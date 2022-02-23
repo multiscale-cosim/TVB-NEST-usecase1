@@ -4,8 +4,12 @@
 import nest
 import nest.raster_plot
 import matplotlib.pyplot as plt
-from nest_elephant_tvb.utils import create_logger
+import sys
+import os
+from nest_elephant_tvb.utils_tvb_nest import create_logger
 from nest_elephant_tvb.nest.utils_function import wait_transformation_modules, get_data
+from nest_elephant_tvb.utils_tvb_nest import create_folder
+from nest_elephant_tvb.Interscale_hub.parameter import Parameter
 
 
 def configure(simulator, co_simulation, nb_neurons=10000):
@@ -99,9 +103,6 @@ def run_example(co_simulation, path, time_synch=0.1, simtime=1000.0, level_log=1
 
 
 if __name__ == "__main__":
-    import sys
-    import os
-    from nest_elephant_tvb.utils import create_folder
 
     if len(sys.argv) == 1:  # test the example
         path_file = os.path.dirname(__file__)
@@ -112,7 +113,10 @@ if __name__ == "__main__":
         run_example(False, path_file + "/../../result_sim/nest_only/")
     elif len(sys.argv) == 2:  # run with parameters file
         import json
-        with open(sys.argv[1]) as f:
+        from pathlib import Path
+        path_file = os.path.dirname(__file__)
+        path = path_file+ '/../../result_sim/co-simulation/parameter.json'
+        with open(path) as f:
             parameters = json.load(f)
         if "time_synchronization" not in parameters.keys():
             parameters['time_synchronization'] = -1

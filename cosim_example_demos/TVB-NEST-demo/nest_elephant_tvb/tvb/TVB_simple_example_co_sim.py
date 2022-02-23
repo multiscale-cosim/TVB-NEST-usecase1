@@ -1,12 +1,15 @@
 #  Copyright 2020 Forschungszentrum Jülich GmbH and Aix-Marseille Université
 # "Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0. "
 import numpy
+import sys
+import os
 import tvb.simulator.lab as lab
 import matplotlib.pyplot as plt
 from tvb.contrib.cosimulation.cosimulator import CoSimulator
 from tvb.contrib.cosimulation.cosim_monitors import CosimCoupling
-from nest_elephant_tvb.utils import create_logger
+from nest_elephant_tvb.utils_tvb_nest import create_logger
 import nest_elephant_tvb.tvb.wrapper_TVB_mpi as Wrapper
+from nest_elephant_tvb.utils_tvb_nest import create_folder
 numpy.random.seed(125)
 
 
@@ -66,10 +69,8 @@ def run_example(co_simulation, path, time_synch=0.1, simtime=1000.0, level_log=1
 
     logger.info("start the simulation")
     if not co_simulation:
-        print('\nINFO ===> DEBUG 1')
         (RAW,) = simulator.run()
     else:
-        print('\nINFO ===> DEBUG 2')
         (RAW,) = Wrapper.run_mpi(simulator, path, logger)
 
     logger.info("plot the result")
@@ -80,9 +81,7 @@ def run_example(co_simulation, path, time_synch=0.1, simtime=1000.0, level_log=1
 
 
 if __name__ == "__main__":
-    import sys
-    import os
-    from nest_elephant_tvb.utils import create_folder
+   
     if len(sys.argv) == 1:  # test the example
         path_file = os.path.dirname(__file__)
         create_folder(path_file+"/../../result_sim/tvb_only/")
@@ -91,7 +90,9 @@ if __name__ == "__main__":
         run_example(False, path_file+"/../../result_sim/tvb_only/")
     elif len(sys.argv) == 2:  # run with parameters file
         import json
-        with open(sys.argv[1]) as f:
+        path_file = os.path.dirname(__file__)
+        path = path_file+ '/../../result_sim/co-simulation/parameter.json'
+        with open(path) as f:
             parameters = json.load(f)
         if "time_synchronization" not in parameters.keys():
            parameters['time_synchronization'] = -1

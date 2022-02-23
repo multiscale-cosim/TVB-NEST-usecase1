@@ -13,7 +13,9 @@
 #
 # ------------------------------------------------------------------------------
 import sys
+import importlib
 import common
+CoSimulator = importlib.import_module("EBRAINS-Launcher.ms_manager")
 
 
 def main(args=None):
@@ -22,7 +24,7 @@ def main(args=None):
     :param args: user command line arguments
     :return: CoSimulator's return code to be used as exit code by the bash environment
     """
-    co_simulator = common.cosimulator.CoSimulator()
+    co_simulator = CoSimulator.CoSimulator()
     co_simulator_rc = co_simulator.run(sys.argv)
 
     if co_simulator_rc == common.enums.CoSimulatorReturnCodes.OK:
