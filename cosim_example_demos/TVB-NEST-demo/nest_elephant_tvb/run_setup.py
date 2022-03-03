@@ -10,14 +10,14 @@ import copy
 from nest_elephant_tvb.utils_tvb_nest import create_folder, create_logger
 
 
-class RunSetup():
-   def __init__(self):
+class RunSetup:
+    def __init__(self):
         parameter_default = {"co_simulation": False,
-                            "path": "",
-                            "simulation_time": 30.0,
-                            "level_log": 1,
-                            "resolution": 0.1,
-                            "nb_neurons": [100]
+                             "path": "",
+                             "simulation_time": 30.0,
+                             "level_log": 1,
+                             "resolution": 0.1,
+                             "nb_neurons": [100]
                             }
 
         ### NOTE: temporary result folder creation, change with refactoring
@@ -40,28 +40,38 @@ class RunSetup():
             "save_spikes": True,
             "save_rate": True,
         })
-        run(parameter_co_simulation)
+        self.run(parameter_co_simulation)
 
+    def run(self, parameters):
+        '''
+        run the simulation
+        :param parameters: parameters of the simulation
+        :return:
+        '''
+        path = parameters['path']
+        # start to create the repertory for the simulation
+        create_folder(path)
+        create_folder(path + "/log")
+        create_folder(path + '/nest')
+        create_folder(path + '/tvb')
+        create_folder(path + '/transformation')
+        create_folder(path + '/transformation/spike_detector/')
+        create_folder(path + '/transformation/send_to_tvb/')
+        create_folder(path + '/transformation/spike_generator/')
+        create_folder(path + '/transformation/receive_from_tvb/')
+        create_folder(path + '/figures')
+        self.save_parameter(parameters)
 
-def run(parameters):
-    '''
-    run the simulation
-    :param parameters: parameters of the simulation
-    :return:
-    '''
-    path = parameters['path']
-    # start to create the repertory for the simulation
-    create_folder(path)
-    create_folder(path + "/log")
-    create_folder(path + '/nest')
-    create_folder(path + '/tvb')
-    create_folder(path + '/transformation')
-    create_folder(path + '/transformation/spike_detector/')
-    create_folder(path + '/transformation/send_to_tvb/')
-    create_folder(path + '/transformation/spike_generator/')
-    create_folder(path + '/transformation/receive_from_tvb/')
-    create_folder(path + '/figures')
-    save_parameter(parameters)
+    def save_parameter(self,parameters):
+        """
+        save the parameters of the simulations in json file
+        :param parameters: dictionary of parameters
+        :return: nothing
+        """
+        # save the value of all parameters
+        f = open(parameters['path'] + '/parameter.json', "wt")
+        json.dump(parameters, f)
+        f.close()
 
     # logger = create_logger(path, 'launcher', parameters['level_log'])
 
@@ -167,16 +177,7 @@ def run(parameters):
 #                             )
 
 
-def save_parameter(parameters):
-    """
-    save the parameters of the simulations in json file
-    :param parameters: dictionary of parameters
-    :return: nothing
-    """
-    # save the value of all parameters
-    f = open(parameters['path'] + '/parameter.json', "wt")
-    json.dump(parameters, f)
-    f.close()
+
 
 
 

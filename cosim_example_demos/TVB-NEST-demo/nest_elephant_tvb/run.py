@@ -7,7 +7,7 @@ import shutil
 import json
 import subprocess
 import copy
-from nest_elephant_tvb.utils import create_folder, create_logger
+from nest_elephant_tvb.utils_tvb_nest import create_folder, create_logger
 
 
 def run(parameters):

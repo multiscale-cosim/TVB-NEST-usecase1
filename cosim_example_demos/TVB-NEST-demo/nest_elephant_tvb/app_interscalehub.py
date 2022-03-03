@@ -13,6 +13,7 @@
 # ------------------------------------------------------------------------------
 
 import sys
+import time
 from Interscale_hub.InterscaleHub import InterscaleHub
 from Interscale_hub.parameter import Parameter
 from run_setup import RunSetup
@@ -31,6 +32,8 @@ def run_wrapper(direction):
     
     if direction == 1:
         RunSetup()  # create directories for logging and to store port information
+    else:
+        time.sleep(1)
 
     # 1) init InterscaleHUB
     # includes param setup, buffer creation
