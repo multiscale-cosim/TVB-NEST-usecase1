@@ -1,0 +1,711 @@
+{
+    "Process id": 1790927,
+    "Process Name": "python3",
+    "Affinity mask": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+    ],
+    "Execution time [seconds]": 84.20999999996275,
+    "Process Exit status": 0,
+    "CPU usage [% average] per second": [
+        88.41991341777452,
+        89.64843749804317,
+        90.57777777777777,
+        91.35399673902278,
+        91.85520362145786,
+        92.50175192699909,
+        93.06282722637879,
+        93.14565483561076,
+        93.89400921729506,
+        94.11764705949192,
+        94.43585780453002,
+        94.80646741724021,
+        94.9579831936076,
+        95.18502006170502,
+        95.39052496730726,
+        95.62013917249162,
+        95.79402515744312,
+        95.87901701255733,
+        96.06557376983994,
+        96.17006324678786,
+        96.33525619206861,
+        96.42388451449462,
+        96.56925031771915,
+        96.64408867000617,
+        96.77611940298509,
+        96.842410196935,
+        96.9594594594086,
+        97.01615110922194,
+        96.46464646435989,
+        96.71325051727199,
+        96.5943491419628,
+        96.68223150664544,
+        96.54676258949681,
+        96.65105386374702,
+        96.49885583482897,
+        96.31614199590113,
+        96.31004366851396,
+        96.38888888927252,
+        96.10878661125317,
+        96.1483302600825,
+        95.88601244216046,
+        95.96774193576515,
+        95.77546296323827,
+        95.87433762328324,
+        95.6586270873638,
+        95.73770491819519,
+        95.61717352430958,
+        95.64300773027277,
+        95.4945624026237,
+        95.53859202683978,
+        95.38025350239414,
+        95.30839895018947,
+        95.33570045196178,
+        95.20406542767181,
+        95.2641450453544,
+        95.07692307692307,
+        95.13710043964952,
+        95.01566930340603,
+        95.10366122660282,
+        94.95725257239856,
+        94.88717509280538,
+        94.97324697265884,
+        94.84865315187773,
+        94.67488021926947,
+        94.76100459080078,
+        94.57767119630581,
+        94.63933780071396,
+        94.5280082986182,
+        94.63645673309556,
+        94.47814000489868,
+        94.5477230194486,
+        94.49168207034874,
+        94.56005841556585,
+        94.60271667274056,
+        94.52559078498422
+    ],
+    "Memory usage [MiB] per second": [
+        {
+            "Rss": 113.140625,
+            "Pss": 76.7451171875,
+            "Private_Clean": 0.02734375,
+            "Private_Dirty": 69.49609375,
+            "Uss": 69.5234375
+        },
+        {
+            "Rss": 226.28125,
+            "Pss": 153.490234375,
+            "Private_Clean": 0.0546875,
+            "Private_Dirty": 138.9921875,
+            "Uss": 139.046875
+        },
+        {
+            "Rss": 339.421875,
+            "Pss": 230.173828125,
+            "Private_Clean": 0.08203125,
+            "Private_Dirty": 208.48828125,
+            "Uss": 208.5703125
+        },
+        {
+            "Rss": 452.5625,
+            "Pss": 306.822265625,
+            "Private_Clean": 0.109375,
+            "Private_Dirty": 277.984375,
+            "Uss": 278.09375
+        },
+        {
+            "Rss": 565.703125,
+            "Pss": 383.470703125,
+            "Private_Clean": 0.13671875,
+            "Private_Dirty": 347.48046875,
+            "Uss": 347.6171875
+        },
+        {
+            "Rss": 678.84375,
+            "Pss": 460.119140625,
+            "Private_Clean": 0.1640625,
+            "Private_Dirty": 416.9765625,
+            "Uss": 417.140625
+        },
+        {
+            "Rss": 791.984375,
+            "Pss": 536.767578125,
+            "Private_Clean": 0.19140625,
+            "Private_Dirty": 486.47265625,
+            "Uss": 486.6640625
+        },
+        {
+            "Rss": 905.125,
+            "Pss": 613.416015625,
+            "Private_Clean": 0.21875,
+            "Private_Dirty": 555.96875,
+            "Uss": 556.1875
+        },
+        {
+            "Rss": 1018.265625,
+            "Pss": 690.064453125,
+            "Private_Clean": 0.24609375,
+            "Private_Dirty": 625.46484375,
+            "Uss": 625.7109375
+        },
+        {
+            "Rss": 1131.40625,
+            "Pss": 766.6435546875,
+            "Private_Clean": 0.2734375,
+            "Private_Dirty": 694.9609375,
+            "Uss": 695.234375
+        },
+        {
+            "Rss": 1244.546875,
+            "Pss": 843.220703125,
+            "Private_Clean": 0.30078125,
+            "Private_Dirty": 764.453125,
+            "Uss": 764.75390625
+        },
+        {
+            "Rss": 1357.6875,
+            "Pss": 919.7978515625,
+            "Private_Clean": 0.328125,
+            "Private_Dirty": 833.9453125,
+            "Uss": 834.2734375
+        },
+        {
+            "Rss": 1470.828125,
+            "Pss": 996.375,
+            "Private_Clean": 0.35546875,
+            "Private_Dirty": 903.4375,
+            "Uss": 903.79296875
+        },
+        {
+            "Rss": 1583.96875,
+            "Pss": 1072.9521484375,
+            "Private_Clean": 0.3828125,
+            "Private_Dirty": 972.9296875,
+            "Uss": 973.3125
+        },
+        {
+            "Rss": 1697.109375,
+            "Pss": 1149.529296875,
+            "Private_Clean": 0.41015625,
+            "Private_Dirty": 1042.421875,
+            "Uss": 1042.83203125
+        },
+        {
+            "Rss": 1810.25,
+            "Pss": 1226.1064453125,
+            "Private_Clean": 0.4375,
+            "Private_Dirty": 1111.9140625,
+            "Uss": 1112.3515625
+        },
+        {
+            "Rss": 1923.390625,
+            "Pss": 1302.68359375,
+            "Private_Clean": 0.46484375,
+            "Private_Dirty": 1181.40625,
+            "Uss": 1181.87109375
+        },
+        {
+            "Rss": 2036.53125,
+            "Pss": 1379.2607421875,
+            "Private_Clean": 0.4921875,
+            "Private_Dirty": 1250.8984375,
+            "Uss": 1251.390625
+        },
+        {
+            "Rss": 2149.671875,
+            "Pss": 1455.837890625,
+            "Private_Clean": 0.51953125,
+            "Private_Dirty": 1320.390625,
+            "Uss": 1320.91015625
+        },
+        {
+            "Rss": 2262.8125,
+            "Pss": 1532.4150390625,
+            "Private_Clean": 0.546875,
+            "Private_Dirty": 1389.8828125,
+            "Uss": 1390.4296875
+        },
+        {
+            "Rss": 2375.953125,
+            "Pss": 1608.9921875,
+            "Private_Clean": 0.57421875,
+            "Private_Dirty": 1459.375,
+            "Uss": 1459.94921875
+        },
+        {
+            "Rss": 2489.09375,
+            "Pss": 1685.5693359375,
+            "Private_Clean": 0.6015625,
+            "Private_Dirty": 1528.8671875,
+            "Uss": 1529.46875
+        },
+        {
+            "Rss": 2602.296875,
+            "Pss": 1762.1552734375,
+            "Private_Clean": 0.62890625,
+            "Private_Dirty": 1598.359375,
+            "Uss": 1598.98828125
+        },
+        {
+            "Rss": 2715.5,
+            "Pss": 1838.7412109375,
+            "Private_Clean": 0.65625,
+            "Private_Dirty": 1667.8515625,
+            "Uss": 1668.5078125
+        },
+        {
+            "Rss": 2828.703125,
+            "Pss": 1915.3271484375,
+            "Private_Clean": 0.68359375,
+            "Private_Dirty": 1737.34375,
+            "Uss": 1738.02734375
+        },
+        {
+            "Rss": 2941.90625,
+            "Pss": 1991.9130859375,
+            "Private_Clean": 0.7109375,
+            "Private_Dirty": 1806.8359375,
+            "Uss": 1807.546875
+        },
+        {
+            "Rss": 3055.109375,
+            "Pss": 2068.4990234375,
+            "Private_Clean": 0.73828125,
+            "Private_Dirty": 1876.328125,
+            "Uss": 1877.06640625
+        },
+        {
+            "Rss": 3168.3125,
+            "Pss": 2145.0849609375,
+            "Private_Clean": 0.765625,
+            "Private_Dirty": 1945.8203125,
+            "Uss": 1946.5859375
+        },
+        {
+            "Rss": 3281.515625,
+            "Pss": 2221.6708984375,
+            "Private_Clean": 0.79296875,
+            "Private_Dirty": 2015.3125,
+            "Uss": 2016.10546875
+        },
+        {
+            "Rss": 3394.71875,
+            "Pss": 2298.2568359375,
+            "Private_Clean": 0.8203125,
+            "Private_Dirty": 2084.8046875,
+            "Uss": 2085.625
+        },
+        {
+            "Rss": 3507.921875,
+            "Pss": 2374.8427734375,
+            "Private_Clean": 0.84765625,
+            "Private_Dirty": 2154.296875,
+            "Uss": 2155.14453125
+        },
+        {
+            "Rss": 3621.125,
+            "Pss": 2451.4287109375,
+            "Private_Clean": 0.875,
+            "Private_Dirty": 2223.7890625,
+            "Uss": 2224.6640625
+        },
+        {
+            "Rss": 3734.328125,
+            "Pss": 2528.0146484375,
+            "Private_Clean": 0.90234375,
+            "Private_Dirty": 2293.28125,
+            "Uss": 2294.18359375
+        },
+        {
+            "Rss": 3847.53125,
+            "Pss": 2604.6005859375,
+            "Private_Clean": 0.9296875,
+            "Private_Dirty": 2362.7734375,
+            "Uss": 2363.703125
+        },
+        {
+            "Rss": 3960.734375,
+            "Pss": 2681.1865234375,
+            "Private_Clean": 0.95703125,
+            "Private_Dirty": 2432.265625,
+            "Uss": 2433.22265625
+        },
+        {
+            "Rss": 4073.9375,
+            "Pss": 2757.7724609375,
+            "Private_Clean": 0.984375,
+            "Private_Dirty": 2501.7578125,
+            "Uss": 2502.7421875
+        },
+        {
+            "Rss": 4187.140625,
+            "Pss": 2834.3583984375,
+            "Private_Clean": 1.01171875,
+            "Private_Dirty": 2571.25,
+            "Uss": 2572.26171875
+        },
+        {
+            "Rss": 4300.34375,
+            "Pss": 2910.9443359375,
+            "Private_Clean": 1.0390625,
+            "Private_Dirty": 2640.7421875,
+            "Uss": 2641.78125
+        },
+        {
+            "Rss": 4413.546875,
+            "Pss": 2987.5302734375,
+            "Private_Clean": 1.06640625,
+            "Private_Dirty": 2710.234375,
+            "Uss": 2711.30078125
+        },
+        {
+            "Rss": 4526.75,
+            "Pss": 3064.1162109375,
+            "Private_Clean": 1.09375,
+            "Private_Dirty": 2779.7265625,
+            "Uss": 2780.8203125
+        },
+        {
+            "Rss": 4639.953125,
+            "Pss": 3140.7021484375,
+            "Private_Clean": 1.12109375,
+            "Private_Dirty": 2849.21875,
+            "Uss": 2850.33984375
+        },
+        {
+            "Rss": 4753.15625,
+            "Pss": 3217.2880859375,
+            "Private_Clean": 1.1484375,
+            "Private_Dirty": 2918.7109375,
+            "Uss": 2919.859375
+        },
+        {
+            "Rss": 4866.359375,
+            "Pss": 3293.8740234375,
+            "Private_Clean": 1.17578125,
+            "Private_Dirty": 2988.203125,
+            "Uss": 2989.37890625
+        },
+        {
+            "Rss": 4979.5625,
+            "Pss": 3370.4599609375,
+            "Private_Clean": 1.203125,
+            "Private_Dirty": 3057.6953125,
+            "Uss": 3058.8984375
+        },
+        {
+            "Rss": 5092.76953125,
+            "Pss": 3447.0478515625,
+            "Private_Clean": 1.23046875,
+            "Private_Dirty": 3127.1875,
+            "Uss": 3128.41796875
+        },
+        {
+            "Rss": 5205.9765625,
+            "Pss": 3523.6357421875,
+            "Private_Clean": 1.2578125,
+            "Private_Dirty": 3196.6796875,
+            "Uss": 3197.9375
+        },
+        {
+            "Rss": 5319.18359375,
+            "Pss": 3600.2236328125,
+            "Private_Clean": 1.28515625,
+            "Private_Dirty": 3266.171875,
+            "Uss": 3267.45703125
+        },
+        {
+            "Rss": 5432.390625,
+            "Pss": 3676.8115234375,
+            "Private_Clean": 1.3125,
+            "Private_Dirty": 3335.6640625,
+            "Uss": 3336.9765625
+        },
+        {
+            "Rss": 5545.59765625,
+            "Pss": 3753.3994140625,
+            "Private_Clean": 1.33984375,
+            "Private_Dirty": 3405.15625,
+            "Uss": 3406.49609375
+        },
+        {
+            "Rss": 5658.8046875,
+            "Pss": 3829.9873046875,
+            "Private_Clean": 1.3671875,
+            "Private_Dirty": 3474.6484375,
+            "Uss": 3476.015625
+        },
+        {
+            "Rss": 5772.01171875,
+            "Pss": 3906.5751953125,
+            "Private_Clean": 1.39453125,
+            "Private_Dirty": 3544.140625,
+            "Uss": 3545.53515625
+        },
+        {
+            "Rss": 5885.21875,
+            "Pss": 3983.1630859375,
+            "Private_Clean": 1.421875,
+            "Private_Dirty": 3613.6328125,
+            "Uss": 3615.0546875
+        },
+        {
+            "Rss": 5998.42578125,
+            "Pss": 4059.7509765625,
+            "Private_Clean": 1.44921875,
+            "Private_Dirty": 3683.125,
+            "Uss": 3684.57421875
+        },
+        {
+            "Rss": 6111.6328125,
+            "Pss": 4136.3388671875,
+            "Private_Clean": 1.4765625,
+            "Private_Dirty": 3752.6171875,
+            "Uss": 3754.09375
+        }
+    ],
+    "Underlying Platform Basic Details": {
+        "system network name": "ubuntu-focal",
+        "processor name": "x86_64",
+        "number of cores": 8,
+        "machine type": "x86_64",
+        "architectural detail": [
+            "64bit",
+            "ELF"
+        ],
+        "OS Name": "Linux",
+        "OS release": "5.4.0-96-generic",
+        "OS Version": "#109-Ubuntu SMP Wed Jan 12 16:49:16 UTC 2022",
+        "Linux Kernel Version": "Linux-5.4.0-96-generic-x86_64-with-glibc2.29",
+        "Python version": "3.8.10",
+        "Python Build info": [
+            "default",
+            "Nov 26 2021 20:14:08"
+        ],
+        "Compiler info": "GCC 9.3.0",
+        "Implementation": "CPython"
+    },
+    "CPU detailed information": {
+        "processor-0": {
+            "processor": "0",
+            "vendor_id": "GenuineIntel",
+            "cpu family": "6",
+            "model": "78",
+            "model name": "Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz",
+            "stepping": "3",
+            "cpu MHz": "2591.986",
+            "cache size": "4096 KB",
+            "physical id": "0",
+            "siblings": "8",
+            "core id": "0",
+            "cpu cores": "8",
+            "apicid": "0",
+            "initial apicid": "0",
+            "fpu": "yes",
+            "fpu_exception": "yes",
+            "cpuid level": "22",
+            "wp": "yes",
+            "flags": "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt md_clear flush_l1d",
+            "bugs": "cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs itlb_multihit srbds",
+            "bogomips": "5183.97",
+            "clflush size": "64",
+            "cache_alignment": "64",
+            "address sizes": "39 bits physical, 48 bits virtual",
+            "power management": ""
+        },
+        "processor-1": {
+            "processor": "1",
+            "vendor_id": "GenuineIntel",
+            "cpu family": "6",
+            "model": "78",
+            "model name": "Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz",
+            "stepping": "3",
+            "cpu MHz": "2591.986",
+            "cache size": "4096 KB",
+            "physical id": "0",
+            "siblings": "8",
+            "core id": "1",
+            "cpu cores": "8",
+            "apicid": "1",
+            "initial apicid": "1",
+            "fpu": "yes",
+            "fpu_exception": "yes",
+            "cpuid level": "22",
+            "wp": "yes",
+            "flags": "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt md_clear flush_l1d",
+            "bugs": "cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs itlb_multihit srbds",
+            "bogomips": "5183.97",
+            "clflush size": "64",
+            "cache_alignment": "64",
+            "address sizes": "39 bits physical, 48 bits virtual",
+            "power management": ""
+        },
+        "processor-2": {
+            "processor": "2",
+            "vendor_id": "GenuineIntel",
+            "cpu family": "6",
+            "model": "78",
+            "model name": "Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz",
+            "stepping": "3",
+            "cpu MHz": "2591.986",
+            "cache size": "4096 KB",
+            "physical id": "0",
+            "siblings": "8",
+            "core id": "2",
+            "cpu cores": "8",
+            "apicid": "2",
+            "initial apicid": "2",
+            "fpu": "yes",
+            "fpu_exception": "yes",
+            "cpuid level": "22",
+            "wp": "yes",
+            "flags": "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt md_clear flush_l1d",
+            "bugs": "cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs itlb_multihit srbds",
+            "bogomips": "5183.97",
+            "clflush size": "64",
+            "cache_alignment": "64",
+            "address sizes": "39 bits physical, 48 bits virtual",
+            "power management": ""
+        },
+        "processor-3": {
+            "processor": "3",
+            "vendor_id": "GenuineIntel",
+            "cpu family": "6",
+            "model": "78",
+            "model name": "Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz",
+            "stepping": "3",
+            "cpu MHz": "2591.986",
+            "cache size": "4096 KB",
+            "physical id": "0",
+            "siblings": "8",
+            "core id": "3",
+            "cpu cores": "8",
+            "apicid": "3",
+            "initial apicid": "3",
+            "fpu": "yes",
+            "fpu_exception": "yes",
+            "cpuid level": "22",
+            "wp": "yes",
+            "flags": "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt md_clear flush_l1d",
+            "bugs": "cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs itlb_multihit srbds",
+            "bogomips": "5183.97",
+            "clflush size": "64",
+            "cache_alignment": "64",
+            "address sizes": "39 bits physical, 48 bits virtual",
+            "power management": ""
+        },
+        "processor-4": {
+            "processor": "4",
+            "vendor_id": "GenuineIntel",
+            "cpu family": "6",
+            "model": "78",
+            "model name": "Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz",
+            "stepping": "3",
+            "cpu MHz": "2591.986",
+            "cache size": "4096 KB",
+            "physical id": "0",
+            "siblings": "8",
+            "core id": "4",
+            "cpu cores": "8",
+            "apicid": "4",
+            "initial apicid": "4",
+            "fpu": "yes",
+            "fpu_exception": "yes",
+            "cpuid level": "22",
+            "wp": "yes",
+            "flags": "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt md_clear flush_l1d",
+            "bugs": "cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs itlb_multihit srbds",
+            "bogomips": "5183.97",
+            "clflush size": "64",
+            "cache_alignment": "64",
+            "address sizes": "39 bits physical, 48 bits virtual",
+            "power management": ""
+        },
+        "processor-5": {
+            "processor": "5",
+            "vendor_id": "GenuineIntel",
+            "cpu family": "6",
+            "model": "78",
+            "model name": "Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz",
+            "stepping": "3",
+            "cpu MHz": "2591.986",
+            "cache size": "4096 KB",
+            "physical id": "0",
+            "siblings": "8",
+            "core id": "5",
+            "cpu cores": "8",
+            "apicid": "5",
+            "initial apicid": "5",
+            "fpu": "yes",
+            "fpu_exception": "yes",
+            "cpuid level": "22",
+            "wp": "yes",
+            "flags": "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt md_clear flush_l1d",
+            "bugs": "cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs itlb_multihit srbds",
+            "bogomips": "5183.97",
+            "clflush size": "64",
+            "cache_alignment": "64",
+            "address sizes": "39 bits physical, 48 bits virtual",
+            "power management": ""
+        },
+        "processor-6": {
+            "processor": "6",
+            "vendor_id": "GenuineIntel",
+            "cpu family": "6",
+            "model": "78",
+            "model name": "Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz",
+            "stepping": "3",
+            "cpu MHz": "2591.986",
+            "cache size": "4096 KB",
+            "physical id": "0",
+            "siblings": "8",
+            "core id": "6",
+            "cpu cores": "8",
+            "apicid": "6",
+            "initial apicid": "6",
+            "fpu": "yes",
+            "fpu_exception": "yes",
+            "cpuid level": "22",
+            "wp": "yes",
+            "flags": "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt md_clear flush_l1d",
+            "bugs": "cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs itlb_multihit srbds",
+            "bogomips": "5183.97",
+            "clflush size": "64",
+            "cache_alignment": "64",
+            "address sizes": "39 bits physical, 48 bits virtual",
+            "power management": ""
+        },
+        "processor-7": {
+            "processor": "7",
+            "vendor_id": "GenuineIntel",
+            "cpu family": "6",
+            "model": "78",
+            "model name": "Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz",
+            "stepping": "3",
+            "cpu MHz": "2591.986",
+            "cache size": "4096 KB",
+            "physical id": "0",
+            "siblings": "8",
+            "core id": "7",
+            "cpu cores": "8",
+            "apicid": "7",
+            "initial apicid": "7",
+            "fpu": "yes",
+            "fpu_exception": "yes",
+            "cpuid level": "22",
+            "wp": "yes",
+            "flags": "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt md_clear flush_l1d",
+            "bugs": "cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf mds swapgs itlb_multihit srbds",
+            "bogomips": "5183.97",
+            "clflush size": "64",
+            "cache_alignment": "64",
+            "address sizes": "39 bits physical, 48 bits virtual",
+            "power management": ""
+        }
+    }
+}

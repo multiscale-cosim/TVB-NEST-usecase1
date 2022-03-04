@@ -1,0 +1,1 @@
+{"param_TR_nest_to_tvb": {"init": "init_spikes.npy", "resolution": 0.1, "synch": 100.0, "width": 20.0, "nb_neurons": 20, "level_log": 0}}
