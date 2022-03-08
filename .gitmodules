@@ -17,3 +17,7 @@
 	path = EBRAINS-Launcher
 	url = https://github.com/sontheimer/EBRAINS-Launcher.git
 	branch = stable-release
+[submodule "EBRAINS-WorkflowConfigurations"]
+	path = EBRAINS-WorkflowConfigurations
+	url = https://github.com/sontheimer/EBRAINS-WorkflowConfigurations.git
+	branch = stable-release
