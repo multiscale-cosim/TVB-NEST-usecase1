@@ -7,10 +7,11 @@ import matplotlib.pyplot as plt
 import os
 import json
 import sys
-from utils_tvb_nest import create_logger
-from nest_sim.utils_function import wait_transformation_modules, get_data
-from python.Application_Companion.common_enums import SteeringCommands
-from python.Application_Companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
+
+from cosim_example_demos.TVB_NEST_demo.tvb_sim.utils_tvb import create_logger
+from cosim_example_demos.TVB_NEST_demo.nest_sim.utils_function import wait_transformation_modules, get_data
+from EBRAINS_RichEndpoint.Application_Companion.common_enums import SteeringCommands
+from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
 
 
 class NESTAdapter:

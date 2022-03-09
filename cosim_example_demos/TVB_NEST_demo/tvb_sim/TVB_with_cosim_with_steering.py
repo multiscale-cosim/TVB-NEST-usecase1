@@ -8,11 +8,12 @@ import tvb.simulator.lab as lab
 import matplotlib.pyplot as plt
 from tvb.contrib.cosimulation.cosimulator import CoSimulator
 from tvb.contrib.cosimulation.cosim_monitors import CosimCoupling
-from utils_tvb_nest import create_logger
-import tvb_sim.wrapper_TVB_mpi as Wrapper
-from utils_tvb_nest import create_folder
-from python.Application_Companion.common_enums import SteeringCommands
-from python.Application_Companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
+
+from cosim_example_demos.TVB_NEST_demo.tvb_sim.utils_tvb import create_logger
+import cosim_example_demos.TVB_NEST_demo.tvb_sim.wrapper_TVB_mpi as Wrapper
+from cosim_example_demos.TVB_NEST_demo.tvb_sim.utils_tvb import create_folder
+from EBRAINS_RichEndpoint.Application_Companion.common_enums import SteeringCommands
+from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
 
 
 numpy.random.seed(125)

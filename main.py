@@ -13,9 +13,9 @@
 #
 # ------------------------------------------------------------------------------
 import sys
-import importlib
-import common
-CoSimulator = importlib.import_module("EBRAINS-Launcher.ms_manager")
+
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import enums
+from ms_manager import MSManager
 
 
 def main(args=None):
@@ -24,23 +24,23 @@ def main(args=None):
     :param args: user command line arguments
     :return: CoSimulator's return code to be used as exit code by the bash environment
     """
-    co_simulator = CoSimulator.CoSimulator()
-    co_simulator_rc = co_simulator.run(sys.argv)
+    ms_manager = MSManager()
+    ms_manager_rc = ms_manager.run(sys.argv)
 
-    if co_simulator_rc == common.enums.CoSimulatorReturnCodes.OK:
+    if ms_manager_rc == enums.CoSimulatorReturnCodes.OK:
         # finished properly!
-        return common.enums.BashReturnCodes.SUCCESSFUL  # 0
+        return enums.BashReturnCodes.SUCCESSFUL  # 0
     # something went wrong
-    elif co_simulator_rc == common.enums.CoSimulatorReturnCodes.PARAMETER_ERROR:
-        return common.enums.BashReturnCodes.CO_SIMULATOR_PARAMETER_ERROR
-    elif co_simulator_rc == common.enums.CoSimulatorReturnCodes.VARIABLE_ERROR:
-        return common.enums.BashReturnCodes.CO_SIMULATOR_VARIABLE_ERROR
-    elif co_simulator_rc == common.enums.CoSimulatorReturnCodes.XML_ERROR:
-        return common.enums.BashReturnCodes.CO_SIMULATOR_XML_ERROR
-    elif co_simulator_rc == common.enums.CoSimulatorReturnCodes.LAUNCHER_ERROR:
-        return common.enums.BashReturnCodes.LAUNCHER_ERROR
+    elif ms_manager_rc == enums.CoSimulatorReturnCodes.PARAMETER_ERROR:
+        return enums.BashReturnCodes.CO_SIMULATOR_PARAMETER_ERROR
+    elif ms_manager_rc == enums.CoSimulatorReturnCodes.VARIABLE_ERROR:
+        return enums.BashReturnCodes.CO_SIMULATOR_VARIABLE_ERROR
+    elif ms_manager_rc == enums.CoSimulatorReturnCodes.XML_ERROR:
+        return enums.BashReturnCodes.CO_SIMULATOR_XML_ERROR
+    elif ms_manager_rc == enums.CoSimulatorReturnCodes.LAUNCHER_ERROR:
+        return enums.BashReturnCodes.LAUNCHER_ERROR
     else:
-        return common.enums.BashReturnCodes.CO_SIMULATOR_ERROR
+        return enums.BashReturnCodes.CO_SIMULATOR_ERROR
 
 
 if __name__ == '__main__':

@@ -14,8 +14,8 @@
 
 import sys
 import time
-from Interscale_hub.InterscaleHub import InterscaleHub
-from Interscale_hub.parameter import Parameter
+from EBRAINS_InterscaleHUB.Interscale_hub.InterscaleHub import InterscaleHub
+from EBRAINS_InterscaleHUB.Interscale_hub.parameter import Parameter
 from run_setup import RunSetup
 
 def run_wrapper(direction):

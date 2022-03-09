@@ -57,14 +57,14 @@ def arg_parse(args=None):
         required=True,
     )
 
-    parser.add_argument(
-        '--parameters',
-        '-p',
-        help='XML file defining the Co-Simulation Parameters to be used',
-        metavar='co_simulation_parameters.xml',
-        type=xml_file_exists,
-        required=True,
-    )
+    # parser.add_argument(
+    #     '--parameters',
+    #     '-p',
+    #     help='XML file defining the Co-Simulation Parameters to be used',
+    #     metavar='co_simulation_parameters.xml',
+    #     type=xml_file_exists,
+    #     required=True,
+    # )
 
     parser.add_argument(
         '--global-settings',
