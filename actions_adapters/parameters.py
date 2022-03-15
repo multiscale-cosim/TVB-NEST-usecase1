@@ -129,10 +129,3 @@ class Parameters:
         self.__inhibitory_connection_params = {"weight": -103.4007762183923, "delay": 1.5}
         self.__connection_param_ex = {'rule': 'fixed_indegree', 'indegree': 10}
         self.__connection_param_in = {'rule': 'fixed_indegree', 'indegree': 2}
-
-
-
-
-
-    
-    

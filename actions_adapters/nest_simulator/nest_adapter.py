@@ -34,52 +34,6 @@ class NESTAdapter:
             self.__parameters.log_level)
         self.__logger.info("initialized")
 
-    # def __configure_nest(self, simulator, co_simulation, nb_neurons=10000):
-    #     """
-    #     configure NEST before the simulation
-    #     modify example of https://simulator.simulator.readthedocs.io/en/stable/_downloads/482ad6e1da8dc084323e0a9fe6b2c7d1/brunel_alpha_simulator.py
-    #     :param simulator: nest simulator
-    #     :param co_simulation: boolean for checking if the co-simulation is active or not
-    #     :param nb_neurons: number of neurons
-    #     :return:
-    #     """
-    #     # create the neurons and the devices
-    #     neuron_params = {"C_m": 250.0, "tau_m": 20.0, "tau_syn_ex": 0.5, "tau_syn_in": 0.5,
-    #                     "t_ref": 2.0, "E_L": 0.0, "V_reset": 0.0, "V_m": 0.0, "V_th": 20.0}
-    #     nodes_ex = simulator.Create("iaf_psc_alpha", nb_neurons, params=neuron_params)
-    #     nodes_in = simulator.Create("iaf_psc_alpha", 25, params=neuron_params)
-    #     noise = simulator.Create("poisson_generator", params={"rate": 8894.503857360944})
-    #     espikes = simulator.Create("spike_recorder")
-    #     ispikes = simulator.Create("spike_recorder")
-    #     espikes.set(label="brunel-py-ex", record_to="ascii")
-    #     ispikes.set(label="brunel-py-in", record_to="ascii")
-    #     # create the connection
-    #     simulator.CopyModel("static_synapse", "excitatory", {"weight":  20.68015524367846, "delay": 1.5})
-    #     simulator.CopyModel("static_synapse", "inhibitory", {"weight": -103.4007762183923, "delay": 1.5})
-    #     simulator.Connect(noise, nodes_ex, syn_spec="excitatory")
-    #     simulator.Connect(noise, nodes_in, syn_spec="excitatory")
-    #     simulator.Connect(nodes_ex[:50], espikes, syn_spec="excitatory")
-    #     simulator.Connect(nodes_in[:25], ispikes, syn_spec="excitatory")
-    #     conn_params_ex = {'rule': 'fixed_indegree', 'indegree': 10}
-    #     conn_params_in = {'rule': 'fixed_indegree', 'indegree': 2}
-    #     simulator.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_ex, "excitatory")
-    #     simulator.Connect(nodes_in, nodes_ex + nodes_in, conn_params_in, "inhibitory")
-    #     # Cosimulation devices
-    #     if co_simulation:
-    #         input_to_simulator = simulator.Create("spike_generator", nb_neurons,
-    #                                             params={'stimulus_source': 'mpi',
-    #                                                     'label': '/../transformation/spike_generator'})
-    #         output_from_simulator = simulator.Create("spike_recorder",
-    #                                                 params={"record_to": "mpi",
-    #                                                         'label': '/../transformation/spike_detector'})
-    #         simulator.Connect(input_to_simulator, nodes_ex, {'rule': 'one_to_one'},
-    #                         {"weight": 20.68015524367846, "delay": 0.1})
-    #         simulator.Connect(nodes_ex, output_from_simulator, {'rule': 'all_to_all'},
-    #                         {"weight": 1.0, "delay": 0.1})
-    #         return espikes, input_to_simulator, output_from_simulator
-    #     else:
-    #         return espikes, None, None
-  
     def __configure_nest(self, simulator):
         """
         configure NEST before the simulation
@@ -115,9 +69,7 @@ class NESTAdapter:
             self.__parameters.predefined_synapse,
             self.__parameters.customary_inhibitory_synapse,
             self.__parameters.inhibitory_connection_params)
-        
-        
-        
+       
         conn_params_ex = {'rule': 'fixed_indegree', 'indegree': 10}
         conn_params_in = {'rule': 'fixed_indegree', 'indegree': 2}
         simulator.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_ex, "excitatory")
