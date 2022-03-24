@@ -13,10 +13,12 @@
 # ------------------------------------------------------------------------------
 
 import sys
-from Interscale_hub.InterscaleHub import InterscaleHub
-from Interscale_hub.parameter import Parameter
+import time
+from EBRAINS_InterscaleHUB.Interscale_hub.InterscaleHub import InterscaleHub
+from EBRAINS_InterscaleHUB.Interscale_hub.parameter import Parameter
+from run_setup import RunSetup
 
-def run_wrapper(direction, path):
+def run_wrapper(direction):
 # def run_wrapper(path):
     # print(f'****************input from pipe:{input()}')
     # direction
@@ -28,6 +30,11 @@ def run_wrapper(direction, path):
     # direction = 1 # NOTE: will be changed
     # receive steering commands init,start,stop
     
+    if direction == 1:
+        RunSetup()  # create directories for logging and to store port information
+    else:
+        time.sleep(1)
+
     # 1) init InterscaleHUB
     # includes param setup, buffer creation
     hub = InterscaleHub(param, direction)
@@ -42,5 +49,6 @@ def run_wrapper(direction, path):
 
     
 if __name__ == '__main__':
+    # RunSetup()
     # args 1 = direction
-    sys.exit(run_wrapper(sys.argv[1],sys.argv[2]))
+    sys.exit(run_wrapper(sys.argv[1]))
