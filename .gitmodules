@@ -10,6 +10,7 @@
 [submodule "EBRAINS_ConfigManager"]
 	path = EBRAINS_ConfigManager
 	url = https://github.com/multiscale-cosim/EBRAINS_ConfigManager.git
+	branch = main
 [submodule "EBRAINS_Launcher"]
 	path = EBRAINS_Launcher
 	url = https://github.com/multiscale-cosim/EBRAINS_Launcher.git
