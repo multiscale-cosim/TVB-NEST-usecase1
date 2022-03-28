@@ -8,8 +8,7 @@
 	branch = stable-release
 [submodule "nest-simulator"]
 	path = nest-simulator
-	url = https://github.com/mfahdaz/nest-simulator.git
-	branch = stable-release
+	url = https://github.com/multiscale-cosim/nest-simulator.git
 [submodule "EBRAINS_ConfigManager"]
 	path = EBRAINS_ConfigManager
 	url = https://github.com/mfahdaz/EBRAINS_ConfigManager.git
