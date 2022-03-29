@@ -37,35 +37,36 @@ class MSManager:
         run(args=None)
             Entry point to the Co-Simulator and executes the main loop of the tool
     """
-    # general members
-    __args = None
-    __arranger = None
-    __configuration_manager = None
-    __logs_root_dir = None
-    __logger = None
-    __launcher = None
+    def __init__(self):
+        # general members
+        self.__args = None
+        self.__arranger = None
+        self.__configurations_manager = None
+        # self.__logs_root_dir = None
+        self.__logger = None
+        # self.__launcher = None
 
-    # Environment
-    __variables_manager = None
+        # Environment
+        self.__variables_manager = None
 
-    # XML configuration files managers
-    __actions_xml_manager = None
-    __parameters_xml_manager = None
-    __plan_xml_manager = None
+        # XML configuration files managers
+        self.__actions_xml_manager = None
+        # self.__parameters_xml_manager = None
+        self.__plan_xml_manager = None
 
-    # dictionaries
-    __action_plan_parameters_dict = {}
-    __action_plan_variables_dict = {}
-    __action_plan_dict = {}
-    __items_to_be_arranged = {}
+        # dictionaries
+        self.__action_plan_parameters_dict = {}
+        self.__action_plan_variables_dict = {}
+        self.__action_plan_dict = {}
+        self.__items_to_be_arranged = {}
 
-    __actions_popen_args_dict = {}
+        self.__actions_popen_args_dict = {}
 
-    __parameters_parameters_dict = {}
-    __parameters_parameters_for_json_file_dict = {}
-    __parameters_variables_dict = {}
+        # self.__parameters_parameters_dict = {}
+        self.__parameters_parameters_for_json_file_dict = {}
+        # self.__parameters_variables_dict = {}
 
-    __logger_settings = {}
+        self.__logger_settings = {}
 
     def generate_parameters_json_file(self):
         """
@@ -75,9 +76,9 @@ class MSManager:
             JSON_FILE_ERROR: reporting error during the parameter JSON file
             OK: parameter JSON file was generated properly
         """
-        # TO BE DONE: exception management when the file cannot be created
+        # TODO: exception management when the file cannot be created
 
-        results_dir = self.__configuration_manager.get_directory(DefaultDirectories.RESULTS)
+        results_dir = self.__configurations_manager.get_directory(DefaultDirectories.RESULTS)
         json_output_filename = \
             self.__parameters_parameters_for_json_file_dict[xml_tags.CO_SIM_XML_CO_SIM_PARAMS_FILENAME]
         json_output_path_filename = os.path.join(results_dir, json_output_filename)
@@ -95,7 +96,7 @@ class MSManager:
         self.__logger.info('Co-Simulation parameters: {}'.format(json_output_path_filename))
         return enums.CoSimulatorReturnCodes.OK
 
-    def run(self, args1=None):
+    def run(self):
         """
             Entry point of the Co-Simulation Co-Simulator tool
         :param args:
@@ -108,7 +109,7 @@ class MSManager:
         ########
         try:
             self.__args = args.arg_parse()
-        except SystemExit as e:
+        except SystemExit:
             # argument parser has reported some issue with the arguments
             return enums.CoSimulatorReturnCodes.PARAMETER_ERROR
 
@@ -118,39 +119,37 @@ class MSManager:
 
         ####################
         # instantiate configuration manager
-        self.__configuration_manager = configurations_manager.ConfigurationsManager()
+        self.__configurations_manager = configurations_manager.ConfigurationsManager()
         
         # get path to setup the output directories
-        default_dir = self.__configuration_manager.get_configuration_settings(
+        default_dir = self.__configurations_manager.get_configuration_settings(
             'output_directory', self.__args.global_settings)
         
         # setup default directories (Output, Output/Results, Output/Logs,
         # Output/Figures, Output/Monitoring_DATA)
-        self.__configuration_manager.setup_default_directories(default_dir['output_directory'])
+        self.__configurations_manager.setup_default_directories(default_dir['output_directory'])
 
         # load common settings for the logging
-        self.__logger_settings = self.__configuration_manager.get_configuration_settings(
+        self.__logger_settings = self.__configurations_manager.get_configuration_settings(
                             'log_configurations', self.__args.global_settings)
                             
-        self.__logger = self.__configuration_manager.load_log_configurations(
+        self.__logger = self.__configurations_manager.load_log_configurations(
                             name=__name__, log_configurations=self.__logger_settings)
-        self.__logger.info('Co-Simulator STEP 2 done, configuration manager started')
+        self.__logger.info('Co-Simulator STEP 2 done, output directories are setup.')
 
         ########
         # STEP 3 - Setting Up CO_SIM_* Variables by means of the Variables Manager
         ########
         self.__logger.info('Co-Simulator STEP 3 running')
         self.__variables_manager = \
-            variables_manager.VariablesManager(logger=self.__logger)
+            variables_manager.VariablesManager(self.__logger_settings, self.__configurations_manager)
 
         # STEP 3.1 - Setting Up the output location (path) for results
-#        self.__variables_manager.set_value(common.variables.CO_SIM_RESULTS_DIR,
- #                                          self.__configuration_manager.get_directory('results'))
-        self.__variables_manager.set_value(variables.CO_SIM_RESULTS_DIR,
-                                           self.__configuration_manager.get_directory(DefaultDirectories.RESULTS))
-
-
-        # STEP 3.2 - Setting Up the launcher command based on the environment
+        # TODO handle case when set value() fails
+        self.__variables_manager.set_value(
+            variables.CO_SIM_RESULTS_DIR,
+            self.__configurations_manager.get_directory(DefaultDirectories.RESULTS)
+            )
 
         self.__logger.info(
             f'Co-Simulator STEP 3 done, Co-Simulation results location: '
@@ -161,9 +160,11 @@ class MSManager:
         ########
         self.__logger.info('Co-Simulator STEP 4, dissecting Co-Simulation Action Plan')
         self.__plan_xml_manager = \
-            plan_xml_manager.PlanXmlManager(configuration_manager=self.__configuration_manager,
-                                                   logger=self.__logger,
-                                                   xml_filename=self.__args.action_plan)
+            plan_xml_manager.PlanXmlManager(
+                log_settings=self.__logger_settings,
+                configurations_manager=self.__configurations_manager,
+                xml_filename=self.__args.action_plan,
+                name = 'PlanXmlManager')
 
         # STEP 4.1 - Dissecting the Co-Simulation Plan XML file
         if not self.__plan_xml_manager.dissect() == enums.XmlManagerReturnCodes.XML_OK:
@@ -210,6 +211,7 @@ class MSManager:
         ########
         # STEP 5 - Processing Co-Simulation Parameters
         ########
+
         # self.__logger.info('Co-Simulator STEP 5, dissecting Co-Simulation parameters')
         # self.__parameters_xml_manager = \
         #     parameters_xml_manager.ParametersXmlManager(configuration_manager=self.__configuration_manager,
@@ -237,11 +239,13 @@ class MSManager:
         ########
         self.__logger.info('Co-Simulator STEP 6, dissecting Co-Simulation Actions XML files')
         # STEP 6.1 - Getting the Actions Popen arguments, the CO_SIM_ variables transformation is performed 
-        self.__actions_xml_manager = \
-            actions_xml_manager.ActionsXmlManager(configuration_manager=self.__configuration_manager,
-                                                         logger=self.__logger,
-                                                         variables_manager=self.__variables_manager,
-                                                         action_plan=self.__action_plan_dict)
+        self.__actions_xml_manager = actions_xml_manager.ActionsXmlManager(
+                self.__logger_settings,
+                self.__configurations_manager,                
+                self.__variables_manager,
+                self.__action_plan_dict
+                )
+
         if not self.__actions_xml_manager.dissect() == enums.XmlManagerReturnCodes.XML_OK:
             return enums.CoSimulatorReturnCodes.XML_ERROR
 
@@ -254,10 +258,12 @@ class MSManager:
         self.__logger.info('Co-Simulator STEP 7, arranging environment')
         self.__items_to_be_arranged = self.__plan_xml_manager.get_items_to_be_arranged_dict()
 
-        self.__arranger = arranger.Arranger(configuration_manager=self.__configuration_manager,
-                                                   logger=self.__logger,
-                                                   variables_manager=self.__variables_manager,
-                                                   items_to_be_arranged_dict=self.__items_to_be_arranged)
+        self.__arranger = arranger.Arranger(
+            self.__logger_settings,
+            self.__configurations_manager,
+            self.__variables_manager,
+            self.__items_to_be_arranged
+            )
 
         if not self.__arranger.arrange() == enums.ArrangerReturnCodes.OK:
             return enums.CoSimulatorReturnCodes.ARRANGER_ERROR
@@ -275,15 +281,10 @@ class MSManager:
         # STEP 9 - Launching the Action Plan
         ########
         self.__logger.info('Co-Simulator STEP 9, carrying out the Co-Simulation Action Plan Strategy')
-        # self.__launcher = common.Launcher(action_plan_dict=self.__action_plan_dict,
-        #                                   actions_popen_args_dict=self.__actions_popen_args_dict,
-        #                                   configuration_manager=self.__configuration_manager,
-        #                                   logger=self.__logger,
-        #                                   log_Settings=self.__logger_settings)
         launching_manager = LaunchingManager(self.__action_plan_dict,
                                           self.__actions_popen_args_dict,
                                           self.__logger_settings,
-                                          self.__configuration_manager)
+                                          self.__configurations_manager)
         if not launching_manager.carry_out_action_plan() == enums.LauncherReturnCodes.LAUNCHER_OK:
             self.__logger.error('Error(s) were reported, check the errors log on {}'.format(
                 self.__variables_manager.get_value(variables.CO_SIM_RESULTS_DIR)))
