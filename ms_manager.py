@@ -148,7 +148,7 @@ class MSManager:
         # TODO handle case when set value() fails
         self.__variables_manager.set_value(
             variables.CO_SIM_RESULTS_DIR,
-            self.__configurations_manager.get_directory(DefaultDirectories.RESULTS)
+            self.__configurations_manager.get_directory(DefaultDirectories.OUTPUT)
             )
 
         self.__logger.info(
