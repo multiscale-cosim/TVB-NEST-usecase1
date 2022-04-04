@@ -13,12 +13,13 @@
 # ------------------------------------------------------------------------------
 import json
 import os
+import time
 
 
 class Parameters:
-    def __init__(self):
+    def __init__(self, path):
 
-        self.__path_to_parameters_file = self.__get_path_to_parameters_file()
+        self.__path_to_parameters_file = self.__get_path_to_parameters_file(path)
         self.__cosim_parameters = self.__load_parameters_from_json()
         self.__cosimulation=self.__cosim_parameters['co_simulation']
         self.__path=self.__cosim_parameters['path']
@@ -102,13 +103,20 @@ class Parameters:
     @property
     def log_level(self): return self.__log_level
 
-    def __get_path_to_parameters_file(self ):
-        path_to_self = os.path.dirname(__file__)
-        return (path_to_self + '/../result_sim/co-simulation/parameter.json')
+    def __get_path_to_parameters_file(self, path ):
+        # path_to_self = os.path.dirname(__file__)
+        return (path + '/parameter.json')
 
     def __load_parameters_from_json(self):
+        # check if file is already created
+        while not os.path.exists(self.__path_to_parameters_file):
+            print(f'{self.__path_to_parameters_file} does not exist yet, retrying in 1 second')
+            time.sleep(1)
+
+        # file is already created
         with open(self.__path_to_parameters_file) as f:
             return json.load(f)
+
 
     def __set_nest_model_parameters(self):
         # neurons and the devices

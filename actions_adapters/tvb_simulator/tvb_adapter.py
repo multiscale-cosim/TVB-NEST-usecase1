@@ -3,30 +3,38 @@
 import numpy
 import sys
 import os
+import pickle
+import base64
+
+from common.utils.security_utils import check_integrity
+from actions_adapters.parameters import Parameters
+import cosim_example_demos.TVB_NEST_demo.tvb_sim.wrapper_TVB_mpi as Wrapper
+from EBRAINS_RichEndpoint.Application_Companion.common_enums import SteeringCommands
+from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
+
 import tvb.simulator.lab as lab
 import matplotlib.pyplot as plt
 from tvb.contrib.cosimulation.cosimulator import CoSimulator
 from tvb.contrib.cosimulation.cosim_monitors import CosimCoupling
-
-from cosim_example_demos.TVB_NEST_demo.tvb_sim.utils_tvb import create_logger
-import cosim_example_demos.TVB_NEST_demo.tvb_sim.wrapper_TVB_mpi as Wrapper
-from EBRAINS_RichEndpoint.Application_Companion.common_enums import SteeringCommands
-from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
-from actions_adapters.parameters import Parameters
-
 
 numpy.random.seed(125)
 
 
 class TVBAdapter:
 
-    def __init__(self):
-        self.__parameters = Parameters()
+    def __init__(self, configurations_manager, log_settings):
         self.__simulator = None
-        self.__logger = create_logger(
-            self.__parameters.path,
-            'TVB',
-            self.__parameters.log_level)
+        self._log_settings = log_settings
+        self._configurations_manager = configurations_manager
+        self.__logger = self._configurations_manager.load_log_configurations(
+                                        name="TVB_Adapter",
+                                        log_configurations=self._log_settings,
+                                        target_directory=DefaultDirectories.SIMULATION_RESULTS)
+        self.__path_to_parameters_file = self._configurations_manager.get_directory(
+                                        directory=DefaultDirectories.SIMULATION_RESULTS)
+        self.__parameters = Parameters(self.__path_to_parameters_file)
         self.__logger.info("initialized")
 
         
@@ -92,8 +100,16 @@ class TVBAdapter:
 
 
 if __name__ == "__main__":
-    
-    tvb_adapter = TVBAdapter()
+    # unpickle configurations_manager object
+    configurations_manager = pickle.loads(base64.b64decode(sys.argv[2]))
+    # unpickle log_settings
+    log_settings = pickle.loads(base64.b64decode(sys.argv[3]))
+    # security check of pickled objects
+    # it raises an exception, if the integrity is compromised
+    check_integrity(configurations_manager, ConfigurationsManager)
+    check_integrity(log_settings, dict)
+    # everything is fine, run simulation
+    tvb_adapter = TVBAdapter(configurations_manager, log_settings)
     local_minimum_step_size = tvb_adapter.execute_init_command()
      # send local minimum step size to Application Manager as a response to INIT
     # NOTE Application Manager expects a string in the following format:

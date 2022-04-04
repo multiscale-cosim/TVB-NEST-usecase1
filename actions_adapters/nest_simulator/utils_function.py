@@ -47,7 +47,7 @@ def wait_transformation_modules(nest, path, spike_generator, spike_detector, log
             os.remove(path + '/transformation/spike_detector/' + str(id_spike_detector[0]) + '.txt.unlock')
 
 
-def get_data(path, pattern="brunel-py-ex-*"):
+def get_data(logger, path, pattern="brunel-py-ex-*"):
     """
     read dat file with spikes inside
     :param path: path of files
@@ -73,7 +73,9 @@ def get_data(path, pattern="brunel-py-ex-*"):
                     a.append(line.split())
                 yield a
         if a == []:
-            raise Exception('stop file')
+            # raise Exception('stop file')
+            logger.exception('stop file')
+
 
     re_pattern = re.compile(pattern)
     data = []

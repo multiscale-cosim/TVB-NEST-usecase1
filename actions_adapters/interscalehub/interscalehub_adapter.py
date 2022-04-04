@@ -14,19 +14,24 @@
 
 import sys
 import time
+import pickle
+import base64
 
+from common.utils.security_utils import check_integrity
 from actions_adapters.setup_result_directories import SetupResultDirectories
 from EBRAINS_InterscaleHUB.Interscale_hub.InterscaleHub import InterscaleHub
 from EBRAINS_InterscaleHUB.Interscale_hub.parameter import Parameter
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
 
 
-def run_wrapper(direction):
-# def run_wrapper(path):
-    # print(f'****************input from pipe:{input()}')
+def run_wrapper(direction, configurations_manager, log_settings):
     # direction
     # 1 --> nest to Tvb
     # 2 --> tvb to nest
-    param = Parameter()
+    path = configurations_manager.get_directory(
+                                        directory=DefaultDirectories.SIMULATION_RESULTS)
+    param = Parameter(path)
 
     direction = int(direction) # NOTE: will be changed
     # direction = 1 # NOTE: will be changed
@@ -35,13 +40,13 @@ def run_wrapper(direction):
     if direction == 1:
         # create directories to store parameter.json file, 
         # port information, and logs
-        SetupResultDirectories()
+        SetupResultDirectories(path)
     else:
         time.sleep(1)
 
     # 1) init InterscaleHUB
     # includes param setup, buffer creation
-    hub = InterscaleHub(param, direction)
+    hub = InterscaleHub(param, direction, configurations_manager, log_settings)
     
     # 2) Start signal
     # receive, pivot, transform, send
@@ -54,5 +59,12 @@ def run_wrapper(direction):
     
 if __name__ == '__main__':
     # RunSetup()
-    # args 1 = direction
-    sys.exit(run_wrapper(sys.argv[1]))
+    direction = sys.argv[1]
+    configurations_manager = pickle.loads(base64.b64decode(sys.argv[2]))
+    log_settings = pickle.loads(base64.b64decode(sys.argv[3]))
+    # security check of pickled objects
+    # it raises an exception, if the integrity is compromised
+    check_integrity(configurations_manager, ConfigurationsManager)
+    check_integrity(log_settings, dict)
+    # everything is fine, run InterscaleHub
+    sys.exit(run_wrapper(direction, configurations_manager, log_settings))
