@@ -13,25 +13,34 @@
 # ------------------------------------------------------------------------------
 import os
 import sys
+import pickle
+import base64
+
+from actions_adapters.nest_simulator.utils_function import wait_transformation_modules
+from actions_adapters.nest_simulator.utils_function import get_data
+from common.utils.security_utils import check_integrity
+from actions_adapters.parameters import Parameters
+from EBRAINS_RichEndpoint.Application_Companion.common_enums import SteeringCommands
+from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
+
 import nest
 import nest.raster_plot
 import matplotlib.pyplot as plt
 
-from cosim_example_demos.TVB_NEST_demo.tvb_sim.utils_tvb import create_logger
-from cosim_example_demos.TVB_NEST_demo.nest_sim.utils_function import wait_transformation_modules
-from cosim_example_demos.TVB_NEST_demo.nest_sim.utils_function import get_data
-from actions_adapters.parameters import Parameters
-from EBRAINS_RichEndpoint.Application_Companion.common_enums import SteeringCommands
-from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
-
 
 class NESTAdapter:
-    def __init__(self):
-        self.__parameters = Parameters()
-        self.__logger = create_logger(
-            self.__parameters.path,
-            'NEST',
-            self.__parameters.log_level)
+    def __init__(self, configurations_manager, log_settings):
+        self._log_settings = log_settings
+        self._configurations_manager = configurations_manager
+        self.__logger = self._configurations_manager.load_log_configurations(
+                                        name="NEST_Adapter",
+                                        log_configurations=self._log_settings,
+                                        target_directory=DefaultDirectories.SIMULATION_RESULTS)
+        self.__path_to_parameters_file = self._configurations_manager.get_directory(
+                                        directory=DefaultDirectories.SIMULATION_RESULTS)
+        self.__parameters = Parameters(self.__path_to_parameters_file)
         self.__logger.info("initialized")
 
     def __configure_nest(self, simulator):
@@ -162,16 +171,24 @@ class NESTAdapter:
     def execute_end_command(self):
         self.__logger.info("plotting the result")
         if nest.Rank() == 0:
-            nest.raster_plot.from_data(get_data(self.__parameters.path + '/nest/'))
+            nest.raster_plot.from_data(get_data(self.__logger, self.__parameters.path + '/nest/'))
             plt.savefig(self.__parameters.path + "/figures/plot_nest.png")
         
         self.__logger.debug("post processing is done")
 
 if __name__ == "__main__":
-    
-    nest_adapter = NESTAdapter()
+    # unpickle configurations_manager object
+    configurations_manager = pickle.loads(base64.b64decode(sys.argv[2]))
+    # unpickle log_settings
+    log_settings = pickle.loads(base64.b64decode(sys.argv[3]))
+    # security check of pickled objects
+    # it raises an exception, if the integrity is compromised
+    check_integrity(configurations_manager, ConfigurationsManager)
+    check_integrity(log_settings, dict)
+    # everything is fine, run simulation
+    nest_adapter = NESTAdapter(configurations_manager, log_settings)
     local_minimum_step_size = nest_adapter.execute_init_command()
-     # send local minimum step size to Application Manager as a response to INIT
+    # send local minimum step size to Application Manager as a response to INIT
     # NOTE Application Manager expects a string in the following format:
     # {'PID': <int>, 'LOCAL_MINIMUM_STEP_SIZE': <float>}
     pid_and_local_minimum_step_size = \

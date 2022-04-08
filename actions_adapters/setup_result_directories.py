@@ -5,6 +5,7 @@ import os
 import json
 import copy
 from common.utils import directory_utils
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 # from actions_adapters.tvb_simulator.utils_tvb import self.create_folder
 
 
@@ -12,7 +13,7 @@ class SetupResultDirectories:
     '''
         sets up the cosimulationb parameters and directories to save the output
     '''
-    def __init__(self):
+    def __init__(self, path):
         parameter_default = {"co_simulation": False,
                              "path": "",
                              "simulation_time": 30.0,
@@ -22,14 +23,16 @@ class SetupResultDirectories:
                             }
 
         ### NOTE: temporary result folder creation, change with refactoring
-        path_file = os.path.dirname(__file__)
-        self.create_folder(path_file + "/../result_sim/")
-        self.create_folder(path_file + "/../result_sim/co-simulation/")
+        # path_file = os.path.dirname(__file__)
+        path_file = path
+        # self.create_folder(path_file + "/../result_sim/")
+        # self.create_folder(path_file + "/../result_sim/co-simulation/")
 
         # Setup Co-simulation and run!
         #path_file = os.path.dirname(__file__)
         parameter_co_simulation = copy.copy(parameter_default)
-        parameter_co_simulation['path'] = path_file + "/../result_sim/co-simulation/"
+        # parameter_co_simulation['path'] = path_file + "/../result_sim/co-simulation/"
+        parameter_co_simulation['path'] = path_file
         parameter_co_simulation.update({
             "co_simulation": True,
             # parameter for the synchronization between simulators
@@ -51,8 +54,8 @@ class SetupResultDirectories:
         '''
         path = parameters['path']
         # start to create the repertory for the simulation
-        self.create_folder(path)
-        self.create_folder(path + "/log")
+        # self.create_folder(path)
+        # self.create_folder(path + "/log")
         self.create_folder(path + '/nest')
         self.create_folder(path + '/tvb')
         self.create_folder(path + '/transformation')

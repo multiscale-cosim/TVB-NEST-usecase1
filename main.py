@@ -18,20 +18,21 @@ from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import en
 from ms_manager import MSManager
 
 
-def main(args=None):
+def main():
     """
     :desc: Entry point for Co-Simulation CoSimulator tool
     :param args: user command line arguments
     :return: CoSimulator's return code to be used as exit code by the bash environment
     """
     ms_manager = MSManager()
-    ms_manager_rc = ms_manager.run(sys.argv)
+    ms_manager_rc = ms_manager.run()
 
     if ms_manager_rc == enums.CoSimulatorReturnCodes.OK:
         # finished properly!
         return enums.BashReturnCodes.SUCCESSFUL  # 0
     # something went wrong
     elif ms_manager_rc == enums.CoSimulatorReturnCodes.PARAMETER_ERROR:
+        print('ERROR: commandline argument parsing!')
         return enums.BashReturnCodes.CO_SIMULATOR_PARAMETER_ERROR
     elif ms_manager_rc == enums.CoSimulatorReturnCodes.VARIABLE_ERROR:
         return enums.BashReturnCodes.CO_SIMULATOR_VARIABLE_ERROR
@@ -44,4 +45,4 @@ def main(args=None):
 
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv))
+    sys.exit(main())
