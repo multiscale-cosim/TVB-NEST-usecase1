@@ -177,17 +177,22 @@ class NESTAdapter:
         self.__logger.debug("post processing is done")
 
 if __name__ == "__main__":
+    
     # unpickle configurations_manager object
     configurations_manager = pickle.loads(base64.b64decode(sys.argv[2]))
+    
     # unpickle log_settings
     log_settings = pickle.loads(base64.b64decode(sys.argv[3]))
+    
     # security check of pickled objects
     # it raises an exception, if the integrity is compromised
     check_integrity(configurations_manager, ConfigurationsManager)
     check_integrity(log_settings, dict)
+    
     # everything is fine, run simulation
     nest_adapter = NESTAdapter(configurations_manager, log_settings)
     local_minimum_step_size = nest_adapter.execute_init_command()
+    
     # send local minimum step size to Application Manager as a response to INIT
     # NOTE Application Manager expects a string in the following format:
     # {'PID': <int>, 'LOCAL_MINIMUM_STEP_SIZE': <float>}
