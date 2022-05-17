@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<parameters>
+        <title>NEST-to-TVB Parameters</title>
+        <description>Scientific Parameters for the NEST-to-TVB Transformer</description>
+
+        <resolution datatype="float">0.1</resolution>
+</parameters>

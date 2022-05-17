@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<parameters>
+        <title>NEST Parameters</title>
+        <description>Scientific Parameters for the NEST Simulation Model</description>
+
+        <resolution datatype="float">0.1</resolution>
+        <nodes_model model="iaf_psc_alpha">
+            <!-- https://nest-simulator.readthedocs.io/en/v3.3/models/iaf_psc_alpha.html -->
+            <nb_neurons datatype="int">20</nb_neurons>
+            <total_inhibitory_nodes datatype="int">25</total_inhibitory_nodes>
+            <neuron_params datatype="dictionary">
+                <V_m datatype="float">0.0</V_m>
+                <E_L datatype="float">0.0</E_L>
+                <C_m datatype="float">250.0</C_m>
+                <tau_m datatype="float">20.0</tau_m>
+                <t_ref datatype="float">2.0</t_ref>
+                <V_th datatype="float">20.0</V_th>
+                <V_reset datatype="float">0.0</V_reset>
+                <tau_syn_ex datatype="float">0.5</tau_syn_ex>
+                <tau_syn_in datatype="float">0.5</tau_syn_in>
+                <I_e datatype="float">0.0</I_e>
+                <V_min datatype="float">0.0</V_min>
+            </neuron_params>
+        </nodes_model>
+        <noise_model model="poisson_generator">
+            <!-- https://nest-simulator.readthedocs.io/en/v3.3/models/poisson_generator.html -->
+        </noise_model>
+</parameters>
