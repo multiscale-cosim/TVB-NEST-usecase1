@@ -21,7 +21,7 @@ from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import va
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import plan_xml_manager
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import xml_tags
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import variables_manager
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import parameters_xml_manager
+# from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import parameters_xml_manager
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import actions_xml_manager
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import arranger
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers import configurations_manager
@@ -37,6 +37,7 @@ class MSManager:
         run(args=None)
             Entry point to the Co-Simulator and executes the main loop of the tool
     """
+
     def __init__(self):
         # general members
         self.__args = None
@@ -61,6 +62,7 @@ class MSManager:
         self.__items_to_be_arranged = {}
 
         self.__actions_popen_args_dict = {}
+        self.__actions_sci_params_xml_files_dict = {}
 
         # self.__parameters_parameters_dict = {}
         self.__parameters_parameters_for_json_file_dict = {}
@@ -99,7 +101,7 @@ class MSManager:
     def run(self):
         """
             Entry point of the Co-Simulation Co-Simulator tool
-        :param args:
+        :param:
             There is no parameters to be used since argparse takes the sys.argv by default
         :return:
             common.enums.CoSimulatorReturnCodes
@@ -120,21 +122,21 @@ class MSManager:
         ####################
         # instantiate configuration manager
         self.__configurations_manager = configurations_manager.ConfigurationsManager()
-        
-        # get path to setup the output directories
+
+        # get path to set up the output directories
         default_dir = self.__configurations_manager.get_configuration_settings(
             'output_directory', self.__args.global_settings)
-        
+
         # setup default directories (Output, Output/Results, Output/Logs,
         # Output/Figures, Output/Monitoring_DATA)
         self.__configurations_manager.setup_default_directories(default_dir['output_directory'])
 
         # load common settings for the logging
         self.__logger_settings = self.__configurations_manager.get_configuration_settings(
-                            'log_configurations', self.__args.global_settings)
-                            
+            'log_configurations', self.__args.global_settings)
+
         self.__logger = self.__configurations_manager.load_log_configurations(
-                            name=__name__, log_configurations=self.__logger_settings)
+            name=__name__, log_configurations=self.__logger_settings)
         self.__logger.info('Co-Simulator STEP 2 done, output directories are setup.')
 
         ########
@@ -147,13 +149,13 @@ class MSManager:
         # STEP 3.1 - Setting Up the output location (path) for results
         # TODO handle case when set value() fails
         self.__variables_manager.set_value(
-            variables.CO_SIM_RESULTS_DIR,
+            variables.CO_SIM_RESULTS_PATH,
             self.__configurations_manager.get_directory(DefaultDirectories.OUTPUT)
-            )
+        )
 
         self.__logger.info(
             f'Co-Simulator STEP 3 done, Co-Simulation results location: '
-            f'{self.__variables_manager.get_value(variables.CO_SIM_RESULTS_DIR)}')
+            f'{self.__variables_manager.get_value(variables.CO_SIM_RESULTS_PATH)}')
 
         ########
         # STEP 4 - Co-Simulation Plan
@@ -164,20 +166,23 @@ class MSManager:
                 log_settings=self.__logger_settings,
                 configurations_manager=self.__configurations_manager,
                 xml_filename=self.__args.action_plan,
-                name = 'PlanXmlManager')
+                name='PlanXmlManager')
 
         # STEP 4.1 - Dissecting the Co-Simulation Plan XML file
+        # NOTE: <variables> section could/can contain references to Environment Variables,
+        #       e.g. ${HOME}, ${CO_SIM_ROOT_PATH}
+        #       In this point, the Environment Variables references will be replaced with their actual values
         if not self.__plan_xml_manager.dissect() == enums.XmlManagerReturnCodes.XML_OK:
             return enums.CoSimulatorReturnCodes.XML_ERROR
 
-        # Variables -> Could contain references to Environment variables, e.g. ${HOME}
         # STEP 4.2 - Getting the variables found on the Co-Simulation Plan XML file
+        #
         self.__action_plan_variables_dict = self.__plan_xml_manager.get_variables_dict()
 
         # STEP 4.3 -    Validating the references to the CO_SIM_* variables
         #               by filling up the environment variables dictionary
         if not enums.VariablesReturnCodes.VARIABLE_OK == \
-               self.__variables_manager.set_co_sim_variable_values_from_variables_dict(
+                self.__variables_manager.set_co_sim_variable_values_from_variables_dict(
                    self.__action_plan_variables_dict):
             return enums.CoSimulatorReturnCodes.VARIABLE_ERROR
 
@@ -188,24 +193,25 @@ class MSManager:
         # STEP 4.5 -    Validating the references to the CO_SIM_* variables on the <parameters> sections
         #               by creating the new CO_SIM_* variables by means of the variables manager
         if not enums.ParametersReturnCodes.PARAMETER_OK == \
-               self.__variables_manager.create_variables_from_parameters_dict(self.__action_plan_parameters_dict):
+                self.__variables_manager.create_variables_from_parameters_dict(self.__action_plan_parameters_dict):
             return enums.CoSimulatorReturnCodes.PARAMETER_ERROR
 
         # STEP 4.6 - Creates Co-Simulation variables based on the information
         #            set on the variables and parameters sections of the processing XML action plan file
         if not enums.VariablesReturnCodes.VARIABLE_OK == \
-               self.__variables_manager.create_co_sim_run_time_variables(self.__action_plan_variables_dict,
-                                                                         self.__action_plan_parameters_dict):
+                self.__variables_manager.create_co_sim_run_time_variables():
             return enums.CoSimulatorReturnCodes.VARIABLE_ERROR
 
         # Action Plan -> ordered and grouped sequence of actions to achieve the Co-Simulation Experiment
         # STEP 4.7 - Getting the action plan per se
         self.__action_plan_dict = self.__plan_xml_manager.get_action_plan_dict()
 
-        self.__logger.info('{} -> {}'.format(variables.CO_SIM_ACTIONS_DIR,
-                                             self.__variables_manager.get_value(variables.CO_SIM_ACTIONS_DIR)))
-        self.__logger.info('{} -> {}'.format(variables.CO_SIM_ROUTINES_DIR,
-                                             self.__variables_manager.get_value(variables.CO_SIM_ROUTINES_DIR)))
+        self.__logger.info('{} -> {}'.format(variables.CO_SIM_ROOT_PATH,
+                                             self.__variables_manager.get_value(variables.CO_SIM_ROOT_PATH)))
+        self.__logger.info('{} -> {}'.format(variables.CO_SIM_ACTIONS_PATH,
+                                             self.__variables_manager.get_value(variables.CO_SIM_ACTIONS_PATH)))
+        self.__logger.info('{} -> {}'.format(variables.CO_SIM_ROUTINES_PATH,
+                                             self.__variables_manager.get_value(variables.CO_SIM_ROUTINES_PATH)))
         self.__logger.info('Co-Simulator STEP 4 done')
 
         ########
@@ -228,7 +234,7 @@ class MSManager:
         # # STEP 5.3 - Getting the parameters found in the Co-Simulation Parameters file
         # self.__parameters_parameters_dict = self.__parameters_xml_manager.get_parameters_dict()
 
-        # # STEP 5.4 - Getting the Co-Simulation parameters to be dump into a json file
+        # # STEP 5.4 - Getting the Co-Simulation parameters to be dumped into a json file
         # self.__parameters_parameters_for_json_file_dict = self.__parameters_xml_manager.get_parameter_for_json_dict()
 
         # self.__logger.info('Co-Simulation parameters loaded from {}'.format(self.__args.parameters))
@@ -238,18 +244,20 @@ class MSManager:
         # STEP 6 - Co-Simulation Actions (processing the XML configuration files)
         ########
         self.__logger.info('Co-Simulator STEP 6, dissecting Co-Simulation Actions XML files')
-        # STEP 6.1 - Getting the Actions Popen arguments, the CO_SIM_ variables transformation is performed 
+        # STEP 6.1 - Getting the Actions Popen arguments, the CO_SIM_ variables transformation is performed
         self.__actions_xml_manager = actions_xml_manager.ActionsXmlManager(
-                self.__logger_settings,
-                self.__configurations_manager,                
-                self.__variables_manager,
-                self.__action_plan_dict
-                )
+            self.__logger_settings,
+            self.__configurations_manager,
+            self.__variables_manager,
+            self.__action_plan_dict
+        )
 
         if not self.__actions_xml_manager.dissect() == enums.XmlManagerReturnCodes.XML_OK:
             return enums.CoSimulatorReturnCodes.XML_ERROR
 
         self.__actions_popen_args_dict = self.__actions_xml_manager.get_actions_popen_arguments_dict()
+        self.__actions_sci_params_xml_files_dict = self.__actions_xml_manager.get_actions_sci_params_xml_files_dict()
+
         self.__logger.info('Co-Simulator STEP 6 done')
 
         ########
@@ -263,7 +271,7 @@ class MSManager:
             self.__configurations_manager,
             self.__variables_manager,
             self.__items_to_be_arranged
-            )
+        )
 
         if not self.__arranger.arrange() == enums.ArrangerReturnCodes.OK:
             return enums.CoSimulatorReturnCodes.ARRANGER_ERROR
@@ -282,16 +290,18 @@ class MSManager:
         ########
         self.__logger.info('Co-Simulator STEP 9, carrying out the Co-Simulation Action Plan Strategy')
         launching_manager = LaunchingManager(self.__action_plan_dict,
-                                          self.__actions_popen_args_dict,
-                                          self.__logger_settings,
-                                          self.__configurations_manager)
+                                             self.__actions_popen_args_dict,
+                                             self.__logger_settings,
+                                             self.__configurations_manager,
+                                             self.__actions_sci_params_xml_files_dict)
+
         if not launching_manager.carry_out_action_plan() == enums.LauncherReturnCodes.LAUNCHER_OK:
             self.__logger.error('Error(s) were reported, check the errors log on {}'.format(
-                self.__variables_manager.get_value(variables.CO_SIM_RESULTS_DIR)))
+                self.__variables_manager.get_value(variables.CO_SIM_RESULTS_PATH)))
             return enums.CoSimulatorReturnCodes.LAUNCHER_ERROR
         # if not self.__launcher.carry_out_action_plan() == common.enums.LauncherReturnCodes.LAUNCHER_OK:
         #     self.__logger.error('Error(s) were reported, check the errors log on {}'.format(
-        #         self.__variables_manager.get_value(common.variables.CO_SIM_RESULTS_DIR)))
+        #         self.__variables_manager.get_value(common.variables.CO_SIM_RESULTS_PATH)))
         #     return common.enums.CoSimulatorReturnCodes.LAUNCHER_ERROR
         self.__logger.info('Co-Simulator STEP 8 done')
 
@@ -299,7 +309,7 @@ class MSManager:
         # STEP 10 - Finishing
         ########
         self.__logger.info('Information about Co-Simulation process could be found on: {}'.format(
-            self.__variables_manager.get_value(variables.CO_SIM_RESULTS_DIR)))
+            self.__variables_manager.get_value(variables.CO_SIM_RESULTS_PATH)))
         self.__logger.info('END: Co-Simulation Co-Simulator')
 
         return enums.CoSimulatorReturnCodes.OK

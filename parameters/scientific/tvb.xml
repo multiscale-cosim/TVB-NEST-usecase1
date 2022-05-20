@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<parameters>
+        <title>TVB Parameters</title>
+        <description>Scientific Parameters for the TVB Simulation Model</description>
+
+        <resolution datatype="float">0.1</resolution>
+
+</parameters>
