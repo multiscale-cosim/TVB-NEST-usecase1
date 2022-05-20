@@ -61,83 +61,119 @@ class NESTAdapter:
         # neuron_params = self.__parameters.neuron_params
 
         nodes_ex = simulator.Create(
-            model=self.__sci_params.nodes_model['model'],           # self.__parameters.nodes_model
-            n=self.__sci_params.nodes_model['nb_neurons'],          # self.__parameters.nb_neurons
-            params=self.__sci_params.nodes_model['neuron_params'])
+            model=self.__sci_params.nodes_model['model'],
+            n=self.__sci_params.nb_neurons,
+            params=self.__sci_params.nodes_model['params'])
 
         nodes_in = simulator.Create(
             model=self.__sci_params.nodes_model['model'],
             n=self.__sci_params.nodes_model['total_inhibitory_nodes'],
-            params=self.__sci_params.nodes_model['neuron_params'])
+            params=self.__sci_params.nodes_model['params'])
 
-        noise = simulator.Create(self.__parameters.noise_model, params=self.__parameters.noise_params)
-        espikes = simulator.Create(self.__parameters.spike_recorder_device)
-        ispikes = simulator.Create(self.__parameters.spike_recorder_device)
-        espikes.set(label=self.__parameters.excitatory_spikes_model, record_to="ascii")
-        ispikes.set(label=self.__parameters.inhibitory_spikes_model, record_to="ascii")
-        # create the connection
+        #
+        # noise poisson_generator
+        #
+        noise = simulator.Create(model=self.__sci_params.noise_model['model'],
+                                 params=self.__sci_params.noise_model['params'])
+
+        #
+        # Spikes' Models
+        #
+        espikes = simulator.Create(self.__sci_params.spike_recorder_device)
+        ispikes = simulator.Create(self.__sci_params.spike_recorder_device)
+
+        espikes.set(label=self.__sci_params.excitatory_spikes_model['model'],
+                    record_to=self.__sci_params.excitatory_spikes_model['record_to'])
+        ispikes.set(label=self.__sci_params.inhibitory_spikes_model['model'],
+                    record_to=self.__sci_params.inhibitory_spikes_model['record_to'])
+
+        #
+        # Creating the connection
         # simulator.CopyModel("static_synapse", "excitatory", {"weight":  20.68015524367846, "delay": 1.5})
         simulator.CopyModel(
-            self.__parameters.predefined_synapse,
-            self.__parameters.customary_excitatory_synapse,
-            self.__parameters.excitatory_connection_params)
+            existing=self.__sci_params.predefined_synapse,
+            new=self.__sci_params.excitatory_model['synapse'],
+            params=self.__sci_params.excitatory_model['params'])
         # simulator.CopyModel("static_synapse", "inhibitory", {"weight": -103.4007762183923, "delay": 1.5})
         simulator.CopyModel(
-            self.__parameters.predefined_synapse,
-            self.__parameters.customary_inhibitory_synapse,
-            self.__parameters.inhibitory_connection_params)
+            existing=self.__sci_params.predefined_synapse,
+            new=self.__sci_params.inhibitory_model['synapse'],
+            params=self.__sci_params.inhibitory_model['params'])
 
-        conn_params_ex = {'rule': 'fixed_indegree', 'indegree': 10}
-        conn_params_in = {'rule': 'fixed_indegree', 'indegree': 2}
-        simulator.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_ex, "excitatory")
-        simulator.Connect(nodes_in, nodes_ex + nodes_in, conn_params_in, "inhibitory")
+        # conn_params_ex = {'rule': 'fixed_indegree', 'indegree': 10}
+        # conn_params_in = {'rule': 'fixed_indegree', 'indegree': 2}
+        simulator.Connect(pre=nodes_ex,
+                          post=nodes_ex + nodes_in,
+                          conn_spec=self.__sci_params.excitatory_connection['params'],
+                          syn_spec=self.__sci_params.excitatory_connection['syn_spec'])
+        simulator.Connect(pre=nodes_in,
+                          post=nodes_ex + nodes_in,
+                          conn_spec=self.__sci_params.inhibitory_connection['params'],
+                          syn_spec=self.__sci_params.inhibitory_connection['syn_spec'])
 
         # simulator.Connect(noise, nodes_ex, syn_spec="excitatory")
         simulator.Connect(
-            noise,
-            nodes_ex,
-            syn_spec=self.__parameters.customary_excitatory_synapse)
+            pre=noise,
+            post=nodes_ex,
+            syn_spec=self.__sci_params.excitatory_model['synapse'])
 
         # simulator.Connect(noise, nodes_in, syn_spec="excitatory")
         simulator.Connect(
-            noise,
-            nodes_in,
-            syn_spec=self.__parameters.customary_excitatory_synapse)
+            pre=noise,
+            post=nodes_in,
+            syn_spec=self.__sci_params.excitatory_model['synapse'])  # is the usage of 'excitatory' OK?
 
         # simulator.Connect(nodes_ex[:50], espikes, syn_spec="excitatory")
         simulator.Connect(
-            nodes_ex[:50],
-            espikes,
-            syn_spec=self.__parameters.customary_excitatory_synapse)
+            pre=nodes_ex[:50],
+            post=espikes,
+            syn_spec=self.__sci_params.excitatory_model['synapse'])
 
         # simulator.Connect(nodes_in[:25], ispikes, syn_spec="excitatory")
         simulator.Connect(
-            nodes_in[:25],
-            ispikes,
-            syn_spec=self.__parameters.customary_excitatory_synapse)
-        conn_params_ex = self.__parameters.connection_param_ex
-        conn_params_in = self.__parameters.connection_param_in
+            pre=nodes_in[:25],
+            post=ispikes,
+            syn_spec=self.__sci_params.excitatory_model['synapse'])
+
+        # conn_params_ex = self.__parameters.connection_param_ex
+        # conn_params_in = self.__parameters.connection_param_in
         simulator.Connect(
             nodes_ex,
             nodes_ex + nodes_in,
-            conn_params_ex,
-            syn_spec=self.__parameters.customary_excitatory_synapse)
+            conn_spec=self.__sci_params.excitatory_connection['params'],
+            syn_spec=self.__sci_params.excitatory_connection['syn_spec'])
         simulator.Connect(
             nodes_in,
             nodes_ex + nodes_in,
-            conn_params_in,
-            syn_spec=self.__parameters.customary_inhibitory_synapse)
+            conn_spec=self.__sci_params.inhibitory_connection['params'],
+            syn_spec=self.__sci_params.inhibitory_connection['syn_spec'])
+
         # Co-Simulation Devices
-        input_to_simulator = simulator.Create("spike_generator", self.__parameters.nb_neurons,
-                                              params={'stimulus_source': 'mpi',
-                                                      'label': '/../transformation/spike_generator'})
-        output_from_simulator = simulator.Create("spike_recorder",
-                                                 params={"record_to": "mpi",
-                                                         'label': '/../transformation/spike_detector'})
-        simulator.Connect(input_to_simulator, nodes_ex, {'rule': 'one_to_one'},
-                          {"weight": 20.68015524367846, "delay": 0.1})
-        simulator.Connect(nodes_ex, output_from_simulator, {'rule': 'all_to_all'},
-                          {"weight": 1.0, "delay": 0.1})
+        # input_to_simulator = simulator.Create("spike_generator", self.__parameters.nb_neurons,
+        #                                       params={'stimulus_source': 'mpi',
+        #                                               'label': '/../transformation/spike_generator'})
+        input_to_simulator = simulator.Create(model=self.__sci_params.input_to_simulator['model'],
+                                              n=self.__sci_params.nb_neurons,
+                                              params=self.__sci_params.input_to_simulator['params'])
+        # output_from_simulator = simulator.Create("spike_recorder",
+        #                                          params={"record_to": "mpi",
+        #                                                  'label': '/../transformation/spike_detector'})
+        output_from_simulator = simulator.Create(model=self.__sci_params.output_from_simulator['model'],
+                                                 params=self.__sci_params.output_from_simulator['params'])
+
+        # simulator.Connect(input_to_simulator, nodes_ex, {'rule': 'one_to_one'},
+        #                   {"weight": 20.68015524367846, "delay": 0.1})
+        simulator.Connect(pre=input_to_simulator,
+                          post=nodes_ex,
+                          conn_spec=self.__sci_params.input_to_simulator['conn_spec'],
+                          syn_spec=self.__sci_params.input_to_simulator['syn_spec'])
+        # simulator.Connect(nodes_ex, output_from_simulator, {'rule': 'all_to_all'},
+        #                   {"weight": 1.0, "delay": 0.1})
+        simulator.Connect(pre=nodes_ex,
+                          post=output_from_simulator,
+                          conn_spec=self.__sci_params.output_from_simulator['conn_spec'],
+                          syn_spec=self.__sci_params.output_from_simulator['syn_spec'])
+
         return espikes, input_to_simulator, output_from_simulator
 
     def execute_init_command(self):
