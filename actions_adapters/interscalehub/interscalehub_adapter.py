@@ -19,40 +19,70 @@ import base64
 
 from common.utils.security_utils import check_integrity
 from actions_adapters.setup_result_directories import SetupResultDirectories
-from EBRAINS_InterscaleHUB.Interscale_hub.InterscaleHub import InterscaleHub
-from EBRAINS_InterscaleHUB.Interscale_hub.parameter import Parameter
+from EBRAINS_InterscaleHUB.Interscale_hub.manager_nest_to_tvb import  NestToTvbManager
+from EBRAINS_InterscaleHUB.Interscale_hub.manager_tvb_to_nest import TvbToNestManager
+from EBRAINS_InterscaleHUB.Interscale_hub.interscalehub_enums import DATA_EXCHANGE_DIRECTION 
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
 
 
 def run_wrapper(direction, configurations_manager, log_settings):
+    '''
+    starts the inter-scale hub to exchange data in direction provided as the
+    parameter.
+    '''
     # direction
     # 1 --> nest to Tvb
     # 2 --> tvb to nest
     path = configurations_manager.get_directory(
                                         directory=DefaultDirectories.SIMULATION_RESULTS)
-    param = Parameter(path)
+    # parameters = Parameter(path)
+    parameters = {
+                "co_simulation": True,
+                "path": path,
+                "simulation_time": 1000.0,
+                "level_log": 1,
+                "resolution": 0.1,
+                "nb_neurons": [100],
+                # parameter for the synchronization between simulators
+                "time_synchronization": 1.2,
+                "id_nest_region": [0],
+                # parameter for the transformation of data between scale
+                "nb_brain_synapses": 1,
+                'id_first_neurons': [1],
+                "save_spikes": True,
+                "save_rate": True,
+                "width": 20.0,
+                "id_first_spike_detector": 229
+        }
 
     direction = int(direction) # NOTE: will be changed
-    # direction = 1 # NOTE: will be changed
-    # receive steering commands init,start,stop
     
-    if direction == 1:
+    # Case a: Nest to TVB inter-scale hub
+    if direction == DATA_EXCHANGE_DIRECTION.NEST_TO_TVB:
         # create directories to store parameter.json file, 
         # port information, and logs
-        SetupResultDirectories(path)
-    else:
-        time.sleep(1)
-
-    # 1) init InterscaleHUB
-    # includes param setup, buffer creation
-    hub = InterscaleHub(param, direction, configurations_manager, log_settings)
+        SetupResultDirectories(path)  # NOTE: will be changed
+        hub = NestToTvbManager(parameters, configurations_manager, log_settings)
     
-    # 2) Start signal
+    # Case b: TVB to NEST inter-scale hub
+    elif direction == DATA_EXCHANGE_DIRECTION.TVB_TO_NEST:
+        # let the NEST_TO_TVB inter-scale hub to set up the directories and
+        # parameters
+        time.sleep(1)
+        hub = TvbToNestManager(parameters, direction, configurations_manager,
+                               log_settings)
+
+    # 1) init steering command
+    # includes param setup, buffer creation
+    # NOTE init is system action and so is done implicitly with the hub
+    # initialization
+    
+    # 2) Start steering command
     # receive, pivot, transform, send
     hub.start()
     
-    # 3) Stop signal
+    # 3) Stop steering command
     # disconnect and close ports
     hub.stop()
 
