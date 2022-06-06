@@ -2,6 +2,6 @@
 <parameters>
         <title>NEST-to-TVB Parameters</title>
         <description>Scientific Parameters for the NEST-to-TVB Transformer</description>
-
+        <!-- TO BE DONE: Checking if this XML scientific parameter file is used/required -->
         <resolution datatype="float">0.1</resolution>
 </parameters>
