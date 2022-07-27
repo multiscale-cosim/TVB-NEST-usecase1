@@ -129,4 +129,8 @@ dmypy.json
 .pyre/
 
 # vscode
-.vscode/ 
+.vscode/
+
+# cosim
+.nestrc
+.tvb-temp/
