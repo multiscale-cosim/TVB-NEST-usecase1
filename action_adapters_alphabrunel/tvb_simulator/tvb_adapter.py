@@ -42,7 +42,7 @@ class TVBAdapter:
         self.__sci_params = Xml2ClassParser(p_sci_params_xml_path_filename, self.__logger)
 
         self.__parameters = Parameters(self.__path_to_parameters_file)
-        print(f'__ric__,self.__path_to_parameters_file={self.__path_to_parameters_file}')
+
         self.__logger.info("initialized")
 
     #
