@@ -5,6 +5,7 @@
 # ------------------------------------------------------------------------------
 
 # NOTE: later change these hardcoded values to be set during runtime
-IP = '127.0.0.1'
-PORT = 50000
+# IP = '127.0.0.1'
+IP = '10.0.2.15'
+PORT = 59010
 KEY = b'secret'

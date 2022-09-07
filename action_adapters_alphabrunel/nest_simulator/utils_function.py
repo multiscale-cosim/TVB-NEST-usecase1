@@ -73,9 +73,10 @@ def get_data(logger, path, pattern="brunel-py-ex-*"):
                     a.append(line.split())
                 yield a
         if a == []:
-            # raise Exception('stop file')
-            logger.exception('stop file')
-
+            try:
+                raise Exception('stop file')
+            except Exception:
+                logger.exception('data is empty')
 
     re_pattern = re.compile(pattern)
     data = []
