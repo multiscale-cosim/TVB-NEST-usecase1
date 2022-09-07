@@ -15,4 +15,4 @@
 def check_integrity(object, type):
     if not isinstance(object, type):
         # TODO raise a contextful exception
-        raise Exception(f"object{object} is not instance of {type}")
+        raise Exception(f"{object} is not an instance of {type}")
