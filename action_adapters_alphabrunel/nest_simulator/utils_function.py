@@ -24,7 +24,7 @@ def wait_transformation_modules(nest, path, spike_generator, spike_detector, log
         list_spike_generator = []
         for node in spike_generator:
             list_spike_generator.append(node.tolist())
-        np.savetxt(path_spike_generator, np.array(list_spike_generator, dtype=int), fmt='%i')
+        np.savetxt(path_spike_generator, np.array(list_spike_generator, dtype=int), fmt='%i')  # add a print statement to send this list of spike generators to Application Manager
         pathlib.Path(path_spike_generator + '.unlock').touch()
         path_spike_detector = path + '/nest/spike_detector.txt'
         list_spike_detector = []

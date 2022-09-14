@@ -7,6 +7,10 @@ from mpi4py import MPI
 import os
 import time
 
+#############################################################
+# TODO make a class for this wrapper
+#############################################################
+
 
 def run_mpi(simulator, path, logger):
     """
@@ -32,7 +36,8 @@ def run_mpi(simulator, path, logger):
     save_result = []
     for i in range(nb_monitor):  # the input output monitor
         save_result.append([])
-
+    #############################################################
+    # Move it to adapter's execute_init_command()
     # init MPI :
     comm_receive = []
     for i in id_proxy:
@@ -40,7 +45,7 @@ def run_mpi(simulator, path, logger):
     comm_send = []
     for i in id_proxy:
         comm_send.append(init_mpi(path_receive + str(i) + ".txt", logger))
-
+    #############################################################
     logger.info("send initialisation of TVB : prepare data")
     initialisation_data = []
     for i in np.arange(0, time_synch_n, 1, dtype=np.int):
@@ -104,7 +109,6 @@ def run_mpi(simulator, path, logger):
     return reshape_result(save_result)
 
 
-## MPI function for receive and send data
 def init_mpi(path, logger):
     """
     initialise MPI connection
@@ -112,6 +116,9 @@ def init_mpi(path, logger):
     :param logger: logger of the modules
     :return:
     """
+    #############################################################
+    # TODO receive port info to make connections, and get rid of files
+    #############################################################
     while not os.path.exists(path + '.unlock'):  # FAT END POINT
         logger.info(path + '.unlock')
         logger.info("spike detector ids not found yet, retry in 1 second")
