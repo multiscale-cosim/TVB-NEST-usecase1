@@ -98,6 +98,7 @@ class TVBAdapter:
         #     self.__parameters.resolution)
         self.__simulator = self.__configure()
         self.__simulator.simulation_length = self.__parameters.simulation_time
+        # TODO MPI init here i.e. set up MPI connections 
         self.__logger.debug("INIT command is executed")
         return self.__parameters.time_synch  # minimum step size for simulation 
 
@@ -105,7 +106,7 @@ class TVBAdapter:
         self.__logger.debug("executing START command")
         (r_raw_results,) = Wrapper.run_mpi(
             self.__simulator,
-            self.__parameters.path,
+            self.__parameters.path,  # TODO rather pass port info here 
             self.__logger)
         self.__logger.debug('TVB simulation is finished')
         return r_raw_results
@@ -121,6 +122,8 @@ class TVBAdapter:
 
 
 if __name__ == "__main__":
+    # TODO receive port info as an argument, i.e. argv[4]
+    # TODO pass port info to start command
     # unpickle configurations_manager object
     configurations_manager = pickle.loads(base64.b64decode(sys.argv[2]))
     # unpickle log_settings
@@ -133,6 +136,7 @@ if __name__ == "__main__":
     tvb_adapter = TVBAdapter(p_configurations_manager=configurations_manager,
                              p_log_settings=log_settings,
                              p_sci_params_xml_path_filename=sys.argv[4])
+
     local_minimum_step_size = tvb_adapter.execute_init_command()
     # send local minimum step size to Application Manager as a response to INIT
     # NOTE Application Manager expects a string in the following format:

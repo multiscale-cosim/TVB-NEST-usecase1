@@ -151,7 +151,7 @@ class NESTAdapter:
         # Co-Simulation Devices
         # input_to_simulator = simulator.Create("spike_generator", self.__parameters.nb_neurons,
         #                                       params={'stimulus_source': 'mpi',
-        #                                               'label': '/../transformation/spike_generator'})
+        #                                               'label': '/../transformation/spike_generator'})  # may be pass a dictionary or tuple in label property i.e. {<is_port>, <port>}
         input_to_simulator = simulator.Create(model=self.__sci_params.input_to_simulator['model'],
                                               n=self.__sci_params.nb_neurons,
                                               params=self.__sci_params.input_to_simulator['params'])
