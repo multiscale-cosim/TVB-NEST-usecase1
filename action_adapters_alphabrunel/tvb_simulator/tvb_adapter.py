@@ -55,6 +55,7 @@ class TVBAdapter:
         self.__parameters = Parameters(self.__path_to_parameters_file)
         self.__simulator_tvb = None
         self.__tvb_mpi_wrapper = None
+        self.__logger.info(f"__DEBUG__ interscalehubs: {p_interscalehub_address}")
         self.__interscalehub_address = p_interscalehub_address
 
         self.__logger.info("initialized")
@@ -139,16 +140,19 @@ if __name__ == "__main__":
     configurations_manager = pickle.loads(base64.b64decode(sys.argv[2]))
     # unpickle log_settings
     log_settings = pickle.loads(base64.b64decode(sys.argv[3]))
-    # security check of pickled objects
-    # it raises an exception, if the integrity is compromised
-    check_integrity(configurations_manager, ConfigurationsManager)
-    check_integrity(log_settings, dict)
+    
 
     # get science parameters XML file path
     p_sci_params_xml_path_filename = sys.argv[4]
 
     # get interscalehub connection details
-    p_interscalehub_address = sys.argv[5]
+    p_interscalehub_address = pickle.loads(base64.b64decode(sys.argv[5]))
+
+    # security check of pickled objects
+    # it raises an exception, if the integrity is compromised
+    check_integrity(configurations_manager, ConfigurationsManager)
+    check_integrity(log_settings, dict)
+    check_integrity(p_interscalehub_address, list)
 
     # start simulation
     tvb_adapter = TVBAdapter(configurations_manager,

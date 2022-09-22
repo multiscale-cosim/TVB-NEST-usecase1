@@ -50,20 +50,20 @@ class TVBMpiWrapper:
         # create receiver communicator
         for _ in self.__id_proxy:
             self.__comm_receiver.append(
-                self.__create_mpi_communicator(self.__interscalehub_address))
+                self.__create_mpi_communicator(self.__interscalehub_address[1][0]))
         self.__logger.debug(f"receiver communicators: {self.__comm_receiver}")
         # create sender communicator
         for _ in self.__id_proxy:
             self.__comm_sender.append(
-                self.__create_mpi_communicator(self.__interscalehub_address))
+                self.__create_mpi_communicator(self.__interscalehub_address[1][1]))
         self.__logger.debug(f"sender communicators: {self.__comm_sender}")
         # TODO error handling
 
-    def __create_mpi_communicator(self):
+    def __create_mpi_communicator(self, interscalehub_address):
         """creates mpi Intercommunicators"""
-        self.__logger.debug(f"connecting at {self.__interscalehub_address}")
-        comm = MPI.COMM_WORLD.Connect(self.__interscalehub_address)
-        self.__logger.debug(f"connected to {self.__interscalehub_address}")
+        self.__logger.info(f"__DEBUG__ connecting at {interscalehub_address}")
+        comm = MPI.COMM_WORLD.Connect(interscalehub_address)
+        self.__logger.info(f"__DEBUG__ connected to {interscalehub_address}")
         return comm
 
     def __send_mpi(self, times, data, comm):
@@ -203,7 +203,7 @@ class TVBMpiWrapper:
         
         # all is fine
         self.__logger.debug(f"after formatting, time:{time_data}, data:{data_value}")
-        data[:] = [time_data, data_value]0
+        data[:] = [time_data, data_value]
         return data
     
     def __run_tvb_simulation(self, data):

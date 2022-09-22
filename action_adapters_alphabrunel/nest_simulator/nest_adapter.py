@@ -32,7 +32,9 @@ import matplotlib.pyplot as plt
 
 
 class NESTAdapter:
-    def __init__(self, p_configurations_manager=None, p_log_settings=None, sci_params_xml_path_filename=None):
+    def __init__(self, p_configurations_manager, p_log_settings,
+                 p_interscalehub_address,
+                 sci_params_xml_path_filename=None):
         self._log_settings = p_log_settings
         self._configurations_manager = p_configurations_manager
         self.__logger = self._configurations_manager.load_log_configurations(
@@ -46,6 +48,15 @@ class NESTAdapter:
         self.__sci_params = Xml2ClassParser(sci_params_xml_path_filename, self.__logger)
 
         self.__parameters = Parameters(self.__path_to_parameters_file)
+
+        # The name of the MPI port to send data to needs to be in string
+        # format and named according to the following pattern:
+        # endpoint_address:<port address>
+        self.__interscalehub_nest_to_tvb_address = "endpoint_address:"+ p_interscalehub_address[0][1]
+        self.__interscalehub_tvb_to_nest_address = "endpoint_address:"+ p_interscalehub_address[0][0]
+        
+        self.__logger.info(f"__DEBUG__ interscalehub_nest_to_tvb_address: {self.__interscalehub_nest_to_tvb_address}")
+        self.__logger.info(f"__DEBUG__ interscalehub_tvb_to_nest_address: {self.__interscalehub_tvb_to_nest_address}")
 
         self.__logger.info("initialized")
 
@@ -151,15 +162,22 @@ class NESTAdapter:
         # Co-Simulation Devices
         # input_to_simulator = simulator.Create("spike_generator", self.__parameters.nb_neurons,
         #                                       params={'stimulus_source': 'mpi',
-        #                                               'label': '/../transformation/spike_generator'})  # may be pass a dictionary or tuple in label property i.e. {<is_port>, <port>}
+        #                                               'label': '/../transformation/spike_generator'})
+        # input_to_simulator = simulator.Create(model=self.__sci_params.input_to_simulator['model'],
+        #                                       n=self.__sci_params.nb_neurons,
+        #                                       params=self.__sci_params.input_to_simulator['params'])
         input_to_simulator = simulator.Create(model=self.__sci_params.input_to_simulator['model'],
                                               n=self.__sci_params.nb_neurons,
-                                              params=self.__sci_params.input_to_simulator['params'])
+                                              params={'stimulus_source': 'mpi',
+                                                      'label': self.__interscalehub_tvb_to_nest_address})
         # output_from_simulator = simulator.Create("spike_recorder",
         #                                          params={"record_to": "mpi",
         #                                                  'label': '/../transformation/spike_detector'})
-        output_from_simulator = simulator.Create(model=self.__sci_params.output_from_simulator['model'],
-                                                 params=self.__sci_params.output_from_simulator['params'])
+        # output_from_simulator = simulator.Create(model=self.__sci_params.output_from_simulator['model'],
+        #                                          params=self.__sci_params.output_from_simulator['params'])
+        output_from_simulator = simulator.Create("spike_recorder",
+                                                 params={"record_to": "mpi",
+                                                         'label': self.__interscalehub_nest_to_tvb_address})
 
         # simulator.Connect(input_to_simulator, nodes_ex, {'rule': 'one_to_one'},
         #                   {"weight": 20.68015524367846, "delay": 0.1})
@@ -188,12 +206,12 @@ class NESTAdapter:
             self.__configure_nest(nest)
 
         self.__logger.info("establishing the connections")
-        wait_transformation_modules(
-            nest,
-            self.__parameters.path,
-            input_to_simulator,
-            output_from_simulator,
-            self.__logger)
+        # wait_transformation_modules(
+        #     nest,
+        #     self.__parameters.path,
+        #     input_to_simulator,
+        #     output_from_simulator,
+        #     self.__logger)
         self.__logger.info("preparing the simulator")
         nest.Prepare()
         self.__logger.info("connections are made")
@@ -238,16 +256,25 @@ if __name__ == "__main__":
     configurations_manager = pickle.loads(base64.b64decode(sys.argv[2]))
 
     # unpickle log_settings
-    log_settings = pickle.loads(base64.b64decode(sys.argv[3]))
+    log_settings = pickle.loads(base64.b64decode(sys.argv[3]))    
+
+    # get science parameters XML file path
+    p_sci_params_xml_path_filename = sys.argv[4]
+
+
+    # get interscalehub connection details
+    p_interscalehub_address = pickle.loads(base64.b64decode(sys.argv[5]))
 
     # security check of pickled objects
     # it raises an exception, if the integrity is compromised
     check_integrity(configurations_manager, ConfigurationsManager)
     check_integrity(log_settings, dict)
+    check_integrity(p_interscalehub_address, list)
 
     # everything is fine, run simulation
     nest_adapter = NESTAdapter(configurations_manager, log_settings,
-                               sci_params_xml_path_filename=sys.argv[4])
+                               p_interscalehub_address,
+                               sci_params_xml_path_filename=p_sci_params_xml_path_filename)
 
     local_minimum_step_size = nest_adapter.execute_init_command()
 
