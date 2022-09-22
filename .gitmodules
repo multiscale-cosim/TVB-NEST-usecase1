@@ -7,10 +7,6 @@
 
 	url = https://github.com/mfahdaz/EBRAINS-RichEndpoint.git
 	branch = stable-release
-=======
-	url = https://github.com/multiscale-cosim/EBRAINS-RichEndpoint.git
-	branch = ZMQ
->>>>>>> upstream/ZMQ
 [submodule "nest-simulator"]
 	path = nest-simulator
 	url = https://github.com/multiscale-cosim/nest-simulator.git
