@@ -22,9 +22,11 @@ from common.utils.security_utils import check_integrity
 from action_adapters_alphabrunel.parameters import Parameters
 from EBRAINS_RichEndpoint.Application_Companion.common_enums import SteeringCommands
 from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
+from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_INTERSCALEHUB_APPLICATION as INTERSCALE_HUB
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers.xml2class_parser import Xml2ClassParser
+from EBRAINS_InterscaleHUB.Interscale_hub.interscalehub_enums import DATA_EXCHANGE_DIRECTION
 
 import nest
 import nest.raster_plot
@@ -52,11 +54,17 @@ class NESTAdapter:
         # The name of the MPI port to send data to needs to be in string
         # format and named according to the following pattern:
         # endpoint_address:<port address>
-        self.__interscalehub_nest_to_tvb_address = "endpoint_address:"+ p_interscalehub_address[0][1]
-        self.__interscalehub_tvb_to_nest_address = "endpoint_address:"+ p_interscalehub_address[0][0]
-        
-        self.__logger.info(f"__DEBUG__ interscalehub_nest_to_tvb_address: {self.__interscalehub_nest_to_tvb_address}")
-        self.__logger.info(f"__DEBUG__ interscalehub_tvb_to_nest_address: {self.__interscalehub_tvb_to_nest_address}")
+        for interscalehub in p_interscalehub_address:
+            self.__logger.debug(f"running interscalehub: {interscalehub}")
+            # NEST_TO_TVB RECEIVER endpoint
+            if interscalehub.get(INTERSCALE_HUB.DATA_EXCHANGE_DIRECTION.name) == DATA_EXCHANGE_DIRECTION.NEST_TO_TVB.name:
+                self.__interscalehub_nest_to_tvb_address = "endpoint_address:"+interscalehub.get(INTERSCALE_HUB.MPI_CONNECTION_INFO.name)
+                self.__logger.info(f"__DEBUG__ interscalehub_nest_to_tvb_address: {self.__interscalehub_nest_to_tvb_address}")
+
+            # TVB_TO_NEST SENDER endpoint
+            elif interscalehub.get(INTERSCALE_HUB.DATA_EXCHANGE_DIRECTION.name) == DATA_EXCHANGE_DIRECTION.TVB_TO_NEST.name:
+                self.__interscalehub_tvb_to_nest_address = "endpoint_address:"+interscalehub.get(INTERSCALE_HUB.MPI_CONNECTION_INFO.name)
+                self.__logger.info(f"__DEBUG__ interscalehub_tvb_to_nest_address: {self.__interscalehub_tvb_to_nest_address}")
 
         self.__logger.info("initialized")
 
@@ -178,7 +186,6 @@ class NESTAdapter:
         output_from_simulator = simulator.Create("spike_recorder",
                                                  params={"record_to": "mpi",
                                                          'label': self.__interscalehub_nest_to_tvb_address})
-
         # simulator.Connect(input_to_simulator, nodes_ex, {'rule': 'one_to_one'},
         #                   {"weight": 20.68015524367846, "delay": 0.1})
         simulator.Connect(pre=input_to_simulator,

@@ -23,10 +23,11 @@ from common.utils.security_utils import check_integrity
 
 from EBRAINS_RichEndpoint.Application_Companion.common_enums import SteeringCommands
 from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
+from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_INTERSCALEHUB_APPLICATION as INTERSCALE_HUB
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers.xml2class_parser import Xml2ClassParser
-
+from EBRAINS_InterscaleHUB.Interscale_hub.interscalehub_enums import DATA_EXCHANGE_DIRECTION
 
 import tvb.simulator.lab as lab
 import matplotlib.pyplot as plt
@@ -55,8 +56,17 @@ class TVBAdapter:
         self.__parameters = Parameters(self.__path_to_parameters_file)
         self.__simulator_tvb = None
         self.__tvb_mpi_wrapper = None
-        self.__logger.info(f"__DEBUG__ interscalehubs: {p_interscalehub_address}")
+        self.__logger.debug(f"interscalehubs: {p_interscalehub_address}")
         self.__interscalehub_address = p_interscalehub_address
+
+        for interscalehub in p_interscalehub_address:
+            self.__logger.debug(f"running interscalehub: {interscalehub}")
+            if interscalehub.get(INTERSCALE_HUB.DATA_EXCHANGE_DIRECTION.name) == DATA_EXCHANGE_DIRECTION.NEST_TO_TVB.name:
+                self.__interscalehub_nest_to_tvb_address = interscalehub.get(INTERSCALE_HUB.MPI_CONNECTION_INFO.name)
+                self.__logger.info(f"__DEBUG__ interscalehub_nest_to_tvb_address: {self.__interscalehub_nest_to_tvb_address}")
+            elif interscalehub.get(INTERSCALE_HUB.DATA_EXCHANGE_DIRECTION.name) == DATA_EXCHANGE_DIRECTION.TVB_TO_NEST.name:
+                self.__interscalehub_tvb_to_nest_address = interscalehub.get(INTERSCALE_HUB.MPI_CONNECTION_INFO.name)
+                self.__logger.info(f"__DEBUG__ interscalehub_tvb_to_nest_address: {self.__interscalehub_tvb_to_nest_address}")
 
         self.__logger.info("initialized")
 
@@ -113,7 +123,8 @@ class TVBAdapter:
         self.__tvb_mpi_wrapper = TVBMpiWrapper(self._log_settings,
                                                self._configurations_manager,
                                                self.__simulator_tvb,
-                                               self.__interscalehub_address)
+                                               intercalehub_nest_to_tvb=self.__interscalehub_nest_to_tvb_address,
+                                               intercalehub_tvb_to_nest=self.__interscalehub_tvb_to_nest_address)
         self.__tvb_mpi_wrapper.init_mpi()
         self.__logger.debug("INIT command is executed")
         return self.__parameters.time_synch  # minimum step size for simulation 

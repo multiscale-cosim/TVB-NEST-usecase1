@@ -21,7 +21,8 @@ from EBRAINS_RichEndpoint.Application_Companion.common_enums import Response
 
 class TVBMpiWrapper:
     def __init__(self, log_settings, configurations_manager, simulator_tvb,
-                 interscalehub_address) -> None:
+                 intercalehub_nest_to_tvb=None,
+                 intercalehub_tvb_to_nest=None) -> None:
         self.__logger = configurations_manager.load_log_configurations(
                 name="TVB_MPI_Wrapper",
                 log_configurations=log_settings,
@@ -35,7 +36,9 @@ class TVBMpiWrapper:
         self.__time_synch_n = int(np.around(self.__time_synch / self.__dt))
         self.__nb_monitor = len(self.__simulator_tvb.monitors)
         self.__id_proxy = self.__simulator_tvb.proxy_inds
-        self.__interscalehub_address = interscalehub_address
+        # self.__interscalehub_address = interscalehub_address
+        self.__intercalehub_nest_to_tvb = intercalehub_nest_to_tvb
+        self.__intercalehub_tvb_to_nest = intercalehub_tvb_to_nest
         # receiver communicator
         self.__comm_receiver = []
         # sender communicator
@@ -50,12 +53,12 @@ class TVBMpiWrapper:
         # create receiver communicator
         for _ in self.__id_proxy:
             self.__comm_receiver.append(
-                self.__create_mpi_communicator(self.__interscalehub_address[1][0]))
+                self.__create_mpi_communicator(self.__intercalehub_nest_to_tvb))
         self.__logger.debug(f"receiver communicators: {self.__comm_receiver}")
         # create sender communicator
         for _ in self.__id_proxy:
             self.__comm_sender.append(
-                self.__create_mpi_communicator(self.__interscalehub_address[1][1]))
+                self.__create_mpi_communicator(self.__intercalehub_tvb_to_nest))
         self.__logger.debug(f"sender communicators: {self.__comm_sender}")
         # TODO error handling
 
@@ -66,7 +69,7 @@ class TVBMpiWrapper:
         self.__logger.info(f"__DEBUG__ connected to {interscalehub_address}")
         return comm
 
-    def __send_mpi(self, times, data, comm):
+    def __send_mpi(self, comm, times, data):
         """
         send mpi data
         :param comm: MPI communicator
@@ -131,7 +134,7 @@ class TVBMpiWrapper:
         """
         # different ending of the transformer
         if is_mode_sending:
-            self.__logger.info(f"TVB close connection send {self.__interscalehub_address}")
+            self.__logger.info(f"TVB close connection send {self.__intercalehub_tvb_to_nest}")
             sys.stdout.flush()
             status_ = MPI.Status()
             # wait until the transformer accept the connections
@@ -144,19 +147,29 @@ class TVBMpiWrapper:
             source = status_.Get_source()  # the id of the excepted source
             times = np.array([0., 0.], dtype='d')  # time of starting and ending step
             comm.Send([times, MPI.DOUBLE], dest=source, tag=1)
+            self.__close_connection(comm, self.__intercalehub_tvb_to_nest)
         else:
-            self.__logger.info("TVB close connection receive " + self.__interscalehub_address)
+            self.__logger.info("TVB close connection receive " + self.__intercalehub_nest_to_tvb)
             # send to the transformer : I want the next part
             req = comm.isend(True, dest=0, tag=1)
             req.wait()
+            self.__close_connection(comm, self.__intercalehub_nest_to_tvb)
+        # # closing the connection at this end
+        # self.__logger.info("TVB disconnect communication")
+        # comm.Disconnect()
+        # self.__logger.info("TVB close " + self.__interscalehub_address)
+        # MPI.Close_port(self.__interscalehub_address)
+        # self.__logger.info("TVB close connection " + self.__interscalehub_address)
+        return Response.OK
+
+    def __close_connection(self, comm, address):
         # closing the connection at this end
         self.__logger.info("TVB disconnect communication")
         comm.Disconnect()
-        self.__logger.info("TVB close " + self.__interscalehub_address)
-        MPI.Close_port(self.__interscalehub_address)
-        self.__logger.info("TVB close connection " + self.__interscalehub_address)
-        return Response.OK
-
+        self.__logger.info("TVB close " + address)
+        MPI.Close_port(address)
+        self.__logger.info("TVB close connection " + address)
+    
     def __prepare_and_send_initialization_date(self):
         # prepare initialization data
         self.__logger.info("send initialization of TVB: prepare data")
@@ -183,9 +196,9 @@ class TVBMpiWrapper:
             time_data = receive[0]
             data_value.append(receive[1])
         self.__logger.debug(f"time received: {time_data}, data received: {data_value}")
-        return data_value  # spikes
+        return data_value, time_data, receive  # spikes
 
-    def __format_and_reshape_simulation_data(self, data):
+    def __format_and_reshape_simulation_data(self, data_value, time_data, receive):
         """helper function to format and reshape simulation data"""
         data = np.empty((2,), dtype=object)
         nb_step = np.rint((time_data[1] - time_data[0]) / self.__dt)
@@ -227,7 +240,7 @@ class TVBMpiWrapper:
         times = [data_for_nest[0][0], data_for_nest[0][-1]]
         rate = np.concatenate(data_for_nest[1][:, 0, [self.__id_proxy], 0])
         for index, comm in enumerate(self.__comm_sender):
-            self.__send_mpi(comm, times, rate[:, index] * 1e3, self.__logger)
+            self.__send_mpi(comm, times, rate[:, index] * 1e3)
         self.__logger.debug("data is send")
 
     def __finalize(self):
@@ -271,12 +284,12 @@ class TVBMpiWrapper:
         # the main loop of the simulation and data exchange
         while self.__simulation_run_counter * self.__time_synch < self.__simulation_length:
             # 1. receive data from InterscaleHub_NEST_to_TVB
-            data_value = self.__receive_data()
+            data_value, time_data, receive = self.__receive_data()
             # 2. format time and data for input to TVB simulation
-            data = self.__format_and_reshape_simulation_data(data_value)
+            data = self.__format_and_reshape_simulation_data(data_value, time_data, receive)
             # 3. run TVB simulation until next synchronization time check with
             # data received from NEST
-            self.__run_tvb_simulation(data, self.__simulation_run_counter)
+            self.__run_tvb_simulation(data)
             # 4. send data to InterscaleHub_TVB_to_NEST
             self.__send_data()
             # 5. increment of the loop
