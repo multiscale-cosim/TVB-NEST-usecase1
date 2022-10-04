@@ -76,7 +76,6 @@ def run_wrapper(direction, configurations_manager, log_settings,
         # parameters
         time.sleep(1)
         hub = TvbToNestManager(parameters,
-                               direction,  # NOTE: is it needed?
                                configurations_manager,
                                log_settings,
                                sci_params_xml_path_filename=sci_params_xml_path_filename)
