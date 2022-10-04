@@ -8,7 +8,7 @@
 	branch = data_channel_via_registry
 [submodule "nest-simulator"]
 	path = nest-simulator
-	url = https://github.com/multiscale-cosim/nest-simulator.git
+	url = https://github.com/mfahdaz/nest-simulator.git
 [submodule "EBRAINS_ConfigManager"]
 	path = EBRAINS_ConfigManager
 	url = https://github.com/mfahdaz/EBRAINS_ConfigManager.git
