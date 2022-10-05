@@ -1,23 +1,23 @@
 [submodule "EBRAINS_InterscaleHUB"]
 	path = EBRAINS_InterscaleHUB
-	url = https://github.com/ringleschavez/EBRAINS-InterscaleHUB.git
-	branch = ZQM
+	url = https://github.com/mfahdaz/EBRAINS-InterscaleHUB.git
+	branch = master
 [submodule "EBRAINS_RichEndpoint"]
 	path = EBRAINS_RichEndpoint
-	url = https://github.com/ringleschavez/EBRAINS-RichEndpoint.git
+	url = https://github.com/mfahdaz/EBRAINS-RichEndpoint.git
 	branch = ZMQ
 [submodule "nest-simulator"]
 	path = nest-simulator
-	url = https://github.com/multiscale-cosim/nest-simulator.git
+	url = https://github.com/mfahdaz/nest-simulator.git
 [submodule "EBRAINS_ConfigManager"]
 	path = EBRAINS_ConfigManager
-	url = https://github.com/ringleschavez/EBRAINS_ConfigManager.git
+	url = https://github.com/mfahdaz/EBRAINS_ConfigManager.git
 	branch = ZMQ
 [submodule "EBRAINS_Launcher"]
 	path = EBRAINS_Launcher
-	url = https://github.com/ringleschavez/EBRAINS_Launcher.git
+	url = https://github.com/mfahdaz/EBRAINS_Launcher.git
 	branch = ZMQ
 [submodule "EBRAINS_WorkflowConfigurations"]
 	path = EBRAINS_WorkflowConfigurations
-	url = https://github.com/ringleschavez/EBRAINS_WorkflowConfigurations.git
+	url = https://github.com/mfahdaz/EBRAINS_WorkflowConfigurations.git
 	branch = ZMQ
