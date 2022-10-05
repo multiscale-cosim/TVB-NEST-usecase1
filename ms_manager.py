@@ -18,6 +18,7 @@ import json
 from common import args
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import enums
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import variables
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import comm_settings_xml_manager
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import plan_xml_manager
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import xml_tags
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import variables_manager
@@ -51,11 +52,13 @@ class MSManager:
         self.__variables_manager = None
 
         # XML configuration files managers
+        self.__comm_settings_xml_manager = None
         self.__actions_xml_manager = None
         # self.__parameters_xml_manager = None
         self.__plan_xml_manager = None
 
         # dictionaries
+        self.__communication_settings_dict = {}
         self.__action_plan_parameters_dict = {}
         self.__action_plan_variables_dict = {}
         self.__action_plan_dict = {}
@@ -68,6 +71,10 @@ class MSManager:
         self.__parameters_parameters_for_json_file_dict = {}
         # self.__parameters_variables_dict = {}
 
+        # run-time variables
+        self.__co_sim_comm_settings_xml_file = ''
+
+        # logging settings
         self.__logger_settings = {}
 
     def generate_parameters_json_file(self):
@@ -212,6 +219,9 @@ class MSManager:
                                              self.__variables_manager.get_value(variables.CO_SIM_ACTIONS_PATH)))
         self.__logger.info('{} -> {}'.format(variables.CO_SIM_ROUTINES_PATH,
                                              self.__variables_manager.get_value(variables.CO_SIM_ROUTINES_PATH)))
+        self.__logger.info('{} -> {}'.format(variables.CO_SIM_COMMUNICATION_SETTINGS_PATH,
+                                             self.__variables_manager.get_value(variables.CO_SIM_COMMUNICATION_SETTINGS_PATH)))
+
         self.__logger.info('Co-Simulator STEP 4 done')
 
         ########
@@ -239,6 +249,29 @@ class MSManager:
 
         # self.__logger.info('Co-Simulation parameters loaded from {}'.format(self.__args.parameters))
         # self.__logger.info('Co-Simulator STEP 5 done')
+
+        ########
+        # STEP 5 - Co-Simulation Communication Settings (Co-Sim Components and their communication ports)
+        ########
+        self.__logger.info('Co-Simulator STEP 5, dissecting Co-Simulation Communication Settings XML file')
+        self.__co_sim_comm_settings_xml_file = \
+            self.__variables_manager.get_value(variables.CO_SIM_COMMUNICATION_SETTINGS_XML)
+        self.__logger.info('{} -> {}'.format(variables.CO_SIM_COMMUNICATION_SETTINGS_XML,
+                                             self.__variables_manager.get_value(variables.CO_SIM_COMMUNICATION_SETTINGS_XML)))
+
+        self.__comm_settings_xml_manager = \
+            comm_settings_xml_manager.CommunicationSettingsXmlManager(log_settings=self.__logger_settings,
+                                                                      configurations_manager=self.__configurations_manager,
+                                                                      xml_filename=self.__co_sim_comm_settings_xml_file,
+                                                                      name="CommunicationSettingsXmlManager")
+
+        # STEP 5.1 - Dissecting the Co-Simulation Communication Settings XML file
+        if not self.__comm_settings_xml_manager.dissect() == enums.XmlManagerReturnCodes.XML_OK:
+            return enums.CoSimulatorReturnCodes.XML_ERROR
+
+        self.__communication_settings_dict = self.__comm_settings_xml_manager.get_communication_settings_dict()
+
+        self.__logger.info('Co-Simulator STEP 5 done')
 
         ########
         # STEP 6 - Co-Simulation Actions (processing the XML configuration files)
@@ -293,7 +326,8 @@ class MSManager:
                                              self.__actions_popen_args_dict,
                                              self.__logger_settings,
                                              self.__configurations_manager,
-                                             self.__actions_sci_params_xml_files_dict)
+                                             self.__actions_sci_params_xml_files_dict,
+                                             self.__communication_settings_dict)
 
         if not launching_manager.carry_out_action_plan() == enums.LauncherReturnCodes.LAUNCHER_OK:
             self.__logger.error('Error(s) were reported, check the errors log on {}'.format(

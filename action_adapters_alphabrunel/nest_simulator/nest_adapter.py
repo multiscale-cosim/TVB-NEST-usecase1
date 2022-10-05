@@ -216,8 +216,18 @@ class NESTAdapter:
     def execute_end_command(self):
         self.__logger.info("plotting the result")
         if nest.Rank() == 0:
-            nest.raster_plot.from_data(get_data(self.__logger, self.__parameters.path + '/nest/'))
-            plt.savefig(self.__parameters.path + "/figures/plot_nest.png")
+            # plot if there is data available
+            data = get_data(self.__logger, self.__parameters.path + '/nest/')
+            if data is not None:
+                nest.raster_plot.from_data(data)
+                plt.savefig(self.__parameters.path + "/figures/plot_nest.png")
+                self.__logger.debug("data is plotted")
+            else:  # Case: there is no data is to there to plot
+                try:
+                    # raise an exception to log with traceback
+                    raise RuntimeError
+                except RuntimeError:
+                    self.__logger.exception("No data to plot")
 
         self.__logger.debug("post processing is done")
 
