@@ -59,7 +59,7 @@ def run_wrapper(direction, configurations_manager, log_settings,
         }
 
     direction = int(direction)  # NOTE: will be changed
-    
+
     # Case a: Nest to TVB inter-scale hub
     if direction == DATA_EXCHANGE_DIRECTION.NEST_TO_TVB:
         # create directories to store parameter.json file, 
@@ -69,14 +69,13 @@ def run_wrapper(direction, configurations_manager, log_settings,
                                configurations_manager,
                                log_settings,
                                sci_params_xml_path_filename=sci_params_xml_path_filename)
-    
+
     # Case b: TVB to NEST inter-scale hub
     elif direction == DATA_EXCHANGE_DIRECTION.TVB_TO_NEST:
         # let the NEST_TO_TVB inter-scale hub to set up the directories and
         # parameters
         time.sleep(1)
         hub = TvbToNestManager(parameters,
-                               direction,  # NOTE: is it needed?
                                configurations_manager,
                                log_settings,
                                sci_params_xml_path_filename=sci_params_xml_path_filename)
@@ -85,16 +84,15 @@ def run_wrapper(direction, configurations_manager, log_settings,
     # includes param setup, buffer creation
     # NOTE init is system action and so is done implicitly with the hub
     # initialization
-    
+
     # 2) Start steering command
     # receive, pivot, transform, send
     hub.start()
-    
+
     # 3) Stop steering command
     # disconnect and close ports
     hub.stop()
 
-    
 if __name__ == '__main__':
     # RunSetup()
     direction = sys.argv[1]

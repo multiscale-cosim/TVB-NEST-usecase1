@@ -4,12 +4,12 @@
 	branch = stable-release	
 [submodule "EBRAINS_RichEndpoint"]
 	path = EBRAINS_RichEndpoint
-
 	url = https://github.com/mfahdaz/EBRAINS-RichEndpoint.git
 	branch = stable-release
 [submodule "nest-simulator"]
 	path = nest-simulator
 	url = https://github.com/mfahdaz/nest-simulator.git
+	branch = cosim_mpi_patch
 [submodule "EBRAINS_ConfigManager"]
 	path = EBRAINS_ConfigManager
 	url = https://github.com/mfahdaz/EBRAINS_ConfigManager.git
