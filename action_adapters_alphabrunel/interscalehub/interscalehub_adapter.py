@@ -59,11 +59,14 @@ def run_wrapper(direction, configurations_manager, log_settings,
         }
 
     direction = int(direction)  # NOTE: will be changed
+    print(f"__DEBUG__ 3")
 
     # Case a: Nest to TVB inter-scale hub
+    import socket
     if direction == DATA_EXCHANGE_DIRECTION.NEST_TO_TVB:
         # create directories to store parameter.json file, 
         # port information, and logs
+        print(f"__DEBUG__ NEST_TO_TVB *** host_name: {socket.gethostname()}")
         SetupResultDirectories(path)  # NOTE: will be changed
         hub = NestToTvbManager(parameters,
                                configurations_manager,
@@ -75,6 +78,7 @@ def run_wrapper(direction, configurations_manager, log_settings,
         # let the NEST_TO_TVB inter-scale hub to set up the directories and
         # parameters
         time.sleep(1)
+        print(f"__DEBUG__ TVB_TO_NEST *** host_name: {socket.gethostname()}")
         hub = TvbToNestManager(parameters,
                                configurations_manager,
                                log_settings,
@@ -95,7 +99,9 @@ def run_wrapper(direction, configurations_manager, log_settings,
 
 if __name__ == '__main__':
     # RunSetup()
+    print(f"__DEBUG__ 1")
     direction = sys.argv[1]
+    print(f"__DEBUG__ 2")
     configurations_manager = pickle.loads(base64.b64decode(sys.argv[2]))
     log_settings = pickle.loads(base64.b64decode(sys.argv[3]))
     # security check of pickled objects
