@@ -272,13 +272,13 @@ class NESTAdapter:
 if __name__ == "__main__":
     # TODO better handling of arguments parsing
     # unpickle configurations_manager object
-    configurations_manager = pickle.loads(base64.b64decode(sys.argv[2]))
+    configurations_manager = pickle.loads(base64.b64decode(sys.argv[1]))
     # unpickle log_settings
-    log_settings = pickle.loads(base64.b64decode(sys.argv[3]))
+    log_settings = pickle.loads(base64.b64decode(sys.argv[2]))
     # get science parameters XML file path
-    p_sci_params_xml_path_filename = sys.argv[4]
+    p_sci_params_xml_path_filename = sys.argv[3]
     # get interscalehub connection details
-    p_interscalehub_address = pickle.loads(base64.b64decode(sys.argv[5]))
+    p_interscalehub_address = pickle.loads(base64.b64decode(sys.argv[4]))
 
     # security check of pickled objects
     # it raises an exception, if the integrity is compromised

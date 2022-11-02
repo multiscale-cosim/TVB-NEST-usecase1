@@ -59,7 +59,6 @@ def run_wrapper(direction, configurations_manager, log_settings,
         }
 
     direction = int(direction)  # NOTE: will be changed
-    print(f"__DEBUG__ 3")
 
     # Case a: Nest to TVB inter-scale hub
     import socket
@@ -99,9 +98,7 @@ def run_wrapper(direction, configurations_manager, log_settings,
 
 if __name__ == '__main__':
     # RunSetup()
-    print(f"__DEBUG__ 1")
     direction = sys.argv[1]
-    print(f"__DEBUG__ 2")
     configurations_manager = pickle.loads(base64.b64decode(sys.argv[2]))
     log_settings = pickle.loads(base64.b64decode(sys.argv[3]))
     # security check of pickled objects
