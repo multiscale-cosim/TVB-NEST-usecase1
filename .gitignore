@@ -134,3 +134,6 @@ dmypy.json
 # cosim
 .nestrc
 .tvb-temp/
+
+# git submodule
+.gitmodules
