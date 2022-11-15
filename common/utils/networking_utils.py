@@ -29,7 +29,11 @@ default_range_of_ports = {
                           # range of ports for Application Companions
                           'APPLICATION_COMPANION': {'MIN': 59150,
                                                     'MAX': 59200,
-                                                    'MAX_TRIES': 50}
+                                                    'MAX_TRIES': 50},
+                          # range of ports for Application Companions
+                          'APPLICATION_MANAGER': {'MIN': 59201,
+                                                    'MAX': 59300,
+                                                    'MAX_TRIES': 100}
                           }
 
 
