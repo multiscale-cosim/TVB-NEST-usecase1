@@ -134,7 +134,7 @@ dmypy.json
 # cosim
 .nestrc
 .tvb-temp/
-Cosimulation_outputs/
+simulation_outputs/
 
-#git submodules
+# git submodule
 .gitmodules
