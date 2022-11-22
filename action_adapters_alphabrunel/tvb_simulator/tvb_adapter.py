@@ -26,7 +26,7 @@ from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_S
 from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_INTERSCALEHUB_APPLICATION as INTERSCALE_HUB
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers.xml2class_parser import Xml2ClassParser
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers.xml2class_parser import Xml2ClassParser
 from EBRAINS_InterscaleHUB.Interscale_hub.interscalehub_enums import DATA_EXCHANGE_DIRECTION
 
 import tvb.simulator.lab as lab
@@ -158,13 +158,13 @@ class TVBAdapter:
 if __name__ == "__main__":
     # TODO better handling of arguments parsing
     # unpickle configurations_manager object
-    configurations_manager = pickle.loads(base64.b64decode(sys.argv[2]))
+    configurations_manager = pickle.loads(base64.b64decode(sys.argv[1]))
     # unpickle log_settings
-    log_settings = pickle.loads(base64.b64decode(sys.argv[3]))
+    log_settings = pickle.loads(base64.b64decode(sys.argv[2]))
     # get science parameters XML file path
-    p_sci_params_xml_path_filename = sys.argv[4]
+    p_sci_params_xml_path_filename = sys.argv[3]
     # get interscalehub connection details
-    p_interscalehub_address = pickle.loads(base64.b64decode(sys.argv[5]))
+    p_interscalehub_address = pickle.loads(base64.b64decode(sys.argv[4]))
 
     # security check of pickled objects
     # it raises an exception, if the integrity is compromised
