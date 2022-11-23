@@ -205,6 +205,7 @@ class MSManager:
 
         # STEP 4.6 - Creates Co-Simulation variables based on the information
         #            set on the variables and parameters sections of the processing XML action plan file
+        #            e.g. CO_SIM_EXECUTION_ENVIRONMENT = <local|cluster>
         if not enums.VariablesReturnCodes.VARIABLE_OK == \
                 self.__variables_manager.create_co_sim_run_time_variables():
             return enums.CoSimulatorReturnCodes.VARIABLE_ERROR
