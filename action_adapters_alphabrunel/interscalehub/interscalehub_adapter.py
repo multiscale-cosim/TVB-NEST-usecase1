@@ -61,9 +61,11 @@ def run_wrapper(direction, configurations_manager, log_settings,
     direction = int(direction)  # NOTE: will be changed
 
     # Case a: Nest to TVB inter-scale hub
+    import socket
     if direction == DATA_EXCHANGE_DIRECTION.NEST_TO_TVB:
         # create directories to store parameter.json file, 
         # port information, and logs
+        print(f"__DEBUG__ NEST_TO_TVB *** host_name: {socket.gethostname()}")
         SetupResultDirectories(path)  # NOTE: will be changed
         hub = NestToTvbManager(parameters,
                                configurations_manager,
@@ -75,6 +77,7 @@ def run_wrapper(direction, configurations_manager, log_settings,
         # let the NEST_TO_TVB inter-scale hub to set up the directories and
         # parameters
         time.sleep(1)
+        print(f"__DEBUG__ TVB_TO_NEST *** host_name: {socket.gethostname()}")
         hub = TvbToNestManager(parameters,
                                configurations_manager,
                                log_settings,
