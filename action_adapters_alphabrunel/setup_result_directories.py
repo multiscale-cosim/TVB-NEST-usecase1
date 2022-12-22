@@ -1,12 +1,21 @@
+# ------------------------------------------------------------------------------
 #  Copyright 2020 Forschungszentrum Jülich GmbH and Aix-Marseille Université
-# "Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0. "
+# "Licensed to the Apache Software Foundation (ASF) under one or more contributor
+#  license agreements; and to You under the Apache License, Version 2.0. "
+#
+# Forschungszentrum Jülich
+#  Institute: Institute for Advanced Simulation (IAS)
+#    Section: Jülich Supercomputing Centre (JSC)
+#   Division: High Performance Computing in Neuroscience
+# Laboratory: Simulation Laboratory Neuroscience
+#       Team: Multi-scale Simulation and Design
+# ------------------------------------------------------------------------------
 
 import os
 import json
 import copy
 from common.utils import directory_utils
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
-# from actions_adapters.tvb_simulator.utils_tvb import self.create_folder
 
 
 class SetupResultDirectories:
@@ -23,15 +32,8 @@ class SetupResultDirectories:
                             }
 
         ### NOTE: temporary result folder creation, change with refactoring
-        # path_file = os.path.dirname(__file__)
         path_file = path
-        # self.create_folder(path_file + "/../result_sim/")
-        # self.create_folder(path_file + "/../result_sim/co-simulation/")
-
-        # Setup Co-simulation and run!
-        #path_file = os.path.dirname(__file__)
         parameter_co_simulation = copy.copy(parameter_default)
-        # parameter_co_simulation['path'] = path_file + "/../result_sim/co-simulation/"
         parameter_co_simulation['path'] = path_file
         parameter_co_simulation.update({
             "co_simulation": True,
@@ -54,15 +56,8 @@ class SetupResultDirectories:
         '''
         path = parameters['path']
         # start to create the repertory for the simulation
-        # self.create_folder(path)
-        # self.create_folder(path + "/log")
         self.create_folder(path + '/nest')
         self.create_folder(path + '/tvb')
-        self.create_folder(path + '/transformation')
-        self.create_folder(path + '/transformation/spike_detector/')
-        self.create_folder(path + '/transformation/send_to_tvb/')
-        self.create_folder(path + '/transformation/spike_generator/')
-        self.create_folder(path + '/transformation/receive_from_tvb/')
         self.create_folder(path + '/figures')
         self.save_parameter(parameters)
 

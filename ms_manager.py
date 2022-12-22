@@ -144,6 +144,7 @@ class MSManager:
 
         self.__logger = self.__configurations_manager.load_log_configurations(
             name=__name__, log_configurations=self.__logger_settings)
+        self.__logger.info('Co-Simulator STEP 1 done, args are parsed.')
         self.__logger.info('Co-Simulator STEP 2 done, output directories are setup.')
 
         ########

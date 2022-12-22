@@ -9,7 +9,6 @@
 #   Division: High Performance Computing in Neuroscience
 # Laboratory: Simulation Laboratory Neuroscience
 #       Team: Multi-scale Simulation and Design
-#
 # ------------------------------------------------------------------------------
 
 import sys
@@ -35,25 +34,20 @@ def run_wrapper(direction, configurations_manager, log_settings,
     # direction
     # 1 --> nest to Tvb
     # 2 --> tvb to nest
+    # NOTE hardcoded path
+    # TODO get the path as an argument from launcher
     path = configurations_manager.get_directory(
                                         directory=DefaultDirectories.SIMULATION_RESULTS)
     # parameters = Parameter(path)
+    # TODO get the parameters from XML
     parameters = {
-                "co_simulation": True,
                 "path": path,
-                "simulation_time": 1000.0,
-                "level_log": 1,
-                # "resolution": 0.1, -> on interscale_hub.xml as dt
-                # POD: is nb_neurons a functional parameter?
-                # "nb_neurons": [100], -> on interscale_hub.xml, POD: is a Python's List required?
-                # parameter for the synchronization between simulators
-                # "time_synchronization": 1.2, -> on interscale_hub.xml
+                # "simulation_time": 1000.0,
+                # "level_log": 1,
                 "id_nest_region": [0],  # TO BE DONE: supporting Python's list on XML sci-params
-                # parameter for the transformation of data between scale
-                # "nb_brain_synapses": 1, -> on interscale_hub.xml
                 'id_first_neurons': [1],
-                "save_spikes": True,
-                "save_rate": True,
+                # "save_spikes": True,
+                # "save_rate": True,
                 "width": 20.0,
                 "id_first_spike_detector": 229
         }
@@ -65,7 +59,7 @@ def run_wrapper(direction, configurations_manager, log_settings,
     if direction == DATA_EXCHANGE_DIRECTION.NEST_TO_TVB:
         # create directories to store parameter.json file, 
         # port information, and logs
-        print(f"__DEBUG__ NEST_TO_TVB *** host_name: {socket.gethostname()}")
+        # print(f"__DEBUG__ NEST_TO_TVB *** host_name: {socket.gethostname()}")
         SetupResultDirectories(path)  # NOTE: will be changed
         hub = NestToTvbManager(parameters,
                                configurations_manager,
@@ -77,7 +71,7 @@ def run_wrapper(direction, configurations_manager, log_settings,
         # let the NEST_TO_TVB inter-scale hub to set up the directories and
         # parameters
         time.sleep(1)
-        print(f"__DEBUG__ TVB_TO_NEST *** host_name: {socket.gethostname()}")
+        # print(f"__DEBUG__ TVB_TO_NEST *** host_name: {socket.gethostname()}")
         hub = TvbToNestManager(parameters,
                                configurations_manager,
                                log_settings,
@@ -101,6 +95,7 @@ if __name__ == '__main__':
     direction = sys.argv[1]
     configurations_manager = pickle.loads(base64.b64decode(sys.argv[2]))
     log_settings = pickle.loads(base64.b64decode(sys.argv[3]))
+    
     # security check of pickled objects
     # it raises an exception, if the integrity is compromised
     check_integrity(configurations_manager, ConfigurationsManager)

@@ -9,7 +9,6 @@
 #   Division: High Performance Computing in Neuroscience
 # Laboratory: Simulation Laboratory Neuroscience
 #       Team: Multi-scale Simulation and Design
-#
 # ------------------------------------------------------------------------------
 
 def check_integrity(object, type):
