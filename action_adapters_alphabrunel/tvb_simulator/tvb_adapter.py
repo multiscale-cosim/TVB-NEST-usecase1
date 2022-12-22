@@ -16,12 +16,13 @@ import sys
 import os
 import pickle
 import base64
+import ast
 
 from action_adapters_alphabrunel.tvb_simulator.wrapper_TVB_mpi import TVBMpiWrapper
 from action_adapters_alphabrunel.parameters import Parameters
 from common.utils.security_utils import check_integrity
 
-from EBRAINS_RichEndpoint.Application_Companion.common_enums import SteeringCommands
+from EBRAINS_RichEndpoint.Application_Companion.common_enums import SteeringCommands, COMMANDS
 from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
 from EBRAINS_RichEndpoint.Application_Companion.common_enums import INTEGRATED_INTERSCALEHUB_APPLICATION as INTERSCALE_HUB
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
@@ -58,6 +59,7 @@ class TVBAdapter:
         self.__tvb_mpi_wrapper = None
         # initialize port_names of the Interscalehubs
         self.__init_port_names(p_interscalehub_addresses)
+        self.__logger.debug(f"host_name:{os.uname()}")
         self.__logger.info("initialized")
 
     def __init_port_names(self, interscalehub_addresses):
@@ -140,9 +142,10 @@ class TVBAdapter:
         self.__logger.debug("INIT command is executed")
         return self.__parameters.time_synch  # minimum step size for simulation 
 
-    def execute_start_command(self):
+    def execute_start_command(self, global_minimum_step_size):
         self.__logger.debug("executing START command")
-        (r_raw_results,) = self.__tvb_mpi_wrapper.run_simulation_and_data_exchange()
+        self.__logger.debug(f'global_minimum_step_size: {global_minimum_step_size}')
+        (r_raw_results,) = self.__tvb_mpi_wrapper.run_simulation_and_data_exchange(global_minimum_step_size)
         self.__logger.debug('TVB simulation is finished')
         return r_raw_results
 
@@ -157,47 +160,78 @@ class TVBAdapter:
 
 if __name__ == "__main__":
     # TODO better handling of arguments parsing
-    # unpickle configurations_manager object
-    configurations_manager = pickle.loads(base64.b64decode(sys.argv[1]))
-    # unpickle log_settings
-    log_settings = pickle.loads(base64.b64decode(sys.argv[2]))
-    # get science parameters XML file path
-    p_sci_params_xml_path_filename = sys.argv[3]
-    # get interscalehub connection details
-    p_interscalehub_address = pickle.loads(base64.b64decode(sys.argv[4]))
+    if len(sys.argv) == 5:        
+        # 1. parse arguments
+        # unpickle configurations_manager object
+        configurations_manager = pickle.loads(base64.b64decode(sys.argv[1]))
+        # unpickle log_settings
+        log_settings = pickle.loads(base64.b64decode(sys.argv[2]))
+        # get science parameters XML file path
+        p_sci_params_xml_path_filename = sys.argv[3]
+        # get interscalehub connection details
+        p_interscalehub_address = pickle.loads(base64.b64decode(sys.argv[4]))
 
-    # security check of pickled objects
-    # it raises an exception, if the integrity is compromised
-    check_integrity(configurations_manager, ConfigurationsManager)
-    check_integrity(log_settings, dict)
-    check_integrity(p_interscalehub_address, list)
+        # 2. security check of pickled objects
+        # it raises an exception, if the integrity is compromised
+        check_integrity(configurations_manager, ConfigurationsManager)
+        check_integrity(log_settings, dict)
+        check_integrity(p_interscalehub_address, list)
 
-    # configure simulator
-    tvb_adapter = TVBAdapter(configurations_manager,
-                             log_settings,
-                             p_interscalehub_address,
-                             p_sci_params_xml_path_filename=p_sci_params_xml_path_filename)
-    local_minimum_step_size = tvb_adapter.execute_init_command()
-    # send local minimum step size to Application Manager as a response to INIT
-    # NOTE Application Manager expects a string in the following format:
-    # {'PID': <pid>, 'LOCAL_MINIMUM_STEP_SIZE': <step size>}
-    pid_and_local_minimum_step_size = \
-        {SIMULATOR.PID.name: os.getpid(),
-         SIMULATOR.LOCAL_MINIMUM_STEP_SIZE.name: local_minimum_step_size}
-    # Application Manager will read the stdout stream via PIPE
-    print(f'{pid_and_local_minimum_step_size}')
+        # 3. everything is fine, configure simulator
+        tvb_adapter = TVBAdapter(
+            configurations_manager,
+            log_settings,
+            p_interscalehub_address,
+            p_sci_params_xml_path_filename=p_sci_params_xml_path_filename)
+        
+        # 4. execute 'INIT' command which is implicit with when laucnhed
+        local_minimum_step_size = tvb_adapter.execute_init_command()
+        
+        # 5. send the pid and the local minimum step size to Application Manager
+        # as a response to 'INIT' as per protocol
+        
+        # NOTE Application Manager expects a string in the following format:
+        # {'PID': <pid>, 'LOCAL_MINIMUM_STEP_SIZE': <step size>}
 
-    # fetch next command from Application Manager
-    user_action_command = input()
-    # execute if steering command is START
-    if SteeringCommands[user_action_command] == SteeringCommands.START:
-        raw_results = tvb_adapter.execute_start_command()
-        tvb_adapter.execute_end_command(raw_results)
-        sys.exit(0)
+        # prepare the response
+        pid_and_local_minimum_step_size = \
+            {SIMULATOR.PID.name: os.getpid(),
+            SIMULATOR.LOCAL_MINIMUM_STEP_SIZE.name: local_minimum_step_size}
+        
+        # send the response
+        # NOTE Application Manager will read the stdout stream via PIPE
+        print(f'{pid_and_local_minimum_step_size}')
+
+        # 6. fetch next command from Application Manager
+        user_action_command = input()
+
+        # NOTE Application Manager sends the control commands with parameters in
+        # the following specific format as a string via stdio:
+        # {'STEERING_COMMAND': {'<Enum SteeringCommands>': <Enum value>}, 'PARAMETERS': <value>}
+        
+        # For example:
+        # {'STEERING_COMMAND': {'SteeringCommands.START': 2}, 'PARAMETERS': 1.2}        
+
+        # convert the received string to dictionary
+        control_command = ast.literal_eval(user_action_command.strip())
+        # get steering command
+        steering_command_dictionary = control_command.get(COMMANDS.STEERING_COMMAND.name)
+        current_steering_command = next(iter(steering_command_dictionary.values()))
+        
+        # 7. execute if steering command is 'START'
+        if current_steering_command == SteeringCommands.START:
+            # fetch global minimum step size
+            global_minimum_step_size = control_command.get(COMMANDS.PARAMETERS.name)
+            # execute the command
+            raw_results = tvb_adapter.execute_start_command(global_minimum_step_size)
+            tvb_adapter.execute_end_command(raw_results)
+            # exit with success code
+            sys.exit(0)
+        else:
+            print(f'unknown command: {current_steering_command}', file=sys.stderr)
+            sys.exit(1)
     else:
-        # TODO raise and log the exception with traceback and terminate with
-        # error if received an unknown steering command
-        print(f'unknown steering command: '
-              f'{SteeringCommands[user_action_command]}',
+        print(f'missing argument[s]; required: 5, received: {len(sys.argv)}',
               file=sys.stderr)
+        print(f'Argument list received: {str(sys.argv)}', file=sys.stderr)
         sys.exit(1)
