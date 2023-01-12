@@ -8,7 +8,7 @@
 
 | folder | files | description |
 | ------ | ------ | ------ |
-| *installation/* | *bootstrap_hpc* | execute to load modules and install dependencies |
+| *installation/* | *bootstrap_hpc.sh* | execute to load modules and install dependencies |
 | *run_usecase/* | *launch_singlenode_alphabrunel.sh* | runs the cosimulation alphabrunel network on a single compute node |
 
 Important:
