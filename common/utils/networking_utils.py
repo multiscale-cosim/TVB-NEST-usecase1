@@ -43,6 +43,7 @@ def my_ip():
     my_ip = socket.gethostbyname(my_host_name)
     return my_ip
 
+
 def my_host_name():
     """returns the hostname of the calling process is running"""
     return socket.gethostname()
