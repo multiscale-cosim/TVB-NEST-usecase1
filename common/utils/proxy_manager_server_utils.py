@@ -14,9 +14,7 @@
 from common.utils import networking_utils
 
 
-# NOTE: later change these hardcoded values to be set during runtime
-# IP = '127.0.0.1'
-#IP = '10.0.2.15'
+# NOTE: later change these hardcoded values to be set maybe from XML
 IP = networking_utils.my_ip()
 PORT = 59010
 KEY = b'secret'
