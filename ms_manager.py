@@ -324,14 +324,12 @@ class MSManager:
         # STEP 9 - Launching the Action Plan
         ########
         self.__logger.info('Co-Simulator STEP 9, carrying out the Co-Simulation Action Plan Strategy')
-        launching_manager = LaunchingManager(action_plan_dict=self.__action_plan_dict,  # actions
-                                             action_plan_variables_dict=self.__action_plan_variables_dict,  # <local|cluster>
-                                             action_plan_parameters_dict=self.__action_plan_parameters_dict,  # paths
-                                             actions_popen_args_dict=self.__actions_popen_args_dict,  # mpirun/srun parameters
-                                             log_settings=self.__logger_settings,
-                                             configurations_manager=self.__configurations_manager,
-                                             actions_sci_params_dict=self.__actions_sci_params_xml_files_dict,  # scientific parameters
-                                             communication_settings_dict=self.__communication_settings_dict)  # zmq ports
+        launching_manager = LaunchingManager(self.__action_plan_dict,
+                                             self.__actions_popen_args_dict,
+                                             self.__logger_settings,
+                                             self.__configurations_manager,
+                                             self.__actions_sci_params_xml_files_dict,
+                                             self.__communication_settings_dict)
 
         if not launching_manager.carry_out_action_plan() == enums.LauncherReturnCodes.LAUNCHER_OK:
             self.__logger.error('Error(s) were reported, check the errors log on {}'.format(

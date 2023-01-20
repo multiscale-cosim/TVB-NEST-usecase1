@@ -138,5 +138,3 @@ Cosimulation_outputs/
 
 # git submodule
 .gitmodules
-
-.idea/
