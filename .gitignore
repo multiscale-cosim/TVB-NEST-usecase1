@@ -135,6 +135,7 @@ dmypy.json
 .nestrc
 .tvb-temp/
 Cosimulation_outputs/
+slurm_logs/
 
 # git submodule
 .gitmodules
