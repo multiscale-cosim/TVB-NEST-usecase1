@@ -14,4 +14,4 @@ export PYTHONPATH=${PYTHONPATH}:${CO_SIM_NEST}/lib64/python3.9/site-packages
 export PYTHONPATH=${PYTHONPATH}:${CO_SIM_ROOT_PATH}/site-packages
 export PYTHONPATH=${PYTHONPATH}:${CO_SIM_USE_CASE_ROOT_PATH}
 
-srun -n 1 --exact python3 main.py --global-settings EBRAINS_WorkflowConfigurations/global_settings/global_settings.xml --action-plan EBRAINS_WorkflowConfigurations/plans/cosim_alpha_brunel_hpc.xml
+srun -n 1 --exact python3 ${CO_SIM_USE_CASE_ROOT_PATH}/main.py --global-settings ${CO_SIM_USE_CASE_ROOT_PATH}/EBRAINS_WorkflowConfigurations/general/global_settings.xml --action-plan ${CO_SIM_USE_CASE_ROOT_PATH}/EBRAINS_WorkflowConfigurations/usecase/hpc/plans/cosim_alpha_brunel_hpc.xml

@@ -8,4 +8,4 @@ export PYTHONPATH=/home/vagrant/nest_installed/lib/python3.8/site-packages:/home
 
 rm -r /home/vagrant/multiscale-cosim-repos/my_forks/TVB-NEST-usecase1/result_sim
 
-python3 ../main.py --global-settings ../EBRAINS_WorkflowConfigurations/global_settings/global_settings.xml --action-plan ../EBRAINS_WorkflowConfigurations/plans/cosim_alpha_brunel_on_local.xml
+python3 ../../main.py --global-settings ../../EBRAINS_WorkflowConfigurations/general/global_settings.xml --action-plan ../../EBRAINS_WorkflowConfigurations/usecase/local/plans/cosim_alpha_brunel_local.xml
