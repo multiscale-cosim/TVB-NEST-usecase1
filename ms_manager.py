@@ -19,6 +19,7 @@ from common import args
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import enums
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import variables
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import comm_settings_xml_manager
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import services_deployment_xml_manager
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import plan_xml_manager
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import xml_tags
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import variables_manager
@@ -56,6 +57,7 @@ class MSManager:
         self.__actions_xml_manager = None
         # self.__parameters_xml_manager = None
         self.__plan_xml_manager = None
+        self.__services_deployment_xml_manager = None
 
         # dictionaries
         self.__communication_settings_dict = {}
@@ -70,9 +72,13 @@ class MSManager:
         # self.__parameters_parameters_dict = {}
         self.__parameters_parameters_for_json_file_dict = {}
         # self.__parameters_variables_dict = {}
+        self.__services_deployment_dict = {}
 
-        # run-time variables
-        self.__co_sim_comm_settings_xml_file = ''
+        # Communication Settings (zmq ports) used by Co-Sim Components
+        self.__co_sim_comm_settings_xml_file = ''  # empty, reference to is gotten from action plan XML file
+
+        # XML referring to the HPC deployment of the Co-Sim Components
+        self.__co_sim_services_deployment_xml_file = ''  # empty, reference to is gotten from action plan XML file
 
         # logging settings
         self.__logger_settings = {}
@@ -190,7 +196,7 @@ class MSManager:
         # STEP 4.3 -    Validating the references to the CO_SIM_* variables
         #               by filling up the environment variables dictionary
         if not enums.VariablesReturnCodes.VARIABLE_OK == \
-                self.__variables_manager.set_co_sim_variable_values_from_variables_dict(
+               self.__variables_manager.set_co_sim_variable_values_from_variables_dict(
                    self.__action_plan_variables_dict):
             return enums.CoSimulatorReturnCodes.VARIABLE_ERROR
 
@@ -201,14 +207,14 @@ class MSManager:
         # STEP 4.5 -    Validating the references to the CO_SIM_* variables on the <parameters> sections
         #               by creating the new CO_SIM_* variables by means of the variables manager
         if not enums.ParametersReturnCodes.PARAMETER_OK == \
-                self.__variables_manager.create_variables_from_parameters_dict(self.__action_plan_parameters_dict):
+               self.__variables_manager.create_variables_from_parameters_dict(self.__action_plan_parameters_dict):
             return enums.CoSimulatorReturnCodes.PARAMETER_ERROR
 
         # STEP 4.6 - Creates Co-Simulation variables based on the information
         #            set on the variables and parameters sections of the processing XML action plan file
         #            e.g. CO_SIM_EXECUTION_ENVIRONMENT = <local|cluster>
         if not enums.VariablesReturnCodes.VARIABLE_OK == \
-                self.__variables_manager.create_co_sim_run_time_variables():
+               self.__variables_manager.create_co_sim_run_time_variables():
             return enums.CoSimulatorReturnCodes.VARIABLE_ERROR
 
         # Action Plan -> ordered and grouped sequence of actions to achieve the Co-Simulation Experiment
@@ -222,7 +228,8 @@ class MSManager:
         self.__logger.info('{} -> {}'.format(variables.CO_SIM_ROUTINES_PATH,
                                              self.__variables_manager.get_value(variables.CO_SIM_ROUTINES_PATH)))
         self.__logger.info('{} -> {}'.format(variables.CO_SIM_COMMUNICATION_SETTINGS_PATH,
-                                             self.__variables_manager.get_value(variables.CO_SIM_COMMUNICATION_SETTINGS_PATH)))
+                                             self.__variables_manager.get_value(
+                                                 variables.CO_SIM_COMMUNICATION_SETTINGS_PATH)))
 
         self.__logger.info('Co-Simulator STEP 4 done')
 
@@ -253,13 +260,17 @@ class MSManager:
         # self.__logger.info('Co-Simulator STEP 5 done')
 
         ########
-        # STEP 5 - Co-Simulation Communication Settings (Co-Sim Components and their communication ports)
+        # STEP 5 - Co-Simulation Components Settings
         ########
-        self.__logger.info('Co-Simulator STEP 5, dissecting Co-Simulation Communication Settings XML file')
+        self.__logger.info('Co-Simulator STEP 5, Co-Simulation Components Settings')
+
+        # # STEP 5.1 - Dissecting the Co-Simulation Communication Settings XML file
+        self.__logger.info('Co-Simulator STEP 5.1, dissecting Co-Simulation Communication Settings XML file')
         self.__co_sim_comm_settings_xml_file = \
             self.__variables_manager.get_value(variables.CO_SIM_COMMUNICATION_SETTINGS_XML)
         self.__logger.info('{} -> {}'.format(variables.CO_SIM_COMMUNICATION_SETTINGS_XML,
-                                             self.__variables_manager.get_value(variables.CO_SIM_COMMUNICATION_SETTINGS_XML)))
+                                             self.__variables_manager.get_value(
+                                                 variables.CO_SIM_COMMUNICATION_SETTINGS_XML)))
 
         self.__comm_settings_xml_manager = \
             comm_settings_xml_manager.CommunicationSettingsXmlManager(log_settings=self.__logger_settings,
@@ -267,11 +278,29 @@ class MSManager:
                                                                       xml_filename=self.__co_sim_comm_settings_xml_file,
                                                                       name="CommunicationSettingsXmlManager")
 
-        # STEP 5.1 - Dissecting the Co-Simulation Communication Settings XML file
         if not self.__comm_settings_xml_manager.dissect() == enums.XmlManagerReturnCodes.XML_OK:
             return enums.CoSimulatorReturnCodes.XML_ERROR
 
         self.__communication_settings_dict = self.__comm_settings_xml_manager.get_communication_settings_dict()
+
+        self.__logger.info('Co-Simulator STEP 5.2, dissecting Co-Simulation Services Deployment XML file')
+        self.__co_sim_services_deployment_xml_file = \
+            self.__variables_manager.get_value(variables.CO_SIM_SERVICES_DEPLOYMENT_XML)
+        self.__logger.info('{} -> {}'.format(variables.CO_SIM_SERVICES_DEPLOYMENT_XML,
+                                             self.__variables_manager.get_value(
+                                                 variables.CO_SIM_SERVICES_DEPLOYMENT_XML)))
+
+        self.__services_deployment_xml_manager = \
+            services_deployment_xml_manager.ServicesDeploymentXmlManager(
+                log_settings=self.__logger_settings,
+                configurations_manager=self.__configurations_manager,
+                xml_filename=self.__co_sim_services_deployment_xml_file,
+                name="ServicesDeploymentXmlManager")
+
+        if not self.__services_deployment_xml_manager.dissect() == enums.XmlManagerReturnCodes.XML_OK:
+            return enums.CoSimulatorReturnCodes.XML_ERROR
+
+        self.__services_deployment_dict = self.__services_deployment_xml_manager.get_services_deployment_dict()
 
         self.__logger.info('Co-Simulator STEP 5 done')
 
@@ -324,14 +353,20 @@ class MSManager:
         # STEP 9 - Launching the Action Plan
         ########
         self.__logger.info('Co-Simulator STEP 9, carrying out the Co-Simulation Action Plan Strategy')
-        launching_manager = LaunchingManager(action_plan_dict=self.__action_plan_dict,                          # actions
-                                             action_plan_variables_dict=self.__action_plan_variables_dict,      # <local|cluster>
-                                             action_plan_parameters_dict=self.__action_plan_parameters_dict,    # paths
-                                             actions_popen_args_dict=self.__actions_popen_args_dict,            # mpirun/srun parameters
-                                             log_settings=self.__logger_settings,                               # logging configurations
-                                             configurations_manager=self.__configurations_manager,              # config manager
-                                             actions_sci_params_dict=self.__actions_sci_params_xml_files_dict,  # scientific parameters
-                                             communication_settings_dict=self.__communication_settings_dict)    # zmq ports
+        launching_manager = LaunchingManager(action_plan_dict=self.__action_plan_dict,  # actions
+                                             action_plan_variables_dict=self.__action_plan_variables_dict,
+                                             # <local|cluster>
+                                             action_plan_parameters_dict=self.__action_plan_parameters_dict,  # paths
+                                             actions_popen_args_dict=self.__actions_popen_args_dict,
+                                             # mpirun/srun parameters
+                                             log_settings=self.__logger_settings,  # logging configurations
+                                             configurations_manager=self.__configurations_manager,  # config manager
+                                             # scientific parameters
+                                             actions_sci_params_dict=self.__actions_sci_params_xml_files_dict,
+                                             # zmq ports
+                                             communication_settings_dict=self.__communication_settings_dict,
+                                             # nodes where to deploy Co-Sim services
+                                             services_deployment_dict=self.__services_deployment_dict)
 
         if not launching_manager.carry_out_action_plan() == enums.LauncherReturnCodes.LAUNCHER_OK:
             self.__logger.error('Error(s) were reported, check the errors log on {}'.format(
