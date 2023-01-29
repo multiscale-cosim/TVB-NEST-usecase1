@@ -38,7 +38,7 @@ $ sh ./TVB-NEST-usecase1/installation/bootstrap_hpc.sh
 executing short tests which import TVB and NEST python packages
 #### 4.1. Loading HPC modules and setting CO_SIM_* variables
 ``` sh
-$ source ./TVB-NEST-usecase1/installation/test/co_sim_vars.source
+$ source ./TVB-NEST-usecase1/installation/tests/co_sim_vars.source
 ```
 
 #### 4.2. TVB testing
