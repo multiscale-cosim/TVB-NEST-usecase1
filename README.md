@@ -116,6 +116,13 @@ Made by <a href="https://github.com/multiscale-cosim" target="_blank">Multiscale
 
 ## :memo: Acknowledgement ##
 
+This project has received funding from the European Union’s Horizon 2020 research and innovation
+programme under grant agreement No 785907 (HBP SGA2), from the European Union’s Horizon
+2020 Framework Programme for Research and Innovation under the Specific Grant Agreement No.
+945539 (HBP SGA3) and from the European Union’s Horizon 2020 Framework Programme for
+Research and Innovation under the Specific Grant Agreement No. 945539 (Human Brain Project
+SGA3)
+
 
 &#xa0;
 
