@@ -47,17 +47,31 @@
 
 ## :dart: About ##
 
-The modular Science Framework is to facilitate the domain scinetists to deploy, integrate, orchestrate and intuitive &
-interactive control of larger complex workflows (comprises a number of independant application kernels running in parallel) executing on heterogeneous HPC platforms. The framework comprises a set of following micro-services like independent applications:
+The Modular Science (MSC) Framework facilitates deployment, integratation, orchestration and intuitive & interactive control of larger complex workflows.
+It can execute a independant applications running in parallel on heterogeneous HPC platforms. The framework comprises a set of following micro-services like independent applications:
 
-* <a href="/python/Application_Companion"> Rich Endpoint </a>
-* <a href="/python/Orchestrator"> InterscaleHub </a>
-* <a href="/python/Orchestrator/command_steering_service.py"> Configurations Manager </a>
-* <a href="/python/Orchestrator/command_steering_service.py"> Launcher </a>
+* <a href="https://github.com/multiscale-cosim/EBRAINS_ConfigManager/tree/hpc"> Configurations Manager </a>
+* <a href="https://github.com/multiscale-cosim/EBRAINS_InterscaleHUB/tree/hpc"> InterscaleHub </a>
+* <a href="https://github.com/multiscale-cosim/EBRAINS_Launcher/tree/hpc"> Launcher </a>
+* <a href="https://github.com/multiscale-cosim/EBRAINS_RichEndpoint/tree/hpc"> Rich Endpoint </a>
+* <a href="https://github.com/multiscale-cosim/EBRAINS_WorkflowConfigurations/tree/hpc"> Workflow Configurations </a>
 
 ## :sparkles: Features ##
 
-fill the section here
+:heavy_check_mark: ConfigManager description
+
+:heavy_check_mark: InterscaleHUB description
+
+:heavy_check_mark: Launcher description
+
+:heavy_check_mark: RichEndpoint description
+
+:heavy_check_mark: WorkflowConfiguration description
+
+:heavy_check_mark: Adapter classes description
+
+:heavy_check_mark: anything else...
+
 
 ## :rocket: Technologies ##
 
@@ -78,6 +92,8 @@ Before starting :checkered_flag:, you need to have [Python](https://www.python.o
 INSTALLATION: Check [INSTALL.md](https://github.com/multiscale-cosim/TVB-NEST-usecase1/blob/main/INSTALL.md)
 -- --
 ### Run usecase on JUSUF
+
+todo: add updated description or link to desciption readme
 
 | folder | files | description |
 | ------ | ------ | ------ |
