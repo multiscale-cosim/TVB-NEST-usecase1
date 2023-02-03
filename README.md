@@ -89,7 +89,7 @@ Before starting :checkered_flag:, you need to have [Python](https://www.python.o
 ## :checkered_flag: Getting Started ##
 
 -- --
-INSTALLATION: Check [INSTALL.md](https://github.com/multiscale-cosim/TVB-NEST-usecase1/blob/main/INSTALL.md)
+INSTALLATION: Check [INSTALL.md](https://github.com/multiscale-cosim/TVB-NEST-usecase1/blob/hpc/INSTALL.md)
 -- --
 ### Run usecase on JUSUF
 
