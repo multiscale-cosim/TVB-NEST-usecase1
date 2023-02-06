@@ -76,12 +76,18 @@ NEST on Python OKAY!
 
 ## Step 1
 ### 1.1 Download and install Vagrant and Virtualbox
-- 123
-- 456
+- Install [Vagrant version 2.2.19](https://www.vagrantup.com/) or higher
+- Install [Virtualbox version 6.1](https://www.virtualbox.org/) or higher
 
 ### 1.2 Create directory
+e.g.
+``` sh
+mkdir -p /home/<user.name>cosim/vagrant
+cd /home/<user.name>cosim/vagrant
+```
 
 ### 1.3 Download/create vagrantfile and installation script
+copy both scripts into your vagrant directory:
 <details>
   <summary>Vagrantfile</summary>
   
@@ -353,6 +359,19 @@ echo -e "\e[1;34mINFO -- Please configure your personal git account to complete 
 
   ```
 </details>
+
+- create directory to synch data between VM and physical OS (e.g. `vagrant/shared`, see line 49 in Vagrantfile)
+
+### 1.4 Start the virtual machine and installation process
+- run the following command from the newly created directory
+``` sh
+vagrant up
+```
+- the installation process will take several minutes.
+- after installation is complete, access the VM by running
+``` sh
+vagrant ssh
+```
 
 ---
 
