@@ -283,23 +283,23 @@ class MSManager:
             return enums.CoSimulatorReturnCodes.XML_ERROR
 
         self.__communication_settings_dict = self.__comm_settings_xml_manager.get_communication_settings_dict()
-        
+
         if self.__action_plan_variables_dict[CO_SIM_EXECUTION_ENVIRONMENT].upper() != "LOCAL":
             self.__logger.info('Co-Simulator STEP 5.2, Using HPC Mode')
             self.__logger.info('Co-Simulator STEP 5.2, dissecting Co-Simulation Services Deployment XML file')
             self.__co_sim_services_deployment_xml_file = \
-                    self.__variables_manager.get_value(variables.CO_SIM_SERVICES_DEPLOYMENT_XML)
+                self.__variables_manager.get_value(variables.CO_SIM_SERVICES_DEPLOYMENT_XML)
             self.__logger.info('{} -> {}'.format(variables.CO_SIM_SERVICES_DEPLOYMENT_XML,
-            self.__variables_manager.get_value(
-                variables.CO_SIM_SERVICES_DEPLOYMENT_XML)))
+                                                 self.__variables_manager.get_value(
+                                                     variables.CO_SIM_SERVICES_DEPLOYMENT_XML)))
 
             self.__services_deployment_xml_manager = \
-                    services_deployment_xml_manager.ServicesDeploymentXmlManager(
-                            log_settings=self.__logger_settings,
-                            configurations_manager=self.__configurations_manager,
-                            variable_manager=self.__variables_manager,
-                            xml_filename=self.__co_sim_services_deployment_xml_file,
-                            name="ServicesDeploymentXmlManager")
+                services_deployment_xml_manager.ServicesDeploymentXmlManager(
+                    log_settings=self.__logger_settings,
+                    configurations_manager=self.__configurations_manager,
+                    variables_manager=self.__variables_manager,
+                    xml_filename=self.__co_sim_services_deployment_xml_file,
+                    name="ServicesDeploymentXmlManager")
 
             if not self.__services_deployment_xml_manager.dissect() == enums.XmlManagerReturnCodes.XML_OK:
                 return enums.CoSimulatorReturnCodes.XML_ERROR
