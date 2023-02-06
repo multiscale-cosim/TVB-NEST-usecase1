@@ -1,3 +1,12 @@
+# Content
+* TVB-NEST-usecase1 installation guide
+  1. [HPC systems](#TVB-NEST-usecase1-installation-on-HPC-systems)
+  2. [Local systems](#TVB-NEST-usecase1-installation-on-local-systems)
+* [Troubleshooting](#Troubleshooting)
+* [Q&A](#Q&A)
+
+---
+
 # TVB-NEST-usecase1 installation on HPC systems
 
 ##### IMPORTANT: In case one of the referenced scripts throws syntax error, it could be that `dash` is being used instead of `bash`. some explanations why could be found on: https://wiki.ubuntu.com/DashAsBinSh
@@ -61,8 +70,17 @@ Expected output:
 NEST on Python OKAY!
 ```
 
-## TROUBLESHOOTING
-* WIP
-## Q&A
+---
+
+# TVB-NEST-usecase1 installation on local systems
+* 123
+
+---
+
+# TROUBLESHOOTING
 * WIP
 
+---
+
+# Q&A
+* WIP
