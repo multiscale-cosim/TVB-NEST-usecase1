@@ -88,24 +88,15 @@ Before starting :checkered_flag:, you need to have [Python](https://www.python.o
 
 ## :checkered_flag: Getting Started ##
 
+The framework and usecase can be installed and launched on:
+- Local systems, e.g. laptop inside a virtual machine (VM). We support the useage of Virtualbox and Vagrant.
+- HPC systems, currently supported on the [JUWELS](https://apps.fz-juelich.de/jsc/hps/juwels/index.html) and [JUSUF](https://apps.fz-juelich.de/jsc/hps/jusuf/index.html) cluster at the Jülich Supercomputing Centre.
+
+The intended platform to deploy the MSC framework with this co-simulation usecase are HPC systems.
+They allow independant scaling and of the components and efficient simulations. Deploying it on a laptop aids testing and development.
+
+Please check [INSTALL.md](https://github.com/multiscale-cosim/TVB-NEST-usecase1/blob/hpc/INSTALL.md) for installation details. 
 -- --
-INSTALLATION: Check [INSTALL.md](https://github.com/multiscale-cosim/TVB-NEST-usecase1/blob/hpc/INSTALL.md)
--- --
-### Run usecase on JUSUF
-
-todo: add updated description or link to desciption readme
-
-| folder | files | description |
-| ------ | ------ | ------ |
-| *installation/* | *bootstrap_hpc.sh* | execute to load modules and install dependencies |
-| *run_usecase/* | *launch_singlenode_alphabrunel.sh* | runs the cosimulation alphabrunel network on a single compute node |
-
-Important:
- 1) Install in your personal prject directory, e.g. /p/project/cslns/sontheimer1
- 2) Allocate interactive compute node, e.g. `salloc --account slns --partition develgpus --nodes=1`
- 3) Run usecase script from the TVB-NEST-usecase1 directory, where main.py is located
- 
- -- --
 
 ## :memo: License ##
 
