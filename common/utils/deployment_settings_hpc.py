@@ -46,11 +46,13 @@ def deployment_command(logger, is_execution_environment_hpc, service,
 
 def command_to_deploy_on_hpc_systems(logger, args, service,
                                      target_nodelist_from_xml,
-                                     default_cosim_nodelist_for_service):
+                                     default_cosim_nodelist_for_service,):
     command = []
     if "--nodelist" not in target_nodelist_from_xml:
         # nodelist = deployment_settings[service_component_name]
-        target_nodelist = cosim_slurm_nodes_mapping(logger)[default_cosim_nodelist_for_service]
+        # __original__ target_nodelist = cosim_slurm_nodes_mapping(logger)[default_cosim_nodelist_for_service]
+        target_nodelist = default_cosim_nodelist_for_service
+
         command.append(f"--nodelist={target_nodelist}")
         logger.debug(f"target nodelist={target_nodelist}")
     else:
