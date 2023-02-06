@@ -74,7 +74,8 @@ NEST on Python OKAY!
 
 # TVB-NEST-usecase1 installation on local systems
 
-## Step 1
+## Step 1 Prepare the virtual machine environment
+*TODO: This is for Linux systems, add windows/...*
 ### 1.1 Download and install Vagrant and Virtualbox
 - Install [Vagrant version 2.2.19](https://www.vagrantup.com/) or higher
 - Install [Virtualbox version 6.1](https://www.virtualbox.org/) or higher
@@ -87,9 +88,10 @@ cd /home/<user.name>cosim/vagrant
 ```
 
 ### 1.3 Download/create vagrantfile and installation script
-copy both scripts into your vagrant directory:
+- create/copy both scripts into your vagrant directory:\
+*TODO: link to Vagrantfile and bootstrap script*
 <details>
-  <summary>Vagrantfile</summary>
+  <summary>(<i>click to expand</i>) Vagrantfile for VM setup</summary>
   
   ``` sh
   # -*- mode: ruby -*-
@@ -183,7 +185,7 @@ copy both scripts into your vagrant directory:
   ```
  </details>
  <details>
-  <summary>Bootstrap</summary>
+  <summary>(<i>click to expand</i>) bootstrap.sh for installation</summary>
   
   ``` sh
 # ------------------------------------------------------------------------------
@@ -363,14 +365,17 @@ echo -e "\e[1;34mINFO -- Please configure your personal git account to complete 
 - create directory to synch data between VM and physical OS (e.g. `vagrant/shared`, see line 49 in Vagrantfile)
 
 ### 1.4 Start the virtual machine and installation process
-- run the following command from the newly created directory
+- run the following command from the newly created directory. The installation process will take several minutes.
 ``` sh
 vagrant up
-```
-- the installation process will take several minutes.
+``` 
 - after installation is complete, access the VM by running
 ``` sh
 vagrant ssh
+```
+- The VM can be stopped (after exiting) by running
+``` sh
+vagrant halt
 ```
 
 ---
