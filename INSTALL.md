@@ -1,6 +1,6 @@
 # Installation guide for the MSC framework and TVB-NEST co-simulation
 
-The below provided installation instructions are intended to minimize changes to the local environment. On local systems the use of a virtual machine ensures no conflicting dependecies. On the supported HPC systems, the use of pre-installed modules is leveraged.
+This installation instructions are intended to minimize changes to the local environment. On local systems the use of a virtual machine ensures no conflicting dependencies. On the supported HPC systems, the use of pre-installed modules is leveraged.
 
 * Platforms
   1. [HPC systems](#TVB-NEST-usecase1-installation-on-HPC-systems)
