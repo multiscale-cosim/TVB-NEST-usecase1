@@ -270,11 +270,6 @@ pip3 install pyzmq
 ### GIT SETUP ###
 #################
 ssh-keyscan github.com >> /home/vagrant/.ssh/known_hosts
-# TODO: discussion about multiscale-cosim-team git account and usage
-# email/github: multiscale.cosim@gmail.com
-# pw: fdL;3+b\
-# TODO: discussion about the tvb submodule (in template and usecase)
-
 # create repository directoriy for later...
 mkdir /home/vagrant/multiscale-cosim-repos
 cd /home/vagrant/multiscale-cosim-repos
@@ -284,25 +279,20 @@ cd /home/vagrant/multiscale-cosim-repos
 #####################################
 # Template -- integration test and simplest example:
 git clone --recurse-submodules https://github.com/sontheimer/ModularScience-Cosim-Template.git
-
 # Usecase Development -- usecase repositoris created from template
 git clone --recurse-submodules https://github.com/sontheimer/TVB-NEST-usecase1.git
 
 #########################
 ### NEST INSTALLATION ###
 #########################
-# TODO: find out if we should (of have to) use a python_venv specific for NEST
-
 # Dependencies for NEST Server
 pip3 install flask
 pip3 install flask-cors
 pip3 install RestrictedPython
 pip3 install gunicorn
-
 # Dependencies for NEST Server MPI
 pip3 install docopt
 pip3 install mpi4py
-
 # Install NEST Desktop
 pip install nest-desktop
 
@@ -327,7 +317,7 @@ make install
 # default: Error: PyNEST testing requested, but 'pytest' cannot be run.
 # default: Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions.
 # set environment variables
-#echo 'source /home/vagrant/nest_installed/bin/nest_vars.sh' >> ~/.bashrc 
+echo 'source /home/vagrant/nest_installed/bin/nest_vars.sh' >> ~/.bashrc 
 echo -e "\e[1;34mINFO -- NEST INSTALLATION COMPLETE!"
 
 ########################
@@ -337,24 +327,14 @@ echo -e "\e[1;34mINFO -- NEST INSTALLATION COMPLETE!"
 pip3 install tvb-data==2.0 tvb-gdist==2.1.0 tvb-library==2.2 tvb-contrib==2.2
 echo -e "\e[1;34mINFO -- TVB INSTALLATION COMPLETE!"
 
-###########################
-### COSIM REPOSITORIES  ###
-###########################
-cd /home/vagrant/multiscale-cosim-repos
-# MS-Cosim Development:
-# forks of the 'main' EBRAINS-cosim* repositories for development, regular updates and releases expected. 
-git clone https://github.com/sontheimer/EBRAINS_Launcher.git
-git clone https://github.com/sontheimer/EBRAINS_ConfigManager.git
-git clone https://github.com/sontheimer/EBRAINS_InterscaleHUB.git
-git clone https://github.com/sontheimer/EBRAINS_RichEndpoint.git
-git clone https://github.com/sontheimer/EBRAINS_WorkflowConfigurations.git
-
+#########################
+### ENVIRONMENT SETUP ###
+#########################
 #set rights to execute git commands
 chmod -R 777 /home/vagrant/multiscale-cosim-repos
-
-#echo 'export CO_SIM_ROOT_PATH=/home/vagrant/multiscale-cosim-repos' >> ~/.bashrc
-#echo 'export CO_SIM_MODULES_ROOT_PATH=${CO_SIM_ROOT_PATH}' >> ~/.bashrc
-#echo 'export CO_SIM_USE_CASE_ROOT_PATH=${CO_SIM_ROOT_PATH}/TVB-NEST-usecase1' >> ~/.bashrc
+echo 'export CO_SIM_ROOT_PATH=/home/vagrant/multiscale-cosim-repos' >> ~/.bashrc
+echo 'export CO_SIM_MODULES_ROOT_PATH=${CO_SIM_ROOT_PATH}' >> ~/.bashrc
+echo 'export CO_SIM_USE_CASE_ROOT_PATH=${CO_SIM_ROOT_PATH}/TVB-NEST-usecase1' >> ~/.bashrc
 
 ###############
 ### CLEANUP ###
