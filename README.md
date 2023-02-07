@@ -93,9 +93,9 @@ The framework and usecase can be installed and launched on:
 - HPC systems, currently supported on the [JUWELS](https://apps.fz-juelich.de/jsc/hps/juwels/index.html) and [JUSUF](https://apps.fz-juelich.de/jsc/hps/jusuf/index.html) cluster at the Jülich Supercomputing Centre.
 
 The intended platform to deploy the MSC framework with this co-simulation usecase are HPC systems.
-They allow independant scaling and of the components and efficient simulations. Deploying it on a laptop aids testing and development.
+They allow independant scaling of the components and efficient simulations. Deploying it on a laptop aids testing and development.
 
-Please check [INSTALL.md](https://github.com/multiscale-cosim/TVB-NEST-usecase1/blob/hpc/INSTALL.md) for installation details. 
+Please check [HERE](https://github.com/multiscale-cosim/TVB-NEST-usecase1/blob/hpc/INSTALL.md) for installation details. 
 -- --
 
 ## :memo: License ##
