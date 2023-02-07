@@ -1,5 +1,8 @@
-# Content
-* TVB-NEST-usecase1 installation guide
+# Installation guide for the MSC framework and TVB-NEST co-simulation
+
+The below provided installation instructions are intended to minimize changes to the local environment. On local systems the use of a virtual machine ensures no conflicting dependecies. On the supported HPC systems, the use of pre-installed modules is leveraged.
+
+* Platforms
   1. [HPC systems](#TVB-NEST-usecase1-installation-on-HPC-systems)
   2. [Local systems](#TVB-NEST-usecase1-installation-on-local-systems)
 * [Troubleshooting](#Troubleshooting)
@@ -12,7 +15,7 @@
 ##### IMPORTANT: In case one of the referenced scripts throws syntax error, it could be that `dash` is being used instead of `bash`. some explanations why could be found on: https://wiki.ubuntu.com/DashAsBinSh
 
 ## STEP 1
-### Preparing the installation/running location.
+### Prepare the installation/running location.
 creating the installation directory:\
 i.e.
  ``` sh
@@ -28,14 +31,14 @@ $ cd multiscale-cosim
 ```
 
 ## STEP 2
-### Getting the Co-Simulation Framework
+### Get the Co-Simulation Framework
 cloning the TVB-NEST-usecase1 repository along with the required submodules\
 ``` sh
 $ git clone --recurse-submodules --jobs 16 https://github.com/multiscale-cosim/TVB-NEST-usecase1.git
 ```
 
 ## STEP 3
-### Setting-up the run-time environment
+### Set up the runtime environment
 executing the installation script in order to set up the run-time environment\
 i.e.
 ``` sh
@@ -43,7 +46,7 @@ $ sh ./TVB-NEST-usecase1/installation/bootstrap_hpc.sh
 ```
 
 ## STEP 4 (OPTIONAL)
-### Testing installation 
+### Testing the installation 
 executing short tests which import TVB and NEST python packages
 #### 4.1. Loading HPC modules and setting CO_SIM_* variables
 ``` sh
@@ -83,15 +86,18 @@ NEST on Python OKAY!
 ### 1.2 Create directory
 e.g.
 ``` sh
-mkdir -p /home/<user.name>cosim/vagrant
-cd /home/<user.name>cosim/vagrant
+mkdir -p /home/<user.name>/cosim/vagrant
+cd /home/<user.name>/cosim/vagrant
 ```
 
-### 1.3 Download/create vagrantfile and installation script
-- create/copy both scripts into your vagrant directory:\
+## Step 2 VM Configuration and installation
+### 2.1 Create setup and installation scripts
+Create or copy both of the following scripts into your vagrant directory:\
 *TODO: link to Vagrantfile and bootstrap script*
+
+  1. Vagrantfile for VM setup
 <details>
-  <summary>(<i>click to expand</i>) Vagrantfile for VM setup</summary>
+  <summary>(<i>click to expand</i>) </summary>
   
   ``` sh
   # -*- mode: ruby -*-
@@ -184,8 +190,10 @@ cd /home/<user.name>cosim/vagrant
    end
   ```
  </details>
+ 
+   2. bootstrap.sh for installation
  <details>
-  <summary>(<i>click to expand</i>) bootstrap.sh for installation</summary>
+  <summary>(<i>click to expand</i>)</summary>
   
   ``` sh
 # ------------------------------------------------------------------------------
@@ -362,14 +370,21 @@ echo -e "\e[1;34mINFO -- Please configure your personal git account to complete 
   ```
 </details>
 
-- create directory to synch data between VM and physical OS (e.g. `vagrant/shared`, see line 49 in Vagrantfile)
+Important: 
+- Ensure exact filenames `Vagrantfile` and `bootstrap.sh`.
+- Create a folder to share data between VM and physical OS (see line 49 in Vagrantfile).
+``` sh
+ mkdir shared
+```
 
-### 1.4 Start the virtual machine and installation process
-- run the following command from the newly created directory. The installation process will take several minutes.
+### 2.2 Start the virtual machine and installation process
+Run the following command from within the newly created directory.
 ``` sh
 vagrant up
-``` 
-- after installation is complete, access the VM by running
+```
+On first startup, the command will run the bootstrap script. The installation process will take several minutes.
+
+After installation is complete, the VM can be accessed. 
 ``` sh
 vagrant ssh
 ```
@@ -377,6 +392,35 @@ vagrant ssh
 ``` sh
 vagrant halt
 ```
+
+## STEP 4 (OPTIONAL)
+### Testing the installation 
+executing short tests which import TVB and NEST python packages
+#### 4.1. Loading HPC modules and setting CO_SIM_* variables
+``` sh
+$ source ./TVB-NEST-usecase1/installation/tests/co_sim_vars.source
+```
+
+#### 4.2. TVB testing
+``` sh
+$ python3 ./TVB-NEST-usecase1/installation/tests/tvb_test.py
+```
+Expected output:
+``` sh
+TVB on Python OKAY!
+```
+
+#### 4.3. NEST testing
+``` sh
+$ python3 ./TVB-NEST-usecase1/installation/tests/nest_test.py
+```
+Expected output:
+``` sh
+...            SimulationManager::run [Info]:
+    Simulation finished.
+NEST on Python OKAY!
+```
+
 
 ---
 
