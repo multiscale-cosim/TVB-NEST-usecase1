@@ -368,44 +368,19 @@ After installation is complete, the VM can be accessed.
 ``` sh
 vagrant ssh
 ```
-- The VM can be stopped (after exiting) by running
+The VM can be stopped (after exiting) by running
 ``` sh
 vagrant halt
-```
-
-## STEP 4 (OPTIONAL)
-### Testing the installation 
-executing short tests which import TVB and NEST python packages
-#### 4.1. Loading HPC modules and setting CO_SIM_* variables
-``` sh
-$ source ./TVB-NEST-usecase1/installation/tests/co_sim_vars.source
-```
-
-#### 4.2. TVB testing
-``` sh
-$ python3 ./TVB-NEST-usecase1/installation/tests/tvb_test.py
-```
-Expected output:
-``` sh
-TVB on Python OKAY!
-```
-
-#### 4.3. NEST testing
-``` sh
-$ python3 ./TVB-NEST-usecase1/installation/tests/nest_test.py
-```
-Expected output:
-``` sh
-...            SimulationManager::run [Info]:
-    Simulation finished.
-NEST on Python OKAY!
 ```
 
 
 ---
 
 # TROUBLESHOOTING
-* WIP
+* TODO: check VM installation, ENV Variables set correctly?
+    * TODO: removed EBRAINS_* repositories from bootstrap 
+* TODO: check HPC installation, conflicting (local) python packages for some users
+* TODO: consider virtual environment for python on HPC
 
 ---
 
