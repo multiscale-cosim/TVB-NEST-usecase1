@@ -80,7 +80,6 @@ NEST on Python OKAY!
 ## Step 1 Prepare the virtual machine environment
 *TODO: This is for Linux systems, add windows/...*
 
-**NOTE** The [installation script]()
 ### 1.1 Download and install Vagrant and Virtualbox
 - Install [Vagrant version 2.2.19](https://www.vagrantup.com/) or higher
 - Install [Virtualbox version 6.1](https://www.virtualbox.org/) or higher
@@ -96,7 +95,7 @@ cd /home/<user.name>/cosim/vagrant
 ### 2.1 Create setup and installation scripts
 Go to [installation/local](https://github.com/multiscale-cosim/TVB-NEST-usecase1/tree/hpc/installation/local) directory and follow the following steps:
 
-  1. [Vagrantfile](https://github.com/multiscale-cosim/TVB-NEST-usecase1/tree/hpc/installation/local/vagrantfile.file).
+  1. To setup and manage the VM, [Vagrantfile](https://github.com/multiscale-cosim/TVB-NEST-usecase1/tree/hpc/installation/local/vagrantfile.file).
 <details>
   <summary>(<i>click to expand</i>) </summary>
   
@@ -187,6 +186,9 @@ Go to [installation/local](https://github.com/multiscale-cosim/TVB-NEST-usecase1
  </details>
  
    2. To install the required packages and preparing the environment, run [bootstrap.sh](https://github.com/multiscale-cosim/TVB-NEST-usecase1/tree/hpc/installation/local/bootstrap.sh) script.
+
+   **NOTE** The bootstrap script is tested on _Ubuntu 22.04.1 LTS (Jammy Jellyfish)_ and _Ubuntu 20.04.5 LTS (Focal Fossa)_.
+
  <details>
   <summary>(<i>click to expand</i>)</summary>
   
@@ -403,7 +405,7 @@ Important:
 ``` sh
  mkdir shared
 ```
-**NOTE** The bootstrap script is tested on _Ubuntu 22.04.1 LTS (Jammy Jellyfish)_ and _Ubuntu 20.04.5 LTS (Focal Fossa)_.
+
 ### 2.2 Start the virtual machine and installation process
 Run the following command from within the newly created directory.
 ``` sh
