@@ -49,7 +49,7 @@ class TVBMpiWrapper:
             self.__simulation_results.append([])
 
     def init_mpi(self):
-        """"""
+        """sets up MPI communicators"""
         # create receiver communicator
         for _ in self.__id_proxy:
             self.__comm_receiver.append(
@@ -64,9 +64,9 @@ class TVBMpiWrapper:
 
     def __create_mpi_communicator(self, interscalehub_address):
         """creates mpi Intercommunicators"""
-        self.__logger.info(f"__DEBUG__ connecting at {interscalehub_address}")
+        self.__logger.debug(f"connecting at {interscalehub_address}")
         comm = MPI.COMM_WORLD.Connect(interscalehub_address)
-        self.__logger.info(f"__DEBUG__ connected to {interscalehub_address}")
+        self.__logger.info(f"connected to {interscalehub_address}")
         return comm
 
     def __send_mpi(self, comm, times, data):
@@ -270,7 +270,7 @@ class TVBMpiWrapper:
                 values.append(running_value)
         return ([np.array(times), np.expand_dims(np.concatenate(values), 1)],)
     
-    def run_simulation_and_data_exchange(self):
+    def run_simulation_and_data_exchange(self, global_minimum_step_size):
         """
         return the result of the simulation between the wanted time
         :param simulator: tvb simulator
@@ -282,7 +282,8 @@ class TVBMpiWrapper:
         self.__prepare_and_send_initialization_date()
         self.__simulation_run_counter = 0
         # the main loop of the simulation and data exchange
-        while self.__simulation_run_counter * self.__time_synch < self.__simulation_length:
+        # while self.__simulation_run_counter * self.__time_synch < self.__simulation_length:
+        while self.__simulation_run_counter * global_minimum_step_size < self.__simulation_length:
             # 1. receive data from InterscaleHub_NEST_to_TVB
             data_value, time_data, receive = self.__receive_data()
             # 2. format time and data for input to TVB simulation
