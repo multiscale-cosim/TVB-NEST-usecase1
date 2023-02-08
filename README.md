@@ -27,7 +27,7 @@
 ## Status
 
 <h4 align="center"> 
-	🚧  Multi-scale Co-simulation - TVB-NEST-usecase1 🚧
+	Multi-scale Co-simulation - TVB-NEST-usecase1
 </h4> 
 
 <hr>
@@ -45,7 +45,7 @@
 
 <br>
 
-## :dart: About ##
+## About ##
 
 The Modular Science (MSC) Framework facilitates deployment, integratation, orchestration and intuitive & interactive control of larger complex workflows.
 It can execute a independant applications running in parallel on heterogeneous HPC platforms. The framework comprises a set of following micro-services like independent applications:
@@ -56,7 +56,7 @@ It can execute a independant applications running in parallel on heterogeneous H
 * <a href="https://github.com/multiscale-cosim/EBRAINS_RichEndpoint/tree/hpc"> Rich Endpoint </a>
 * <a href="https://github.com/multiscale-cosim/EBRAINS_WorkflowConfigurations/tree/hpc"> Workflow Configurations </a>
 
-## :sparkles: Features ##
+## Features ##
 
 :heavy_check_mark: ConfigManager description
 
@@ -73,7 +73,7 @@ It can execute a independant applications running in parallel on heterogeneous H
 :heavy_check_mark: anything else...
 
 
-## :rocket: Technologies ##
+## Technologies ##
 
 The following tools were used in this project:
 
@@ -82,11 +82,11 @@ The following tools were used in this project:
 - [C++](https://isocpp.org/)
 - [Makefile](https://www.gnu.org/software/make/manual/make.html)
 
-## :white_check_mark: Dependencies ##
+## Dependencies ##
 
 Before starting :checkered_flag:, you need to have [Python](https://www.python.org/) and [CMake](https://cmake.org/) installed.
 
-## :checkered_flag: Getting Started ##
+## Getting Started ##
 
 The framework and usecase can be installed and launched on:
 - Local systems, e.g. laptop inside a virtual machine (VM). We support the useage of Virtualbox and Vagrant.
@@ -98,14 +98,14 @@ They allow independant scaling of the components and efficient simulations. Depl
 Please check [HERE](https://github.com/multiscale-cosim/TVB-NEST-usecase1/blob/hpc/INSTALL.md) for installation details. 
 -- --
 
-## :memo: License ##
+## License ##
 
 This project is under license from Apache License, Version 2.0. For more details, see the [LICENSE](LICENSE) file.
 
 
 Made by <a href="https://github.com/multiscale-cosim" target="_blank">Multiscale Co-simulation team</a>.
 
-## :memo: Acknowledgement ##
+## Acknowledgement ##
 
 This project has received funding from the European Union’s Horizon 2020 research and innovation
 programme under grant agreement No 785907 (HBP SGA2), from the European Union’s Horizon
