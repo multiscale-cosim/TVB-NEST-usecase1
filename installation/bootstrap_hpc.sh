@@ -4,6 +4,7 @@
 # ASSUMPTION: current location is where use git cloned TVB-NEST-usecase1 repository
 # pwd=/location/where/user/cloned
 #                                /TVB-NEST-usecase1
+
 PWDPATH=`pwd`
 [ -w ${PWDPATH} ] || (echo "${PWDPATH} is not writable"; exit 1)
 
@@ -18,11 +19,9 @@ CO_SIM_ROOT_PATH=${PWDPATH}
 CO_SIM_DEPENDENCIES=${CO_SIM_ROOT_PATH}/site-packages
 CO_SIM_NEST_BUILD=${CO_SIM_ROOT_PATH}/nest-build
 CO_SIM_NEST=${CO_SIM_ROOT_PATH}/nest
-CO_SIM_SLURM_LOGS=${CO_SIM_ROOT_PATH}/slurm_logs
 
 mkdir -p ${CO_SIM_DEPENDENCIES}
 mkdir -p ${CO_SIM_NEST_BUILD}
-mkdir -p ${CO_SIM_SLURM_LOGS}
 
 # ###
 # TVB
@@ -38,9 +37,6 @@ pip install --target=${CO_SIM_DEPENDENCIES} elephant
 # WARNING: typing.py package produce conflict/issue with Co-Sim simulators
 #
 rm -f ${CO_SIM_DEPENDENCIES}/typing.py
-
-cd ${CO_SIM_REPOS}
-git clone --recurse-submodules --jobs 16 https://github.com/multiscale-cosim/TVB-NEST-usecase1.git
 
 # ####
 # NEST
