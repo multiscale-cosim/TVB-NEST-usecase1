@@ -99,7 +99,7 @@ Please check [HERE](https://github.com/multiscale-cosim/TVB-NEST-usecase1/blob/h
 ### How to run ###
  
  The framework and usecase can be installed and launched on:
-- **Local systems:** go to [run_usecase/local](https://github.com/multiscale-cosim/TVB-NEST-usecase1/tree/hpc/run_usecase/local) directory and from there run [this](https://github.com/multiscale-cosim/TVB-NEST-usecase1/blob/hpc/run_usecase/local/cosim_launch_local_dev.sh) script from there e.g.
+- **Local systems:** go to [run_usecase/local](https://github.com/multiscale-cosim/TVB-NEST-usecase1/tree/hpc/run_usecase/local) directory and run [this](https://github.com/multiscale-cosim/TVB-NEST-usecase1/blob/hpc/run_usecase/local/cosim_launch_local_dev.sh) script from there e.g.
 
   ```
   $ sh ./cosim_launch_local.sh
