@@ -30,15 +30,20 @@ default_range_of_ports = {
                           'APPLICATION_COMPANION': {'MIN': 59150,
                                                     'MAX': 59200,
                                                     'MAX_TRIES': 50},
-                          # range of ports for Application Companions
+                          # range of ports for Application Managers
                           'APPLICATION_MANAGER': {'MIN': 59201,
-                                                    'MAX': 59300,
-                                                    'MAX_TRIES': 100}
+                                                  'MAX': 59300,
+                                                  'MAX_TRIES': 100}
                           }
 
 
 def my_ip():
-    """returns the ip address of calling process"""
+    """returns the ip address where the calling process is running"""
     my_host_name = socket.gethostname()
     my_ip = socket.gethostbyname(my_host_name)
     return my_ip
+
+
+def my_host_name():
+    """returns the hostname of the calling process is running"""
+    return socket.gethostname()
