@@ -16,7 +16,7 @@ import numpy as np
 from mpi4py import MPI
 
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
-from EBRAINS_RichEndpoint.Application_Companion.common_enums import Response
+from EBRAINS_RichEndpoint.application_companion.common_enums import Response
 
 
 class TVBMpiWrapper:

@@ -18,7 +18,7 @@ import pickle
 import base64
 import time
 
-from EBRAINS_RichEndpoint.Application_Companion.common_enums import Response
+from EBRAINS_RichEndpoint.application_companion.common_enums import Response
 
 
 def b64encode_and_pickle(logger, obj):
