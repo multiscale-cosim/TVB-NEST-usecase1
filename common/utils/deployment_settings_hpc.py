@@ -14,8 +14,8 @@
 import os
 import re
 
-from EBRAINS_RichEndpoint.Application_Companion.common_enums import SERVICE_COMPONENT_CATEGORY
-from EBRAINS_RichEndpoint.Application_Companion.common_enums import Response
+from EBRAINS_RichEndpoint.application_companion.common_enums import SERVICE_COMPONENT_CATEGORY
+from EBRAINS_RichEndpoint.application_companion.common_enums import Response
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import variables
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import constants
 
