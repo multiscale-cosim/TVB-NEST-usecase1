@@ -42,7 +42,7 @@ $ git clone --recurse-submodules --jobs 16 https://github.com/multiscale-cosim/T
 executing the installation script in order to set up the run-time environment\
 i.e.
 ``` sh
-$ sh ./TVB-NEST-usecase1/installation/bootstrap_hpc.sh
+$ sh ./TVB-NEST-usecase1/installation/hpc/bootstrap_hpc.sh
 ```
 
 ## STEP 4 (OPTIONAL)
