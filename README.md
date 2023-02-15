@@ -34,9 +34,7 @@
 
 <p align="center">
   <a href="#dart-about">About</a> &#xa0; | &#xa0; 
-  <a href="#sparkles-features">Features</a> &#xa0; | &#xa0;
   <a href="#rocket-technologies">Technologies</a> &#xa0; | &#xa0;
-  <a href="#white_check_mark-Dependencies">Dependencies</a> &#xa0; | &#xa0;
   <a href="#checkered_flag-starting">Getting Started</a> &#xa0; | &#xa0;
   <a href="#memo-license">License</a> &#xa0; | &#xa0;
   <a href="https://github.com/multiscale-cosim" target="_blank">Author</a> &#xa0; | &#xa0;
@@ -47,31 +45,7 @@
 
 ## About ##
 
-The Modular Science (MSC) Framework facilitates deployment, integratation, orchestration and intuitive & interactive control of larger complex workflows.
-It can execute a independant applications running in parallel on heterogeneous HPC platforms. The framework comprises a set of following micro-services like independent applications:
-
-* <a href="https://github.com/multiscale-cosim/EBRAINS_ConfigManager/tree/hpc"> Configurations Manager </a>
-* <a href="https://github.com/multiscale-cosim/EBRAINS_InterscaleHUB/tree/hpc"> InterscaleHub </a>
-* <a href="https://github.com/multiscale-cosim/EBRAINS_Launcher/tree/hpc"> Launcher </a>
-* <a href="https://github.com/multiscale-cosim/EBRAINS_RichEndpoint/tree/hpc"> Rich Endpoint </a>
-* <a href="https://github.com/multiscale-cosim/EBRAINS_WorkflowConfigurations/tree/hpc"> Workflow Configurations </a>
-
-## Features ##
-
-:heavy_check_mark: ConfigManager description
-
-:heavy_check_mark: InterscaleHUB description
-
-:heavy_check_mark: Launcher description
-
-:heavy_check_mark: RichEndpoint description
-
-:heavy_check_mark: WorkflowConfiguration description
-
-:heavy_check_mark: Adapter classes description
-
-:heavy_check_mark: anything else...
-
+TODO: add usecase 1 descr.
 
 ## Technologies ##
 
