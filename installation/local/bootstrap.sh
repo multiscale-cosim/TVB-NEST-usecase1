@@ -10,7 +10,7 @@
 #       e.g. 
 #           ./TVB_NEST_usace1_ubuntu_setting_up.sh /opt/MY_COSIM sontheimer
 
-BASELINE_PATH="/home"
+BASELINE_PATH="/home/vagrant"
 BASELINE_PATH=${1:-${BASELINE_PATH}}
 
 GIT_DEFAULT_NAME='multiscale-cosim'
@@ -188,8 +188,8 @@ echo \$PATH | grep ${CO_SIM_NEST}/bin 1>/dev/null 2>&1
 [ \$? -eq 0 ] || export PATH=$CO_SIM_NEST/bin:\${PATH}
 
 python3 \${CO_SIM_USE_CASE_ROOT_PATH}/main.py \\
-    --global-settings \${CO_SIM_MODULES_ROOT_PATH}/EBRAINS_WorkflowConfigurations/global_settings/global_settings.xml \\
-    --action-plan \${CO_SIM_MODULES_ROOT_PATH}/EBRAINS_WorkflowConfigurations/plans/cosim_alpha_brunel_on_local.xml
+    --global-settings \${CO_SIM_MODULES_ROOT_PATH}/EBRAINS_WorkflowConfigurations/general/global_settings.xml \\
+    --action-plan \${CO_SIM_MODULES_ROOT_PATH}/EBRAINS_WorkflowConfigurations/usecase/local/plans/cosim_alpha_brunel_local.xml
 
 .EORF
 
