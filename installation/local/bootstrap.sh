@@ -10,8 +10,8 @@
 #       e.g. 
 #           ./TVB_NEST_usace1_ubuntu_setting_up.sh /opt/MY_COSIM sontheimer
 
-BASELINE_PATH="${HOME}"
-BASELINE_PATH=${1:-${HOME}}
+BASELINE_PATH="/home"
+BASELINE_PATH=${1:-${BASELINE_PATH}}
 
 GIT_DEFAULT_NAME='multiscale-cosim'
 GIT_DEFAULT_NAME=${2:-${GIT_DEFAULT_NAME}}
