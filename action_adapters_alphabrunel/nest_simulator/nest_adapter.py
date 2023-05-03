@@ -17,6 +17,8 @@ import pickle
 import base64
 import ast
 
+from mpi4py import MPI
+
 from common.utils.security_utils import check_integrity
 
 from action_adapters_alphabrunel.nest_simulator.utils_function import get_data
@@ -47,6 +49,11 @@ class NESTAdapter:
         self.__path_to_parameters_file = self._configurations_manager.get_directory(
             directory=DefaultDirectories.SIMULATION_RESULTS)
 
+        # MPI rank
+        self.__comm = MPI.COMM_WORLD
+        self.__rank = self.__comm.Get_rank()
+        self.__logger.info(f"size: {self.__comm.Get_size()}, my rank: {self.__rank}")
+        
         # Loading scientific parameters into an object
         self.__sci_params = Xml2ClassParser(sci_params_xml_path_filename, self.__logger)
         self.__parameters = Parameters(self.__path_to_parameters_file)
@@ -57,8 +64,12 @@ class NESTAdapter:
 
         # Initialize port_names in the format as per nest-simulator
         self.__init_port_names(p_interscalehub_addresses)
-        self.__logger.debug(f"host_name:{os.uname()}")
+        self.__logger.info(f"__DEBUG__ host_name:{os.uname()}")
         self.__logger.info("initialized")
+
+    @property
+    def rank(self):
+        return self.__rank
 
     def __init_port_names(self, interscalehub_addresses):
         '''
@@ -255,9 +266,9 @@ class NESTAdapter:
         # self.execute_end_command()
 
     def execute_end_command(self):
-        self.__logger.info("plotting the result")
         if nest.Rank() == 0:
             # plot if there is data available
+            self.__logger.info("plotting the result")
             data = get_data(self.__logger, self.__parameters.path + '/nest/')
             if data is not None:
                 nest.raster_plot.from_data(data)
@@ -271,52 +282,6 @@ class NESTAdapter:
                     self.__logger.exception("No data to plot")
 
         self.__logger.debug("post processing is done")
- 
-    def convert_to_dictionary(self, lines):
-        """
-        finds and extracts the local minimum step size information from
-        std_out stream, and converts it to a dictionary.
-
-        Parameters
-        ----------
-        lines : str
-            output received from the application
-
-        Returns
-        -------
-            int
-                return code indicating whether the string is converted into
-                dictionary
-        """
-        # NOTE as per protocol, the local minimum step size is received as a
-        # response of INIT command from SIMULATORs
-        # it is received via (stdin) PIPE as a string in the
-        # following format from a Simulator:
-
-        # {'PID': <pid>, 'LOCAL_MINIMUM_STEP_SIZE': <step_size>}
-
-        # STEP 1. find the starting index of response in the output received
-        # from Simulator
-
-        # As per protocol the response starts with PID, so look for that in
-        # output received
-        index = lines.find(COMMANDS.STEERING_COMMAND.name)
-
-        # STEP 2. covert response string to dictionary
-        try:
-            # the index points to PID, the curly bracket {'PID'... therefore
-            # starts at from index-2
-            self.__logger.debug("string response before converting to a"
-                                f"dictionary: {lines[index - 2:]}")
-            command_dictionary = ast.literal_eval(lines[index - 2:])
-            self.__logger.info(f"got responses: {command_dictionary}")
-            return Response.OK
-        except Exception:
-            # Could not convert string into dict
-            # log the exception with traceback and return with error
-            self.__logger.exception(f'could not convert {lines[index - 2:]} into'
-                                    f' the dictionary.')
-            return Response.ERROR
 
 
 if __name__ == "__main__":
@@ -355,13 +320,15 @@ if __name__ == "__main__":
         # {'PID': <pid>, 'LOCAL_MINIMUM_STEP_SIZE': <step size>}
 
         # prepare the response
-        pid_and_local_minimum_step_size = \
-            {SIMULATOR.PID.name: os.getpid(),
-            SIMULATOR.LOCAL_MINIMUM_STEP_SIZE.name: local_minimum_step_size}
+        my_rank = nest_adapter.rank
+        if my_rank == 0:
+            pid_and_local_minimum_step_size = \
+                {SIMULATOR.PID.name: os.getpid(),
+                SIMULATOR.LOCAL_MINIMUM_STEP_SIZE.name: local_minimum_step_size}
         
-        # send the response
-        # NOTE Application Manager will read the stdout stream via PIPE
-        print(f'{pid_and_local_minimum_step_size}')
+            # send the response
+            # NOTE Application Manager will read the stdout stream via PIPE
+            print(f'{pid_and_local_minimum_step_size}')
 
         # 6. fetch next command from Application Manager
         user_action_command = input()
