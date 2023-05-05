@@ -132,6 +132,7 @@ class MSManager:
         
         # if interactive steering is enabled from CLI arguments
         self.__is_interactive = self.__args.interactive
+
         ########
         # STEP 2 - Setting Up the Configuration Manager
         ########
@@ -372,8 +373,6 @@ class MSManager:
                                              actions_sci_params_dict=self.__actions_sci_params_xml_files_dict,
                                              # if interactive steering is enabled
                                              is_interactive=self.__is_interactive,
-                                             # if interactive steering is enabled
-                                             is_monitoring_enabled=False,  # TODO set via XML
                                              # zmq ports
                                              communication_settings_dict=self.__communication_settings_dict,
                                              # nodes where to deploy Co-Sim services
