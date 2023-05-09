@@ -20,6 +20,7 @@ import ast
 from mpi4py import MPI
 
 from common.utils.security_utils import check_integrity
+from action_adapters_alphabrunel.resource_usage_monitor_adapter import ResourceMonitorAdapter
 
 from action_adapters_alphabrunel.nest_simulator.utils_function import get_data
 from action_adapters_alphabrunel.parameters import Parameters
@@ -52,24 +53,39 @@ class NESTAdapter:
         # MPI rank
         self.__comm = MPI.COMM_WORLD
         self.__rank = self.__comm.Get_rank()
-        self.__logger.info(f"size: {self.__comm.Get_size()}, my rank: {self.__rank}")
-        
+        self.__my_pid = os.getpid()
+        self.__logger.info(f"__DEBUG__ size: {self.__comm.Get_size()}, my rank: {self.__rank}, "
+                           f"host_name:{os.uname()}")
         # Loading scientific parameters into an object
         self.__sci_params = Xml2ClassParser(sci_params_xml_path_filename, self.__logger)
         self.__parameters = Parameters(self.__path_to_parameters_file)
 
+        self.__resource_usage_monitor = ResourceMonitorAdapter(self._configurations_manager,
+                                                               self._log_settings,
+                                                               self.pid,
+                                                               "NEST")
         # NOTE The MPI port_name needs to be in string format and must be sent to
         # nest-simulator in the following pattern:
         # "endpoint_address":<port name>
 
         # Initialize port_names in the format as per nest-simulator
         self.__init_port_names(p_interscalehub_addresses)
-        self.__logger.info(f"__DEBUG__ host_name:{os.uname()}")
-        self.__logger.info("initialized")
+        self.__log_message("initialized")
 
     @property
     def rank(self):
         return self.__rank
+    
+    @property
+    def pid(self):
+        return self.__my_pid
+
+    def __log_message(self, msg):
+        "helper function to control the log emissions as per rank"
+        if self.rank == 0:        
+            self.__logger.info(msg)
+        else:
+            self.__logger.debug(msg)
 
     def __init_port_names(self, interscalehub_addresses):
         '''
@@ -111,7 +127,6 @@ class NESTAdapter:
 
         # create the neurons and the devices
         # neuron_params = self.__parameters.neuron_params
-
         nodes_ex = simulator.Create(
             model=self.__sci_params.nodes_model['model'],
             n=self.__sci_params.nb_neurons,
@@ -228,7 +243,8 @@ class NESTAdapter:
                           conn_spec=self.__sci_params.output_from_simulator['conn_spec'],
                           syn_spec=self.__sci_params.output_from_simulator['syn_spec'])
 
-        return espikes, input_to_simulator, output_from_simulator
+        # return espikes, input_to_simulator, output_from_simulator
+        self.__logger.debug("simulation is configured")
 
     def execute_init_command(self):
         self.__logger.debug("executing INIT command")
@@ -239,33 +255,37 @@ class NESTAdapter:
              "resolution": self.__parameters.resolution})
 
         self.__logger.info("configure the network")
-        espikes, input_to_simulator, output_from_simulator = \
-            self.__configure_nest(nest)
+        # espikes, input_to_simulator, output_from_simulator = self.__configure_nest(nest)
+        self.__configure_nest(nest)
 
-        self.__logger.info("preparing the simulator, and "
+        self.__log_message("preparing the simulator, and "
                            "establishing the connections")
         nest.Prepare()
-        self.__logger.info("connections are made")
+        self.__log_message("connections are made")
         self.__logger.debug("INIT command is executed")
         return self.__parameters.time_synch  # minimum step size for simulation
 
+    
+    
     def execute_start_command(self, global_minimum_step_size):
         self.__logger.debug("executing START command")
+        self.__resource_usage_monitor.start_monitoring()
         self.__logger.debug(f'global_minimum_step_size: {global_minimum_step_size}')
         count = 0.0
         self.__logger.debug('starting simulation')
         # while count * self.__parameters.time_synch < self.__parameters.simulation_time:
         while count * global_minimum_step_size < self.__parameters.simulation_time:
-            self.__logger.info(f"simulation run counter: {count+1}")
+            self.__log_message(f"simulation run counter: {count+1}")
             nest.Run(self.__parameters.time_synch)
             count += 1
 
-        self.__logger.info('nest simulation is finished')
-        self.__logger.info("cleaning up NEST")
+        self.__log_message('nest simulation is finished')
+        self.__log_message("cleaning up NEST")
         nest.Cleanup()
         # self.execute_end_command()
 
     def execute_end_command(self):
+        self.__resource_usage_monitor.stop_monitoring()
         if nest.Rank() == 0:
             # plot if there is data available
             self.__logger.info("plotting the result")
@@ -323,7 +343,8 @@ if __name__ == "__main__":
         my_rank = nest_adapter.rank
         if my_rank == 0:
             pid_and_local_minimum_step_size = \
-                {SIMULATOR.PID.name: os.getpid(),
+                {SIMULATOR.PID.name: nest_adapter.pid,
+                #SIMULATOR.PID.name: os.getpid(),
                 SIMULATOR.LOCAL_MINIMUM_STEP_SIZE.name: local_minimum_step_size}
         
             # send the response

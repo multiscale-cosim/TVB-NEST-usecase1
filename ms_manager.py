@@ -130,7 +130,7 @@ class MSManager:
             # argument parser has reported some issue with the arguments
             return enums.CoSimulatorReturnCodes.PARAMETER_ERROR
         
-        # if interactive steering is enabled from CLI arguments
+        # set whether interactive steering is enabled from CLI arguments
         self.__is_interactive = self.__args.interactive
 
         ########

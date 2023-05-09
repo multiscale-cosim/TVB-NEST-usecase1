@@ -20,6 +20,7 @@ import ast
 
 from action_adapters_alphabrunel.tvb_simulator.wrapper_TVB_mpi import TVBMpiWrapper
 from action_adapters_alphabrunel.parameters import Parameters
+from action_adapters_alphabrunel.resource_usage_monitor_adapter import ResourceMonitorAdapter
 from common.utils.security_utils import check_integrity
 
 from EBRAINS_RichEndpoint.application_companion.common_enums import SteeringCommands, COMMANDS
@@ -53,14 +54,23 @@ class TVBAdapter:
 
         # Load scientific parameters into an object
         self.__sci_params = Xml2ClassParser(p_sci_params_xml_path_filename, self.__logger)
-
+        
         self.__parameters = Parameters(self.__path_to_parameters_file)
         self.__simulator_tvb = None
         self.__tvb_mpi_wrapper = None
+        self.__my_pid = os.getpid()
+        self.__resource_usage_monitor = ResourceMonitorAdapter(self._configurations_manager,
+                                                               self._log_settings,
+                                                               self.pid,
+                                                               "TVB")
         # initialize port_names of the Interscalehubs
         self.__init_port_names(p_interscalehub_addresses)
         self.__logger.debug(f"host_name:{os.uname()}")
         self.__logger.info("initialized")
+
+    @property
+    def pid(self):
+        return self.__my_pid
 
     def __init_port_names(self, interscalehub_addresses):
         '''
@@ -144,12 +154,14 @@ class TVBAdapter:
 
     def execute_start_command(self, global_minimum_step_size):
         self.__logger.debug("executing START command")
+        self.__resource_usage_monitor.start_monitoring()
         self.__logger.debug(f'global_minimum_step_size: {global_minimum_step_size}')
         (r_raw_results,) = self.__tvb_mpi_wrapper.run_simulation_and_data_exchange(global_minimum_step_size)
         self.__logger.debug('TVB simulation is finished')
         return r_raw_results
 
     def execute_end_command(self, p_raw_results=None):
+        self.__resource_usage_monitor.stop_monitoring()
         self.__logger.info("plotting the result")
         plt.figure(1)
         plt.plot(p_raw_results[0], raw_results[1][:, 0, :, 0] + 3.0)
@@ -195,7 +207,8 @@ if __name__ == "__main__":
 
         # prepare the response
         pid_and_local_minimum_step_size = \
-            {SIMULATOR.PID.name: os.getpid(),
+            {SIMULATOR.PID.name: tvb_adapter.pid,
+            # SIMULATOR.PID.name: os.getpid(),
             SIMULATOR.LOCAL_MINIMUM_STEP_SIZE.name: local_minimum_step_size}
         
         # send the response
