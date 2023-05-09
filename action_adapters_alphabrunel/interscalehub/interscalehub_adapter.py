@@ -10,7 +10,7 @@
 # Laboratory: Simulation Laboratory Neuroscience
 #       Team: Multi-scale Simulation and Design
 # ------------------------------------------------------------------------------
-
+import os
 import sys
 import time
 import pickle
@@ -18,6 +18,8 @@ import base64
 
 from common.utils.security_utils import check_integrity
 from action_adapters_alphabrunel.setup_result_directories import SetupResultDirectories
+from action_adapters_alphabrunel.resource_usage_monitor_adapter import ResourceMonitorAdapter
+
 from EBRAINS_InterscaleHUB.Interscale_hub.manager_nest_to_tvb import NestToTvbManager
 from EBRAINS_InterscaleHUB.Interscale_hub.manager_tvb_to_nest import TvbToNestManager
 from EBRAINS_InterscaleHUB.Interscale_hub.interscalehub_enums import DATA_EXCHANGE_DIRECTION 
@@ -65,6 +67,7 @@ def run_wrapper(direction, configurations_manager, log_settings,
                                configurations_manager,
                                log_settings,
                                sci_params_xml_path_filename=sci_params_xml_path_filename)
+        name = "NEST_TO_TVB"
 
     # Case b: TVB to NEST inter-scale hub
     elif direction == DATA_EXCHANGE_DIRECTION.TVB_TO_NEST:
@@ -76,19 +79,26 @@ def run_wrapper(direction, configurations_manager, log_settings,
                                configurations_manager,
                                log_settings,
                                sci_params_xml_path_filename=sci_params_xml_path_filename)
+        name = "TVB_TO_NEST"
 
     # 1) init steering command
     # includes param setup, buffer creation
     # NOTE init is system action and so is done implicitly with the hub
     # initialization
+    resource_usage_monitor = ResourceMonitorAdapter(configurations_manager,
+                                                    log_settings,
+                                                    os.getpid(),
+                                                    f"InterscaleHub_{name}")
 
     # 2) Start steering command
+    resource_usage_monitor.start_monitoring()
     # receive, pivot, transform, send
     hub.start()
 
     # 3) Stop steering command
     # disconnect and close ports
     hub.stop()
+    resource_usage_monitor.stop_monitoring()
 
 if __name__ == '__main__':
     # RunSetup()
