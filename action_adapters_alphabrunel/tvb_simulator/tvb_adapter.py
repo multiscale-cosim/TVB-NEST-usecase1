@@ -42,7 +42,9 @@ numpy.random.seed(125)
 class TVBAdapter:
 
     def __init__(self, p_configurations_manager, p_log_settings,
-                 p_interscalehub_addresses, p_sci_params_xml_path_filename=None):
+                 p_interscalehub_addresses,
+                 is_monitoring_enabled,
+                 p_sci_params_xml_path_filename=None):
         self._log_settings = p_log_settings
         self._configurations_manager = p_configurations_manager
         self.__logger = self._configurations_manager.load_log_configurations(
@@ -59,7 +61,9 @@ class TVBAdapter:
         self.__simulator_tvb = None
         self.__tvb_mpi_wrapper = None
         self.__my_pid = os.getpid()
-        self.__resource_usage_monitor = ResourceMonitorAdapter(self._configurations_manager,
+        self.__is_monitoring_enabled = is_monitoring_enabled
+        if self.__is_monitoring_enabled:
+            self.__resource_usage_monitor = ResourceMonitorAdapter(self._configurations_manager,
                                                                self._log_settings,
                                                                self.pid,
                                                                "TVB")
@@ -154,14 +158,16 @@ class TVBAdapter:
 
     def execute_start_command(self, global_minimum_step_size):
         self.__logger.debug("executing START command")
-        self.__resource_usage_monitor.start_monitoring()
+        if self.__is_monitoring_enabled:
+            self.__resource_usage_monitor.start_monitoring()
         self.__logger.debug(f'global_minimum_step_size: {global_minimum_step_size}')
         (r_raw_results,) = self.__tvb_mpi_wrapper.run_simulation_and_data_exchange(global_minimum_step_size)
         self.__logger.debug('TVB simulation is finished')
         return r_raw_results
 
     def execute_end_command(self, p_raw_results=None):
-        self.__resource_usage_monitor.stop_monitoring()
+        if self.__is_monitoring_enabled:
+            self.__resource_usage_monitor.stop_monitoring()
         self.__logger.info("plotting the result")
         plt.figure(1)
         plt.plot(p_raw_results[0], raw_results[1][:, 0, :, 0] + 3.0)
@@ -172,7 +178,7 @@ class TVBAdapter:
 
 if __name__ == "__main__":
     # TODO better handling of arguments parsing
-    if len(sys.argv) == 5:        
+    if len(sys.argv) == 6:
         # 1. parse arguments
         # unpickle configurations_manager object
         configurations_manager = pickle.loads(base64.b64decode(sys.argv[1]))
@@ -180,20 +186,24 @@ if __name__ == "__main__":
         log_settings = pickle.loads(base64.b64decode(sys.argv[2]))
         # get science parameters XML file path
         p_sci_params_xml_path_filename = sys.argv[3]
+        # flag indicating whether resource usage monitoring is enabled
+        is_monitoring_enabled = pickle.loads(base64.b64decode(sys.argv[4]))
         # get interscalehub connection details
-        p_interscalehub_address = pickle.loads(base64.b64decode(sys.argv[4]))
+        p_interscalehub_address = pickle.loads(base64.b64decode(sys.argv[5]))
 
         # 2. security check of pickled objects
         # it raises an exception, if the integrity is compromised
         check_integrity(configurations_manager, ConfigurationsManager)
         check_integrity(log_settings, dict)
         check_integrity(p_interscalehub_address, list)
+        check_integrity(is_monitoring_enabled, bool)
 
         # 3. everything is fine, configure simulator
         tvb_adapter = TVBAdapter(
             configurations_manager,
             log_settings,
             p_interscalehub_address,
+            is_monitoring_enabled,
             p_sci_params_xml_path_filename=p_sci_params_xml_path_filename)
         
         # 4. execute 'INIT' command which is implicit with when laucnhed

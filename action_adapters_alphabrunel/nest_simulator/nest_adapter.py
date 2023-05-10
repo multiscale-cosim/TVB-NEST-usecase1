@@ -40,6 +40,7 @@ import matplotlib.pyplot as plt
 class NESTAdapter:
     def __init__(self, p_configurations_manager, p_log_settings,
                  p_interscalehub_addresses,
+                 is_monitoring_enabled,
                  sci_params_xml_path_filename=None):
         self._log_settings = p_log_settings
         self._configurations_manager = p_configurations_manager
@@ -59,8 +60,9 @@ class NESTAdapter:
         # Loading scientific parameters into an object
         self.__sci_params = Xml2ClassParser(sci_params_xml_path_filename, self.__logger)
         self.__parameters = Parameters(self.__path_to_parameters_file)
-
-        self.__resource_usage_monitor = ResourceMonitorAdapter(self._configurations_manager,
+        self.__is_monitoring_enabled = is_monitoring_enabled
+        if self.__is_monitoring_enabled:
+            self.__resource_usage_monitor = ResourceMonitorAdapter(self._configurations_manager,
                                                                self._log_settings,
                                                                self.pid,
                                                                "NEST")
@@ -269,7 +271,8 @@ class NESTAdapter:
     
     def execute_start_command(self, global_minimum_step_size):
         self.__logger.debug("executing START command")
-        self.__resource_usage_monitor.start_monitoring()
+        if self.__is_monitoring_enabled:
+            self.__resource_usage_monitor.start_monitoring()
         self.__logger.debug(f'global_minimum_step_size: {global_minimum_step_size}')
         count = 0.0
         self.__logger.debug('starting simulation')
@@ -285,7 +288,8 @@ class NESTAdapter:
         # self.execute_end_command()
 
     def execute_end_command(self):
-        self.__resource_usage_monitor.stop_monitoring()
+        if self.__is_monitoring_enabled:
+            self.__resource_usage_monitor.stop_monitoring()
         if nest.Rank() == 0:
             # plot if there is data available
             self.__logger.info("plotting the result")
@@ -306,7 +310,7 @@ class NESTAdapter:
 
 if __name__ == "__main__":
     # TODO better handling of arguments parsing
-    if len(sys.argv) == 5:        
+    if len(sys.argv) == 6:        
         # 1. parse arguments
         # unpickle configurations_manager object
         configurations_manager = pickle.loads(base64.b64decode(sys.argv[1]))
@@ -314,20 +318,25 @@ if __name__ == "__main__":
         log_settings = pickle.loads(base64.b64decode(sys.argv[2]))
         # get science parameters XML file path
         p_sci_params_xml_path_filename = sys.argv[3]
+        # flag indicating whether resource usage monitoring is enabled
+        is_monitoring_enabled = pickle.loads(base64.b64decode(sys.argv[4]))
         # get interscalehub connection details
-        p_interscalehub_address = pickle.loads(base64.b64decode(sys.argv[4]))
+        p_interscalehub_address = pickle.loads(base64.b64decode(sys.argv[5]))
+        
 
         # 2. security check of pickled objects
         # it raises an exception, if the integrity is compromised
         check_integrity(configurations_manager, ConfigurationsManager)
         check_integrity(log_settings, dict)
         check_integrity(p_interscalehub_address, list)
+        check_integrity(is_monitoring_enabled, bool)
 
         # 3. everything is fine, configure simulator
         nest_adapter = NESTAdapter(
             configurations_manager,
             log_settings,
             p_interscalehub_address,
+            is_monitoring_enabled,
             sci_params_xml_path_filename=p_sci_params_xml_path_filename)
 
         # 4. execute 'INIT' command which is implicit with when laucnhed
@@ -380,6 +389,6 @@ if __name__ == "__main__":
             print(f'unknown command: {current_steering_command}', file=sys.stderr)
             sys.exit(1)
     else:
-        print(f'missing argument[s]; required: 5, received: {len(sys.argv)}')
+        print(f'missing argument[s]; required: 6, received: {len(sys.argv)}')
         print(f'Argument list received: {str(sys.argv)}')
         sys.exit(1)
