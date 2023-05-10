@@ -36,12 +36,14 @@ class ResourceMonitorAdapter:
         self.__action_pid = action_pid
         self.__action_process_name = action_process_name
         self.__poll_interval = poll_interval
-        self.__bind_with_cores = self.__get_affinity()
+        self.__affinity_manager = AffinityManager(self._log_settings,
+                                                   self._configurations_manager)
+        # get affinity mask of the action
+        self.__action_bound_with_cores = self.__get_action_affinity()
         self.__logger.debug("logger is configured.")
 
-    def __get_affinity(self):
-         self.__affinity_manager = AffinityManager(self._log_settings,
-                                                   self._configurations_manager)
+    def __get_action_affinity(self):
+         
          affinity_mask = self.__affinity_manager.get_affinity(self.__action_pid)
          self.__logger.debug(f"{self.__action_process_name} "
                              f"<{self.__action_pid}> "
@@ -58,7 +60,7 @@ class ResourceMonitorAdapter:
                 self._log_settings,
                 self._configurations_manager,
                 self.__action_pid,
-                self.__bind_with_cores,
+                self.__action_bound_with_cores,
                 self.__action_process_name,
                 self.__poll_interval
                 )
