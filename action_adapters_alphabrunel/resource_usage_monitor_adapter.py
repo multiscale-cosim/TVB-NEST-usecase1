@@ -39,7 +39,6 @@ class ResourceMonitorAdapter:
         self.__bind_with_cores = self.__get_affinity()
         self.__logger.debug("logger is configured.")
 
-
     def __get_affinity(self):
          self.__affinity_manager = AffinityManager(self._log_settings,
                                                    self._configurations_manager)
