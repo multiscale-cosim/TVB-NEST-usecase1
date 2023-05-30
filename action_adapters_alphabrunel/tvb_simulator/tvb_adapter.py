@@ -246,7 +246,7 @@ if __name__ == "__main__":
             # fetch global minimum step size
             global_minimum_step_size = control_command.get(COMMANDS.PARAMETERS.name)
             # execute the command
-            raw_results = tvb_adapter.execute_start_command(global_minimum_step_size)
+            raw_results = tvb_adapter.execute_start_command(global_minimum_step_size[0])
             tvb_adapter.execute_end_command(raw_results)
             # exit with success code
             sys.exit(0)

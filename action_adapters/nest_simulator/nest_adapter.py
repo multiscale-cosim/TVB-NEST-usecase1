@@ -21,7 +21,6 @@ from mpi4py import MPI
 
 from common.utils.security_utils import check_integrity
 from action_adapters_alphabrunel.resource_usage_monitor_adapter import ResourceMonitorAdapter
-
 from action_adapters_alphabrunel.nest_simulator.utils_function import get_data
 from action_adapters_alphabrunel.parameters import Parameters
 
@@ -74,6 +73,11 @@ class NESTAdapter:
 
         # Initialize port_names in the format as per nest-simulator
         self.__init_port_names(p_interscalehub_addresses)
+        """
+        self.__simulator = BrunelAlphaHPC(self._log_settings,
+                                            self._configurations_manager,
+                                            self.__interscalehub_tvb_to_nest_address,
+                                            self.__interscalehub_nest_to_tvb_address)"""
         self.__log_message("initialized")
 
         self.nest = None
@@ -151,6 +155,8 @@ class NESTAdapter:
         # setup connections with InterscaleHub
         self.__logger.info("preparing the simulator, and "
                            "establishing the connections")
+        
+        """self.__simulator.build_network()"""
         # nest.Prepare()
         #### sample old code ends
         
@@ -189,6 +195,7 @@ class NESTAdapter:
         #### sample old code ends
         
         ############################################
+        """self.__simulator.run_simulation(global_minimum_step_size)"""
         # self.execute_end_command()
 
     def execute_end_command(self):
