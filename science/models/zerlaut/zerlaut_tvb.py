@@ -61,7 +61,7 @@ class ZerlautTVB:
         rgn.seed(self.__paramsparam_tvb_integrator['seed_init'] - 1)
 
         ## Model configuration
-        if self.__paramsparam_tvb_model['order'] == 1:
+        if self.__params.param_tvb_model['order'] == 1:
             model = Zerlaut.ZerlautAdaptationFirstOrder(variables_of_interest='E I W_e W_i'.split())
         elif self.__params.param_tvb_model['order'] == 2:
             model = Zerlaut.ZerlautAdaptationSecondOrder(variables_of_interest='E I C_ee C_ei C_ii W_e W_i'.split())
