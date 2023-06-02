@@ -1,11 +1,8 @@
 import nest
 import numpy as np
-import os, sys
-import time
-import json
-#from nest_elephant_tvb.utils import create_logger
-import pathlib
+import os, sys, time, pathlib
 
+from science.parameters.zerlaut.model_parameters_nest import Parameters as ParameterNest
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 
 class ZerlautNest:
@@ -18,25 +15,25 @@ class ZerlautNest:
                 target_directory=DefaultDirectories.SIMULATION_RESULTS)
             self.__sci_params = sci_params
 
-            ##TODO: Custom param
-            self.parameters = self.__set_parameters(path_parameter)
-            self.time_synch = self.parameters['param_co_simulation']['synchronization']
-            self.begin = self.parameters['begin']
-            self.end = self.parameters['end']
-            self.results_path = self.parameters['result_path']
+            self.__params = ParameterNest()
+            self.results_path = path_parameter
 
-    def configure(self,one=nest_to_tvb_address,two=tvb_to_nest_address):
-        if self.parameters is None:
+    def configure(self,nest_to_tvb_address,tvb_to_nest_address):
+        self.nest_to_tvb_address=nest_to_tvb_address
+        self.tvb_to_nest_address=tvb_to_nest_address
+
+        if self.__params is None:
             return
         
         # initialise Nest
         self.__logger.info('configuration Nest')
-        res = self.__config_mpi_record(results_path=self.results_path, begin=self.begin, end=self.end,
-                                param_nest=self.parameters['param_nest'],
-                                param_topology=self.parameters['param_nest_topology'],
-                                param_connection=self.parameters['param_nest_connection'],
-                                param_background=self.parameters['param_nest_background'],
-                                cosimulation=self.parameters['param_co_simulation'])
+        res = self.__config_mpi_record(results_path=self.results_path, 
+                                        begin=self.__params.param_co_simulation['begin'], end=self.__params.param_co_simulation['end'],
+                                        param_nest=self.__params.param_nest,
+                                        param_topology=self.__params.param_nest_topology,
+                                        param_connection=self.__params.param_nest_connection,
+                                        param_background=self.__params.param_nest_background,
+                                        cosimulation=self.__params.param_co_simulation)
         spike_detector, spike_generator = res
         # save the id of the detector and wait until the file for the port are ready
         self.__logger.info('save id ')
@@ -71,20 +68,29 @@ class ZerlautNest:
                 os.remove(self.results_path + '/transformation/spike_detector/' + str(id_spike_detector[0]) + '.txt.unlock')
             self.__logger.info('configuration Nest Done!')
         """
+        list_spike_detector = []
+        for node in spike_detector:
+            list_spike_detector.append(node.tolist())
+        self.__logger.info('configuration Nest Done!')
+
+        return list_spike_detector, nest.GetKernelStatus("min_delay")
     
 
     def simulate(self):
         # launch the simulation
         self.__logger.info('start the simulation')
-        self.__simulate_mpi_co_simulation(self.time_synch, self.end)
+        self.__simulate_mpi_co_simulation(self.__params.param_co_simulation['synchronization'], 
+                                          self.__params.param_co_simulation['begin'])
         self.__logger.info('exit')
-
+    
+    """
     @staticmethod
     def __set_parameters(path_parameter):
         parameters = None
         with open(path_parameter + '/parameter.json') as f:
             parameters = json.load(f)
         return parameters
+    """
 ###################################
 
     def __network_initialisation(self, results_path, param_nest):
@@ -396,11 +402,12 @@ class ZerlautNest:
             param_spike_dec = {"start": min_time,
                             "stop": time_simulation,
                             "record_to": "mpi",
-                            'label': '/../transformation/spike_detector'
+                            'label': self.nest_to_tvb_address #'/../transformation/spike_detector'
                             }
             nest.CopyModel('spike_recorder', 'spike_detector_record_mpi')
             nest.SetDefaults("spike_detector_record_mpi", param_spike_dec)
             spike_detector = []
+        """
         else:
             if param_background['record_spike']:
                 param_spike_dec = {"start": min_time,
@@ -412,8 +419,10 @@ class ZerlautNest:
                 nest.SetDefaults("spike_detector_record", param_spike_dec)
                 # list_record
                 spike_detector = nest.Create('spike_detector_record')
+        
             else:
                 spike_detector = []
+        """
 
         # Connection to population
         for name_pops, items in dic_layer.items():
@@ -530,7 +539,7 @@ class ZerlautNest:
             param_spike_gen = {"start": 0.0,
                             "stop": time_simulation,
                             'stimulus_source': 'mpi',
-                            'label': '../transformation/spike_generator'
+                            'label': self.tvb_to_nest_address #'../transformation/spike_generator'
                             }
             nest.CopyModel('spike_generator', 'spike_generator_mpi')
             nest.SetDefaults("spike_generator_mpi", param_spike_gen)
@@ -619,7 +628,7 @@ class ZerlautNest:
 
         return spike_detector, spike_generator
 
-    def __simulate_mpi_co_simulation(self, time_synch, end):
+    def __simulate_mpi_co_simulation(self, end):
         """
         simulation with co-simulation
         :param time_synch: time of synchronization between all the simulator
@@ -630,9 +639,9 @@ class ZerlautNest:
         count = 0.0
         self.__logger.info("Nest Prepare")
         nest.Prepare()
-        while count * time_synch < end:  # FAT END POINT
+        while count * self.__params.param_co_simulation['synchronization'] < end:  # FAT END POINT
             self.__logger.info(" Nest run time " + str(nest.GetKernelStatus('biological_time')))
-            nest.Run(time_synch)
+            nest.Run(self.__params.param_co_simulation['synchronization'])
             self.__logger.info(" Nest end")
             count += 1
         self.__logger.info("cleanup")
@@ -643,93 +652,100 @@ class ZerlautNest:
 
 
 
-    def __run_mpi(self):
-        """
-        Run the simulation with MPI in co-simulation
-        :param path_parameter: path to the parameter
-        :return:
-        """
+#     def __run_mpi(self):
+#         """
+#         Run the simulation with MPI in co-simulation
+#         :param path_parameter: path to the parameter
+#         :return:
+#         """
 
-        """
-        param_co_simulation = self.parameters['param_co_simulation']
-        time_synch = param_co_simulation['synchronization']
-        begin = self.parameters['begin']
-        end = self.parameters['end']
-        results_path = self.parameters['result_path']
-        level_log = param_co_simulation['level_log']
-        """
-        # configuration of the logger
-        #logger = create_logger(self.path_parameter, 'nest', level_log)
+#         """
+#         param_co_simulation = self.__params['param_co_simulation']
+#         time_synch = param_co_simulation['synchronization']
+#         begin = self.__params['begin']
+#         end = self.__params['end']
+#         results_path = self.__params['result_path']
+#         level_log = param_co_simulation['level_log']
+#         """
+#         # configuration of the logger
+#         #logger = create_logger(self.path_parameter, 'nest', level_log)
 
-        if self.parameters is None:
-            return
+#         if self.__params is None:
+#             return
         
-        # initialise Nest
-        self.__logger.info('configuration Nest')
-        res = self.__config_mpi_record(results_path=self.results_path, begin=self.begin, end=self.end,
-                                param_nest=self.parameters['param_nest'],
-                                param_topology=self.parameters['param_nest_topology'],
-                                param_connection=self.parameters['param_nest_connection'],
-                                param_background=self.parameters['param_nest_background'],
-                                cosimulation=self.parameters['param_co_simulation'])
-        spike_detector, spike_generator = res
-        # save the id of the detector and wait until the file for the port are ready
-        self.__logger.info('save id ')
-        if nest.Rank() == 0:
-            path_spike_generator = self.path_parameter + '/nest/spike_generator.txt'
-            list_spike_generator = []
-            for node in spike_generator:
-                list_spike_generator.append(node.tolist())
-            np.savetxt(path_spike_generator, np.array(list_spike_generator, dtype=int), fmt='%i')
-            pathlib.Path(path_spike_generator + '.unlock').touch()
-            path_spike_detector = self.path_parameter + '/nest/spike_detector.txt'
-            list_spike_detector = []
-            for node in spike_detector:
-                list_spike_detector.append(node.tolist())
-            np.savetxt(path_spike_detector, np.array(list_spike_detector, dtype=int), fmt='%i')
-            pathlib.Path(path_spike_detector + '.unlock').touch()
+#         # initialise Nest
+#         self.__logger.info('configuration Nest')
+#         res = self.__config_mpi_record(results_path=self.results_path, 
+#                                         begin=self.__params.param_co_simulation['begin'], end=self.__params.param_co_simulation['end'],
+#                                         param_nest=self.__params.param_nest,
+#                                         param_topology=self.__params.param_nest_topology,
+#                                         param_connection=self.__params.param_nest_connection,
+#                                         param_background=self.__params.param_nest_background,
+#                                         cosimulation=self.__params.param_co_simulation)
+#         spike_detector, spike_generator = res
+#         # save the id of the detector and wait until the file for the port are ready
+#         self.__logger.info('save id ')
+#         if nest.Rank() == 0:
+#             path_spike_generator = self.path_parameter + '/nest/spike_generator.txt'
+#             list_spike_generator = []
+#             for node in spike_generator:
+#                 list_spike_generator.append(node.tolist())
+#             np.savetxt(path_spike_generator, np.array(list_spike_generator, dtype=int), fmt='%i')
+#             pathlib.Path(path_spike_generator + '.unlock').touch()
+#             path_spike_detector = self.path_parameter + '/nest/spike_detector.txt'
+#             list_spike_detector = []
+#             for node in spike_detector:
+#                 list_spike_detector.append(node.tolist())
+#             np.savetxt(path_spike_detector, np.array(list_spike_detector, dtype=int), fmt='%i')
+#             pathlib.Path(path_spike_detector + '.unlock').touch()
 
-            self.__logger.info('check if the port are file for the port are ready to use')
-            for ids_spike_generator in list_spike_generator:
-                for id_spike_generator in ids_spike_generator:
-                    while not os.path.exists(
-                            self.results_path + '/transformation/spike_generator/' + str(id_spike_generator) + '.txt.unlock'):
-                        time.sleep(1)
-                    os.remove(self.results_path + '/transformation/spike_generator/' + str(id_spike_generator) + '.txt.unlock')
-            for id_spike_detector in list_spike_detector:
-                while not os.path.exists(
-                        self.results_path + '/transformation/spike_detector/' + str(id_spike_detector[0]) + '.txt.unlock'):
-                    time.sleep(1)
-                os.remove(self.results_path + '/transformation/spike_detector/' + str(id_spike_detector[0]) + '.txt.unlock')
+#             self.__logger.info('check if the port are file for the port are ready to use')
+            
+#             """
+#             for ids_spike_generator in list_spike_generator:
+#                 for id_spike_generator in ids_spike_generator:
+#                     while not os.path.exists(
+#                             self.results_path + '/transformation/spike_generator/' + str(id_spike_generator) + '.txt.unlock'):
+#                         time.sleep(1)
+#                     os.remove(self.results_path + '/transformation/spike_generator/' + str(id_spike_generator) + '.txt.unlock')
+#             for id_spike_detector in list_spike_detector:
+#                 while not os.path.exists(
+#                         self.results_path + '/transformation/spike_detector/' + str(id_spike_detector[0]) + '.txt.unlock'):
+#                     time.sleep(1)
+#                 os.remove(self.results_path + '/transformation/spike_detector/' + str(id_spike_detector[0]) + '.txt.unlock')
+#             """
+#         # launch the simulation
+#         self.__logger.info('start the simulation')
+#         self.__simulate_mpi_co_simulation(self.__params.param_co_simulation['synchronization'], 
+#                                           self.__params.param_co_simulation['begin'])
+#         self.__logger.info('exit')
+#         return
 
-        # launch the simulation
-        self.__logger.info('start the simulation')
-        self.__simulate_mpi_co_simulation(self.time_synch, self.end)
-        self.__logger.info('exit')
-        return
+#     def __run_normal(self):
+#         """
+#         Run only nest
+#         :param path_parameter: parameter for the simulation
+#         :return:
+#         """
+#         """
+#         with open(self.path_parameter + '/parameter.json') as f:
+#             parameters = json.load(f)
+#         begin = parameters['begin']
+#         end = parameters['end']
+#         results_path = parameters['result_path']
+#         """
+#         if self.__params is None:
+#             return
 
-    def __run_normal(self):
-        """
-        Run only nest
-        :param path_parameter: parameter for the simulation
-        :return:
-        """
-        """
-        with open(self.path_parameter + '/parameter.json') as f:
-            parameters = json.load(f)
-        begin = parameters['begin']
-        end = parameters['end']
-        results_path = parameters['result_path']
-        """
-        if self.parameters is None:
-            return
+#         # just run nest with the configuration
+#         self.__simulate(results_path=self.results_path, 
+#                                     begin=self.__params.param_co_simulation['begin'], end=self.__params.param_co_simulation['end'],
+#                                     param_nest=self.__params.param_nest,
+#                                     param_topology=self.__params.param_nest_topology,
+#                                     param_connection=self.__params.param_nest_connection,
+#                                     param_background=self.__params.param_nest_background)
+#         return
 
-        # just run nest with the configuration
-        self.__simulate(results_path=self.results_path, begin=self.begin, end=self.end,
-                param_nest=self.parameters['param_nest'],
-                param_topology=self.parameters['param_nest_topology'],
-                param_connection=self.parameters['param_nest_connection'],
-                param_background=self.parameters['param_nest_background'])
-        return
+# a = ZerlautNest()
 
-a = ZerlautNest()
+#############################

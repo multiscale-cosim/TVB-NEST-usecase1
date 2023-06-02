@@ -80,7 +80,7 @@ class NESTAdapter:
                                             self.__interscalehub_nest_to_tvb_address)"""
         self.__log_message("initialized")
 
-        self.nest = None
+        self.nest_network = None
 
     @property
     def rank(self):
@@ -140,8 +140,8 @@ class NESTAdapter:
                                 sci_params=self.__sci_params,
                                 path_parameter=self.__path_to_parameters_file)
         # TODO: checks parameters
-        self.nest_network.configure(one=self.__interscalehub_nest_to_tvb_address,
-                                    two=self.__interscalehub_tvb_to_nest_address)
+        list_spike_detector, min_delay = self.nest_network.configure(self.__interscalehub_nest_to_tvb_address,
+                                                                    self.__interscalehub_tvb_to_nest_address)
 
 
         #### sample old code starts
