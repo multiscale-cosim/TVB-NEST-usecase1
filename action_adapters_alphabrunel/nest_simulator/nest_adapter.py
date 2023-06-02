@@ -55,7 +55,7 @@ class NESTAdapter:
         self.__comm = MPI.COMM_WORLD
         self.__rank = self.__comm.Get_rank()
         self.__my_pid = os.getpid()
-        self.__logger.info(f"__DEBUG__ size: {self.__comm.Get_size()}, my rank: {self.__rank}, "
+        self.__logger.info(f"size: {self.__comm.Get_size()}, my rank: {self.__rank}, "
                            f"host_name:{os.uname()}")
         # Loading scientific parameters into an object
         self.__sci_params = Xml2ClassParser(sci_params_xml_path_filename, self.__logger)
@@ -72,6 +72,7 @@ class NESTAdapter:
 
         # Initialize port_names in the format as per nest-simulator
         self.__init_port_names(p_interscalehub_addresses)
+        self.__list_spike_detector = []
         self.__log_message("initialized")
 
     @property
@@ -195,12 +196,14 @@ class NESTAdapter:
         # simulator.Connect(nodes_ex[:50], espikes, syn_spec="excitatory")
         simulator.Connect(
             pre=nodes_ex[:50],
+            # pre=nodes_ex,
             post=espikes,
             syn_spec=self.__sci_params.excitatory_model['synapse'])
 
         # simulator.Connect(nodes_in[:25], ispikes, syn_spec="excitatory")
         simulator.Connect(
             pre=nodes_in[:25],
+            # pre=nodes_in,
             post=ispikes,
             syn_spec=self.__sci_params.excitatory_model['synapse'])
 
@@ -246,6 +249,11 @@ class NESTAdapter:
                           syn_spec=self.__sci_params.output_from_simulator['syn_spec'])
 
         # return espikes, input_to_simulator, output_from_simulator
+        self.__logger.debug(f"espikes: {espikes}, spike_generator: {input_to_simulator}, spike_detector: {output_from_simulator}")
+        
+        for node in output_from_simulator:
+            self.__list_spike_detector.append(node.tolist())
+        self.__logger.debug(f"first spike_detector: {self.__list_spike_detector[0]}")
         self.__logger.debug("simulation is configured")
 
     def execute_init_command(self):
@@ -265,9 +273,7 @@ class NESTAdapter:
         nest.Prepare()
         self.__log_message("connections are made")
         self.__logger.debug("INIT command is executed")
-        return self.__parameters.time_synch  # minimum step size for simulation
-
-    
+        return self.__parameters.time_synch, self.__list_spike_detector[0]   # minimum step size for simulation
     
     def execute_start_command(self, global_minimum_step_size):
         self.__logger.debug("executing START command")
@@ -340,7 +346,7 @@ if __name__ == "__main__":
             sci_params_xml_path_filename=p_sci_params_xml_path_filename)
 
         # 4. execute 'INIT' command which is implicit with when laucnhed
-        local_minimum_step_size = nest_adapter.execute_init_command()
+        local_minimum_step_size, list_spike_detector = nest_adapter.execute_init_command()
 
         # 5. send the pid and the local minimum step size to Application Manager
         # as a response to 'INIT' as per protocol
@@ -354,7 +360,9 @@ if __name__ == "__main__":
             pid_and_local_minimum_step_size = \
                 {SIMULATOR.PID.name: nest_adapter.pid,
                 #SIMULATOR.PID.name: os.getpid(),
-                SIMULATOR.LOCAL_MINIMUM_STEP_SIZE.name: local_minimum_step_size}
+                SIMULATOR.LOCAL_MINIMUM_STEP_SIZE.name: local_minimum_step_size,
+                SIMULATOR.SPIKE_DETECTORS.name: list_spike_detector,
+                }
         
             # send the response
             # NOTE Application Manager will read the stdout stream via PIPE
@@ -381,7 +389,7 @@ if __name__ == "__main__":
             # fetch global minimum step size
             global_minimum_step_size = control_command.get(COMMANDS.PARAMETERS.name)
             # execute the command
-            nest_adapter.execute_start_command(global_minimum_step_size)
+            nest_adapter.execute_start_command(global_minimum_step_size[0])
             nest_adapter.execute_end_command()
             # exit with success code
             sys.exit(0)

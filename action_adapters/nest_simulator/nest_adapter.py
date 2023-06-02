@@ -21,9 +21,9 @@ from mpi4py import MPI
 
 from common.utils.security_utils import check_integrity
 from action_adapters_alphabrunel.resource_usage_monitor_adapter import ResourceMonitorAdapter
-
 from action_adapters_alphabrunel.nest_simulator.utils_function import get_data
 from action_adapters_alphabrunel.parameters import Parameters
+
 from EBRAINS_RichEndpoint.application_companion.common_enums import SteeringCommands, COMMANDS
 from EBRAINS_RichEndpoint.application_companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
 from EBRAINS_RichEndpoint.application_companion.common_enums import INTEGRATED_INTERSCALEHUB_APPLICATION as INTERSCALE_HUB
@@ -35,6 +35,7 @@ from EBRAINS_InterscaleHUB.Interscale_hub.interscalehub_enums import DATA_EXCHAN
 import nest
 import nest.raster_plot
 import matplotlib.pyplot as plt
+from science.models.zerlaut.zerlaut_nest import ZerlautNest
 
 
 class NESTAdapter:
@@ -72,7 +73,14 @@ class NESTAdapter:
 
         # Initialize port_names in the format as per nest-simulator
         self.__init_port_names(p_interscalehub_addresses)
+        """
+        self.__simulator = BrunelAlphaHPC(self._log_settings,
+                                            self._configurations_manager,
+                                            self.__interscalehub_tvb_to_nest_address,
+                                            self.__interscalehub_nest_to_tvb_address)"""
         self.__log_message("initialized")
+
+        self.nest_network = None
 
     @property
     def rank(self):
@@ -126,6 +134,16 @@ class NESTAdapter:
         ###########################################
         # TODO call science/models/<model_nest>.py for setting up network configuraions
         
+
+        self.nest_network = ZerlautNest(p_configurations_manager=self._configurations_manager,
+                                p_log_settings=self._log_settings,
+                                sci_params=self.__sci_params,
+                                path_parameter=self.__path_to_parameters_file)
+        # TODO: checks parameters
+        list_spike_detector, min_delay = self.nest_network.configure(self.__interscalehub_nest_to_tvb_address,
+                                                                    self.__interscalehub_tvb_to_nest_address)
+
+
         #### sample old code starts
         
         # nest.ResetKernel()
@@ -137,6 +155,8 @@ class NESTAdapter:
         # setup connections with InterscaleHub
         self.__logger.info("preparing the simulator, and "
                            "establishing the connections")
+        
+        """self.__simulator.build_network()"""
         # nest.Prepare()
         #### sample old code ends
         
@@ -151,11 +171,16 @@ class NESTAdapter:
         if self.__is_monitoring_enabled:  # NOTE WIP may be changed
             self.__resource_usage_monitor.start_monitoring()
         self.__logger.debug(f'global_minimum_step_size: {global_minimum_step_size}')
-        count = 0.0
+        #count = 0.0
         self.__logger.debug('starting simulation')
+
         ############################################
         # TODO call science/models/<model_nest>.py to run simulation step
         
+
+        self.nest_network.simulate()
+
+
         #### sample old code starts
         
         # while count * global_minimum_step_size < self.__parameters.simulation_time:
@@ -170,6 +195,7 @@ class NESTAdapter:
         #### sample old code ends
         
         ############################################
+        """self.__simulator.run_simulation(global_minimum_step_size)"""
         # self.execute_end_command()
 
     def execute_end_command(self):
