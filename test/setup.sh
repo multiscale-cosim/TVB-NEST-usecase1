@@ -6,7 +6,8 @@ export PYTHONPATH=${CO_SIM_USE_CASE_ROOT_PATH}:/home/vagrant/multiscale-cosim/si
 
 ### FOR TESTING ###
 export CO_SIM_TEST_PATH="${CO_SIM_ROOT_PATH}/myremotefork/TVB-NEST-usecase1/test"
-export CO_SIM_TEST_SETTINGS="${CO_SIM_TEST_PATH}/XML/global_settings.xml"
+#export CO_SIM_TEST_SETTINGS="${CO_SIM_TEST_PATH}/XML/global_settings.xml"
+export CO_SIM_TEST_SETTINGS="${CO_SIM_MODULES_ROOT_PATH}/EBRAINS_WorkflowConfigurations/general/global_settings.xml"
 export CO_SIM_TEST_PLAN="${CO_SIM_TEST_PATH}/XML/model_plan.xml"
 
 export PATH=/home/vagrant/multiscale-cosim/nest/bin:${PATH}
