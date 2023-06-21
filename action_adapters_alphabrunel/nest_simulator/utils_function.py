@@ -74,15 +74,20 @@ def get_data(logger, path, pattern="brunel-py-ex-*"):
                 yield a
         if a == []:
             try:
-                raise Exception('stop file')
-            except Exception:
+                raise RuntimeError('stop file')
+            except RuntimeError:
                 logger.exception('data is empty')
+                return None
 
     re_pattern = re.compile(pattern)
     data = []
     for file in os.listdir(path):
         if re.match(re_pattern, file) is not None:
             for i in _blockread(path + file):
+                if i is None and data == []:
+                     return data  # return empty array
+                if i is None and data:
+                    return np.array(data) 
                 for id, time in i:
                     data.append([int(id), float(time)])
     return np.array(data)
