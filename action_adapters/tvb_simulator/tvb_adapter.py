@@ -23,6 +23,8 @@ from action_adapters_alphabrunel.parameters import Parameters
 from action_adapters_alphabrunel.resource_usage_monitor_adapter import ResourceMonitorAdapter
 from common.utils.security_utils import check_integrity
 
+from science.models.zerlaut.zerlaut_tvb import ZerlautTVB
+
 from EBRAINS_RichEndpoint.application_companion.common_enums import SteeringCommands, COMMANDS
 from EBRAINS_RichEndpoint.application_companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
 from EBRAINS_RichEndpoint.application_companion.common_enums import INTEGRATED_INTERSCALEHUB_APPLICATION as INTERSCALE_HUB
@@ -59,7 +61,7 @@ class TVBAdapter:
         
         self.__parameters = Parameters(self.__path_to_parameters_file)
         self.__simulator_tvb = None
-        self.__tvb_mpi_wrapper = None
+        #self.__tvb_mpi_wrapper = None
         self.__my_pid = os.getpid()
         self.__is_monitoring_enabled = is_monitoring_enabled
         if self.__is_monitoring_enabled:
@@ -97,7 +99,6 @@ class TVBAdapter:
                     interscalehub.get(INTERSCALE_HUB.MPI_CONNECTION_INFO.name)
                 self.__logger.debug(f"Interscalehub_tvb_to_nest_address: {self.__interscalehub_tvb_to_nest_address}")
 
-    # def __configure(self, time_synch=0.1, id_nest_region=None, dt=0.1):
     def __configure(self):
         """
         configure TVB before the simulation
@@ -143,37 +144,74 @@ class TVBAdapter:
 
     def execute_init_command(self):
         self.__logger.debug("executing INIT command")
-        self.__simulator_tvb = self.__configure()
-        self.__simulator_tvb.simulation_length = self.__parameters.simulation_time
+         ############################################
+        # TODO call science/models/<model_tvb>.py for configurations
+        
+        #init and configure
+        self.tvb_network = ZerlautTVB(p_configurations_manager=self._configurations_manager,
+                                p_log_settings=self._log_settings,
+                                sci_params=self.__sci_params,
+                                path_parameter=self.__path_to_parameters_file)
+        # TODO: checks parameters
+        min_delay = self.tvb_network.configure(self.__interscalehub_nest_to_tvb_address,
+                                    self.__interscalehub_tvb_to_nest_address)
+
+        #### sample old code starts
+        # self.__simulator_tvb = self.__configure()
+        # self.__simulator_tvb.simulation_length = self.__parameters.simulation_time
+        
         # set up MPI connections
-        self.__tvb_mpi_wrapper = TVBMpiWrapper(
-            self._log_settings,
-            self._configurations_manager,
-            self.__simulator_tvb,
-            intercalehub_nest_to_tvb=self.__interscalehub_nest_to_tvb_address,
-            intercalehub_tvb_to_nest=self.__interscalehub_tvb_to_nest_address)
-        self.__tvb_mpi_wrapper.init_mpi()
+        # self.__tvb_mpi_wrapper = TVBMpiWrapper(
+        #     self._log_settings,
+        #     self._configurations_manager,
+        #     self.__simulator_tvb,
+        #     intercalehub_nest_to_tvb=self.__interscalehub_nest_to_tvb_address,
+        #     intercalehub_tvb_to_nest=self.__interscalehub_tvb_to_nest_address)
+        # self.__tvb_mpi_wrapper.init_mpi()
+
+        #### sample old code ends
+        
+        ############################################
         self.__logger.debug("INIT command is executed")
         return self.__parameters.time_synch  # minimum step size for simulation 
 
     def execute_start_command(self, global_minimum_step_size):
         self.__logger.debug("executing START command")
-        if self.__is_monitoring_enabled:
+        if self.__is_monitoring_enabled:  # NOTE WIP may be changed
             self.__resource_usage_monitor.start_monitoring()
         self.__logger.debug(f'global_minimum_step_size: {global_minimum_step_size}')
-        (r_raw_results,) = self.__tvb_mpi_wrapper.run_simulation_and_data_exchange(global_minimum_step_size)
+
+        ############################################
+        # TODO call science/models/<model_nest>.py to run simulation step
+        
+        self.tvb_network.simulate()
+
+        #### sample old code starts
+        # (r_raw_results,) = self.__tvb_mpi_wrapper.run_simulation_and_data_exchange(global_minimum_step_size)
         self.__logger.debug('TVB simulation is finished')
-        return r_raw_results
+        # return r_raw_results
+
+        #### sample old code ends
+        ############################################
 
     def execute_end_command(self, p_raw_results=None):
-        if self.__is_monitoring_enabled:
+        if self.__is_monitoring_enabled:  # NOTE WIP may be changed
             self.__resource_usage_monitor.stop_monitoring()
+
+        ############################################
+        # TODO call science/models/<model_nest>.py for post processing
+        
+        #### sample old code starts
+
         self.__logger.info("plotting the result")
-        plt.figure(1)
-        plt.plot(p_raw_results[0], raw_results[1][:, 0, :, 0] + 3.0)
-        plt.title("Raw -- State variable 0")
-        plt.savefig(self.__parameters.path + "/figures/plot_tvb.png")
+        # plt.figure(1)
+        # plt.plot(p_raw_results[0], raw_results[1][:, 0, :, 0] + 3.0)
+        # plt.title("Raw -- State variable 0")
+        # plt.savefig(self.__parameters.path + "/figures/plot_tvb.png")
         self.__logger.debug("post processing is done")
+
+        #### sample old code ends
+        ############################################
 
 
 if __name__ == "__main__":
@@ -246,7 +284,7 @@ if __name__ == "__main__":
             # fetch global minimum step size
             global_minimum_step_size = control_command.get(COMMANDS.PARAMETERS.name)
             # execute the command
-            raw_results = tvb_adapter.execute_start_command(global_minimum_step_size[0])
+            raw_results = tvb_adapter.execute_start_command(global_minimum_step_size)
             tvb_adapter.execute_end_command(raw_results)
             # exit with success code
             sys.exit(0)
