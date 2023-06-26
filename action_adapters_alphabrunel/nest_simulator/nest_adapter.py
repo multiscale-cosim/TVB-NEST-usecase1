@@ -259,6 +259,7 @@ class NESTAdapter:
     def execute_init_command(self):
         self.__logger.debug("executing INIT command")
         nest.ResetKernel()
+        # nest.local_num_threads = 96
         nest.SetKernelStatus(
             {"data_path": self.__parameters.path + '/nest/',
              "overwrite_files": True, "print_time": True,
@@ -284,9 +285,11 @@ class NESTAdapter:
         self.__logger.debug('starting simulation')
         # while count * self.__parameters.time_synch < self.__parameters.simulation_time:
         while count * global_minimum_step_size < self.__parameters.simulation_time:
-            self.__log_message(f"simulation run counter: {count+1}")
-            nest.Run(self.__parameters.time_synch)
             count += 1
+            self.__log_message(f"simulation run counter: {count}")
+            nest.Run(global_minimum_step_size)
+            # nest.Run(self.__parameters.time_synch)
+            
 
         self.__log_message('nest simulation is finished')
         self.__log_message("cleaning up NEST")
@@ -300,7 +303,8 @@ class NESTAdapter:
             # plot if there is data available
             self.__logger.info("plotting the result")
             data = get_data(self.__logger, self.__parameters.path + '/nest/')
-            if data is not None:
+            self.__logger.debug(f"data for plotting: {data}")
+            if data.size > 0:
                 nest.raster_plot.from_data(data)
                 plt.savefig(self.__parameters.path + "/figures/plot_nest.png")
                 self.__logger.debug("data is plotted")
