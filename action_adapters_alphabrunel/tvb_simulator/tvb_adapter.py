@@ -158,10 +158,16 @@ class TVBAdapter:
 
     def execute_start_command(self, global_minimum_step_size):
         self.__logger.debug("executing START command")
+        r_raw_results = []
         if self.__is_monitoring_enabled:
             self.__resource_usage_monitor.start_monitoring()
         self.__logger.debug(f'global_minimum_step_size: {global_minimum_step_size}')
-        (r_raw_results,) = self.__tvb_mpi_wrapper.run_simulation_and_data_exchange(global_minimum_step_size)
+        try:
+            (r_raw_results,) = self.__tvb_mpi_wrapper.run_simulation_and_data_exchange(global_minimum_step_size)
+        except Exception as e:
+            # log the exception with traceback and continue
+            self.__logger.exception(f" {e}")
+
         self.__logger.debug('TVB simulation is finished')
         return r_raw_results
 
@@ -169,10 +175,15 @@ class TVBAdapter:
         if self.__is_monitoring_enabled:
             self.__resource_usage_monitor.stop_monitoring()
         self.__logger.info("plotting the result")
-        plt.figure(1)
-        plt.plot(p_raw_results[0], raw_results[1][:, 0, :, 0] + 3.0)
-        plt.title("Raw -- State variable 0")
-        plt.savefig(self.__parameters.path + "/figures/plot_tvb.png")
+        try:
+            plt.figure(1)
+            plt.plot(p_raw_results[0], raw_results[1][:, 0, :, 0] + 3.0)
+            plt.title("Raw -- State variable 0")
+            plt.savefig(self.__parameters.path + "/figures/plot_tvb.png")
+        except Exception as e:
+            # log the exception with traceback and continue
+            self.__logger.exception(f"coudl not plot because {e}")
+
         self.__logger.debug("post processing is done")
 
 

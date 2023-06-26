@@ -264,11 +264,21 @@ class TVBMpiWrapper:
         """reshapes the output of TVB for the"""
         times = []
         values = []
-        for (running_time, running_value) in result[0]:
-            if running_time > 0.0:
-                times.append(running_time)
-                values.append(running_value)
-        return ([np.array(times), np.expand_dims(np.concatenate(values), 1)],)
+        result = []
+        try:
+            for (running_time, running_value) in result[0]:
+                if running_time > 0.0:
+                    times.append(running_time)
+                    values.append(running_value)
+
+            result = ([np.array(times), np.expand_dims(np.concatenate(values), 1)],)
+        except Exception as e:
+            # log the exception with traceback and continue
+            self.__logger.exception("could not reshaped the result because"
+                                    f" {e}")
+        finally:  # continue with simulation
+            # NOTE discuss if it is not the desired behavior
+            return result
     
     def run_simulation_and_data_exchange(self, global_minimum_step_size):
         """
