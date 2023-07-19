@@ -189,7 +189,7 @@ echo \$PATH | grep ${CO_SIM_NEST}/bin 1>/dev/null 2>&1
 
 python3 \${CO_SIM_USE_CASE_ROOT_PATH}/main.py \\
     --global-settings \${CO_SIM_MODULES_ROOT_PATH}/EBRAINS_WorkflowConfigurations/general/global_settings.xml \\
-    --action-plan \${CO_SIM_MODULES_ROOT_PATH}/EBRAINS_WorkflowConfigurations/usecase/local/plans/cosim_alpha_brunel_local.xml
+    --action-plan \${CO_SIM_USE_CASE_ROOT_PATH}/userland/configs/local/plans/cosim_alpha_brunel_local.xml
 
 .EORF
 
