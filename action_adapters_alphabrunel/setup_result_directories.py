@@ -14,7 +14,8 @@
 import os
 import json
 import copy
-from common.utils import directory_utils
+
+from EBRAINS_Launcher.common.utils import directory_utils
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 
 

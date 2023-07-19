@@ -21,7 +21,6 @@ import ast
 from action_adapters_alphabrunel.tvb_simulator.wrapper_TVB_mpi import TVBMpiWrapper
 from action_adapters_alphabrunel.parameters import Parameters
 from action_adapters_alphabrunel.resource_usage_monitor_adapter import ResourceMonitorAdapter
-from common.utils.security_utils import check_integrity
 
 from EBRAINS_RichEndpoint.application_companion.common_enums import SteeringCommands, COMMANDS
 from EBRAINS_RichEndpoint.application_companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
@@ -30,6 +29,7 @@ from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_dir
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers.xml2class_parser import Xml2ClassParser
 from EBRAINS_InterscaleHUB.Interscale_hub.interscalehub_enums import DATA_EXCHANGE_DIRECTION
+from EBRAINS_Launcher.common.utils.security_utils import check_integrity
 
 import tvb.simulator.lab as lab
 import matplotlib.pyplot as plt

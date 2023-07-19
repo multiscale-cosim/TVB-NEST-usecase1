@@ -13,7 +13,7 @@
 [submodule "EBRAINS_Launcher"]
 	path = EBRAINS_Launcher
 	url = https://github.com/multiscale-cosim/EBRAINS_Launcher.git
-	branch = main
+	branch = nest_desktop_insite
 [submodule "EBRAINS_WorkflowConfigurations"]
 	path = EBRAINS_WorkflowConfigurations
 	url = https://github.com/multiscale-cosim/EBRAINS_WorkflowConfigurations.git
