@@ -14,7 +14,8 @@
 import os
 import json
 import copy
-from common.utils import directory_utils
+
+from EBRAINS_Launcher.common.utils import directory_utils
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 
 
@@ -25,7 +26,7 @@ class SetupResultDirectories:
     def __init__(self, path):
         parameter_default = {"co_simulation": False,
                              "path": "",
-                             "simulation_time": 30.0,
+                             "simulation_time": 3.0,
                              "level_log": 1,
                              "resolution": 0.1,
                              "nb_neurons": [100]

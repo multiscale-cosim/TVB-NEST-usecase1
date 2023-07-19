@@ -19,7 +19,6 @@ import ast
 
 from mpi4py import MPI
 
-from common.utils.security_utils import check_integrity
 from action_adapters_alphabrunel.setup_result_directories import SetupResultDirectories
 from action_adapters_alphabrunel.resource_usage_monitor_adapter import ResourceMonitorAdapter
 
@@ -29,6 +28,7 @@ from EBRAINS_InterscaleHUB.Interscale_hub.interscalehub_enums import DATA_EXCHAN
 from EBRAINS_RichEndpoint.application_companion.common_enums import SteeringCommands, COMMANDS 
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
+from EBRAINS_Launcher.common.utils.security_utils import check_integrity
 
 
 class InterscaleHubAdapter:
