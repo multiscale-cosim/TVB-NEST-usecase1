@@ -23,6 +23,8 @@ from action_adapters_alphabrunel.parameters import Parameters
 from action_adapters_alphabrunel.resource_usage_monitor_adapter import ResourceMonitorAdapter
 from common.utils.security_utils import check_integrity
 
+from science.models.zerlaut.zerlaut_tvb import ZerlautTVB
+
 from EBRAINS_RichEndpoint.application_companion.common_enums import SteeringCommands, COMMANDS
 from EBRAINS_RichEndpoint.application_companion.common_enums import INTEGRATED_SIMULATOR_APPLICATION as SIMULATOR
 from EBRAINS_RichEndpoint.application_companion.common_enums import INTEGRATED_INTERSCALEHUB_APPLICATION as INTERSCALE_HUB
@@ -59,7 +61,7 @@ class TVBAdapter:
         
         self.__parameters = Parameters(self.__path_to_parameters_file)
         self.__simulator_tvb = None
-        self.__tvb_mpi_wrapper = None
+        #self.__tvb_mpi_wrapper = None
         self.__my_pid = os.getpid()
         self.__is_monitoring_enabled = is_monitoring_enabled
         if self.__is_monitoring_enabled:
@@ -145,6 +147,15 @@ class TVBAdapter:
          ############################################
         # TODO call science/models/<model_tvb>.py for configurations
         
+        #init and configure
+        self.tvb_network = ZerlautTVB(p_configurations_manager=self._configurations_manager,
+                                p_log_settings=self._log_settings,
+                                sci_params=self.__sci_params,
+                                path_parameter=self.__path_to_parameters_file)
+        # TODO: checks parameters
+        min_delay = self.tvb_network.configure(self.__interscalehub_nest_to_tvb_address,
+                                    self.__interscalehub_tvb_to_nest_address)
+
         #### sample old code starts
         # self.__simulator_tvb = self.__configure()
         # self.__simulator_tvb.simulation_length = self.__parameters.simulation_time
@@ -173,6 +184,8 @@ class TVBAdapter:
         ############################################
         # TODO call science/models/<model_nest>.py to run simulation step
         
+        self.tvb_network.simulate()
+
         #### sample old code starts
         # (r_raw_results,) = self.__tvb_mpi_wrapper.run_simulation_and_data_exchange(global_minimum_step_size)
         self.__logger.debug('TVB simulation is finished')
