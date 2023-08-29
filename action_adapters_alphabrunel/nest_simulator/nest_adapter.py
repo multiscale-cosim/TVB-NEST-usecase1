@@ -29,7 +29,7 @@ from EBRAINS_RichEndpoint.application_companion.common_enums import INTEGRATED_I
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers.xml2class_parser import Xml2ClassParser
-from EBRAINS_InterscaleHUB.Interscale_hub.interscalehub_enums import DATA_EXCHANGE_DIRECTION
+from EBRAINS_InterscaleHUB.common.interscalehub_enums import DATA_EXCHANGE_DIRECTION
 from EBRAINS_Launcher.common.utils.security_utils import check_integrity
 
 import nest
@@ -55,6 +55,7 @@ class NESTAdapter:
         self.__comm = MPI.COMM_WORLD
         self.__rank = self.__comm.Get_rank()
         self.__my_pid = os.getpid()
+        self.__min_delay = None
         self.__logger.info(f"size: {self.__comm.Get_size()}, my rank: {self.__rank}, "
                            f"host_name:{os.uname()}")
         # Loading scientific parameters into an object
@@ -187,11 +188,21 @@ class NESTAdapter:
             post=nodes_ex,
             syn_spec=self.__sci_params.excitatory_model['synapse'])
 
+        # simulator.Connect(
+        #     pre=noise,
+        #     post=nodes_ex,
+        #     syn_spec={"weight": 200.680, "delay": 1.5} )
+
         # simulator.Connect(noise, nodes_in, syn_spec="excitatory")
         simulator.Connect(
             pre=noise,
             post=nodes_in,
             syn_spec=self.__sci_params.excitatory_model['synapse'])  # is the usage of 'excitatory' OK?
+
+        # simulator.Connect(
+        #     pre=noise,
+        #     post=nodes_in,
+        #     syn_spec={"weight": 20.680, "delay": 1.5} )
 
         # simulator.Connect(nodes_ex[:50], espikes, syn_spec="excitatory")
         simulator.Connect(
@@ -274,7 +285,11 @@ class NESTAdapter:
         nest.Prepare()
         self.__log_message("connections are made")
         self.__logger.debug("INIT command is executed")
-        return self.__parameters.time_synch, self.__list_spike_detector[0]   # minimum step size for simulation
+        nest_min_delay = nest.GetKernelStatus("min_delay") # (A corresponding entry exists for max_delay)
+        self.__log_message(f"__DEBUG__ nest_min_delay:{nest_min_delay}")
+        self.__min_delay = nest_min_delay
+        # return self.__parameters.time_synch, self.__list_spike_detector[0]   # minimum step size for simulation
+        return self.__min_delay, self.__list_spike_detector[0]   # minimum step size for simulation
     
     def execute_start_command(self, global_minimum_step_size):
         self.__logger.debug("executing START command")
@@ -283,12 +298,12 @@ class NESTAdapter:
         self.__logger.debug(f'global_minimum_step_size: {global_minimum_step_size}')
         count = 0.0
         self.__logger.debug('starting simulation')
-        # while count * self.__parameters.time_synch < self.__parameters.simulation_time:
-        while count * global_minimum_step_size < self.__parameters.simulation_time:
+        while count * self.__parameters.time_synch < self.__parameters.simulation_time:
+        # while count * global_minimum_step_size < self.__parameters.simulation_time:
             count += 1
             self.__log_message(f"simulation run counter: {count}")
-            nest.Run(global_minimum_step_size)
-            # nest.Run(self.__parameters.time_synch)
+            # nest.Run(global_minimum_step_size)
+            nest.Run(self.__parameters.time_synch)
             
 
         self.__log_message('nest simulation is finished')

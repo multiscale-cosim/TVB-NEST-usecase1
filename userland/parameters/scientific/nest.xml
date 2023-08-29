@@ -75,6 +75,7 @@
             </conn_spec>
             <syn_spec datatype="dict">
                 <weight datatype="float">20.68015524367846</weight>
+                <!-- <weight datatype="float">0.0001</weight> -->
                 <delay datatype="float">0.1</delay>
             </syn_spec>
         </input_to_simulator>
