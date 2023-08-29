@@ -260,13 +260,13 @@ class TVBMpiWrapper:
         # ending with MPI
         MPI.Finalize()
 
-    def __reshape_result(self, result):
+    def __reshape_result(self):
         """reshapes the output of TVB for the"""
         times = []
         values = []
         result = []
         try:
-            for (running_time, running_value) in result[0]:
+            for (running_time, running_value) in self.__simulation_results[0]:
                 if running_time > 0.0:
                     times.append(running_time)
                     values.append(running_value)
@@ -316,4 +316,4 @@ class TVBMpiWrapper:
         # end communications and finalize MPI
         self.__finalize()
         self.__logger.info(" TVB exit")
-        return self.__reshape_result(self.__simulation_results)
+        return self.__reshape_result()
