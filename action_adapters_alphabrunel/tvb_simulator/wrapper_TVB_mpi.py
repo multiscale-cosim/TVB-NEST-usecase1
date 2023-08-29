@@ -221,8 +221,8 @@ class TVBMpiWrapper:
     
     def __run_tvb_simulation(self, data):
         """helper function to run TVB simulation with updated data"""
-        self.__logger.info("TVB start simulation "
-                           f"{self.__simulation_run_counter * self.__time_synch}")
+        self.__logger.info("TVB start simulation counter: "
+                           f"{self.__simulation_run_counter}")
         # start simulation until next synchronization time check
         for result in self.__simulator_tvb(simulation_length=self.__time_synch, cosim_updates=data):
             for i in range(self.__nb_monitor):
@@ -264,11 +264,21 @@ class TVBMpiWrapper:
         """reshapes the output of TVB for the"""
         times = []
         values = []
-        for (running_time, running_value) in result[0]:
-            if running_time > 0.0:
-                times.append(running_time)
-                values.append(running_value)
-        return ([np.array(times), np.expand_dims(np.concatenate(values), 1)],)
+        result = []
+        try:
+            for (running_time, running_value) in result[0]:
+                if running_time > 0.0:
+                    times.append(running_time)
+                    values.append(running_value)
+
+            result = ([np.array(times), np.expand_dims(np.concatenate(values), 1)],)
+        except Exception as e:
+            # log the exception with traceback and continue
+            self.__logger.exception("could not reshaped the result because"
+                                    f" {e}")
+        finally:  # continue with simulation
+            # NOTE discuss if it is not the desired behavior
+            return result
     
     def run_simulation_and_data_exchange(self, global_minimum_step_size):
         """
@@ -280,21 +290,23 @@ class TVBMpiWrapper:
         # prepare and send initialization data, required by protocol to signal
         # ready to receive
         self.__prepare_and_send_initialization_date()
-        self.__simulation_run_counter = 0
+        self.__simulation_run_counter = 0  # NOTE initial simulaiton step is alreay done ??
         # the main loop of the simulation and data exchange
-        # while self.__simulation_run_counter * self.__time_synch < self.__simulation_length:
-        while self.__simulation_run_counter * global_minimum_step_size < self.__simulation_length:
-            # 1. receive data from InterscaleHub_NEST_to_TVB
+        self.__logger.debug(f'global_minimum_step_size: {global_minimum_step_size}')
+        while self.__simulation_run_counter * self.__time_synch < self.__simulation_length:
+        # while self.__simulation_run_counter * global_minimum_step_size < self.__simulation_length:
+            # 1. increment of the loop
+            self.__simulation_run_counter += 1
+            # 2. receive data from InterscaleHub_NEST_to_TVB
             data_value, time_data, receive = self.__receive_data()
-            # 2. format time and data for input to TVB simulation
+            # 3. format time and data for input to TVB simulation
             data = self.__format_and_reshape_simulation_data(data_value, time_data, receive)
-            # 3. run TVB simulation until next synchronization time check with
+            # 4. run TVB simulation until next synchronization time check with
             # data received from NEST
             self.__run_tvb_simulation(data)
-            # 4. send data to InterscaleHub_TVB_to_NEST
+            # 5. send data to InterscaleHub_TVB_to_NEST
             self.__send_data()
-            # 5. increment of the loop
-            self.__simulation_run_counter += 1
+           
             # 6. continue simulation and data exchange
             continue
 

@@ -30,7 +30,7 @@ class ResourceMonitorAdapter:
         self._log_settings = log_settings
         self._configurations_manager = configurations_manager
         self.__logger = self._configurations_manager.load_log_configurations(
-                                        name="Resource Uagae Adapter",
+                                        name="Resource Usage Adapter",
                                         log_configurations=self._log_settings)
         
         self.__action_pid = action_pid

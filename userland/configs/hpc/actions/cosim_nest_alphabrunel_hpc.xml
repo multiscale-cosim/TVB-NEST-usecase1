@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<settings>
+    <co_simulation_action>
+        <title>Nest to TVB transformer data producer</title>
+        <description>Test Nest to TVB transformer input data</description>
+        <variables>
+            <var_000>
+                <var_name>__no_variable_name__</var_name>
+                <var_value>__no_variable_value__</var_value>
+            </var_000>
+        </variables>
+        <parameters>
+            <par_001>
+                <par_name>CO_SIM_SCIENTIFIC_PARAMETERS</par_name>
+                <par_value>{CO_SIM_PARAMETERS_PATH}/scientific/nest.xml</par_value>
+            </par_001>
+        </parameters>
+        <action>
+            <launcher>
+                <launcher_command>{CO_SIM_LAUNCHER}</launcher_command>
+                <launcher_arguments>
+                    <argv_01_option>--exact</argv_01_option>
+                    <argv_01_value>{CO_SIM_EMPTY}</argv_01_value>
+                    <argv_02_option>--label</argv_02_option>
+                    <argv_02_value>{CO_SIM_EMPTY}</argv_02_value>
+                    <argv_03_option>--nodes=</argv_03_option>
+                    <argv_03_value>1</argv_03_value>
+                    <argv_04_option>--ntasks=</argv_04_option>
+                    <argv_04_value>2</argv_04_value>
+
+                    <argv_06_option>--cpu-bind=</argv_06_option>
+                    <argv_06_value>none</argv_06_value>
+                    <argv_07_option>--gres=</argv_07_option>
+                    <argv_07_value>gpus:0</argv_07_value>
+                    <argv_08_option>--nodelist=</argv_08_option>
+                    <argv_08_value>{CO_SIM_SLURM_NODE_001}</argv_08_value>
+                </launcher_arguments>
+            </launcher>
+            <performer>
+                <performer_binary>python3</performer_binary>
+                <performer_arguments>
+                    <argv_01_empty>{CO_SIM_EMPTY}</argv_01_empty>  <!-- change it with something for example CO_SIM_NONE -->
+                </performer_arguments>
+            </performer>
+            <routine>
+                <routine_code>{CO_SIM_ROUTINES_PATH}/nest_simulator/nest_adapter.py</routine_code>
+                <routine_arguments>
+                    <!-- TODO: change it with something for example CO_SIM_NONE -->
+                    <argv_01_empty>{CO_SIM_EMPTY}</argv_01_empty>
+                </routine_arguments>
+            </routine>
+        </action>
+    </co_simulation_action>
+</settings>
