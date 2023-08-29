@@ -29,7 +29,7 @@ from EBRAINS_RichEndpoint.application_companion.common_enums import INTEGRATED_I
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers.xml2class_parser import Xml2ClassParser
-from EBRAINS_InterscaleHUB.Interscale_hub.interscalehub_enums import DATA_EXCHANGE_DIRECTION
+from EBRAINS_InterscaleHUB.common.interscalehub_enums import DATA_EXCHANGE_DIRECTION
 
 import tvb.simulator.lab as lab
 import matplotlib.pyplot as plt
@@ -80,8 +80,7 @@ class TVBAdapter:
         '''
         helper function to initialize the port_names
         '''
-        self.__logger.debug("Interscalehubs endpoints: "
-                            f" {interscalehub_addresses}")
+        self.__logger.debug(f"Interscalehubs endpoints: {interscalehub_addresses}")
 
         for interscalehub in interscalehub_addresses:
             self.__logger.debug(f"running interscalehub: {interscalehub}")
@@ -145,6 +144,8 @@ class TVBAdapter:
         self.__logger.debug("executing INIT command")
         self.__simulator_tvb = self.__configure()
         self.__simulator_tvb.simulation_length = self.__parameters.simulation_time
+        # TODO determine correct minimum step size (min delay) of tVB
+        local_minimum_step_size = self.__parameters.time_synch  # NOTE is it correct?
         # set up MPI connections
         self.__tvb_mpi_wrapper = TVBMpiWrapper(
             self._log_settings,
@@ -154,7 +155,7 @@ class TVBAdapter:
             intercalehub_tvb_to_nest=self.__interscalehub_tvb_to_nest_address)
         self.__tvb_mpi_wrapper.init_mpi()
         self.__logger.debug("INIT command is executed")
-        return self.__parameters.time_synch  # minimum step size for simulation 
+        return  local_minimum_step_size
 
     def execute_start_command(self, global_minimum_step_size):
         self.__logger.debug("executing START command")

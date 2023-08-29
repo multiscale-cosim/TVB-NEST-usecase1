@@ -23,9 +23,8 @@ from common.utils.security_utils import check_integrity
 from action_adapters_alphabrunel.setup_result_directories import SetupResultDirectories
 from action_adapters_alphabrunel.resource_usage_monitor_adapter import ResourceMonitorAdapter
 
-from EBRAINS_InterscaleHUB.Interscale_hub.manager_nest_to_tvb import NestToTvbManager
-from EBRAINS_InterscaleHUB.Interscale_hub.manager_tvb_to_nest import TvbToNestManager
-from EBRAINS_InterscaleHUB.Interscale_hub.interscalehub_enums import DATA_EXCHANGE_DIRECTION
+from EBRAINS_InterscaleHUB.managers.usecase_specific.tvb_nest_manager import TvbNestManager
+from EBRAINS_InterscaleHUB.common.interscalehub_enums import DATA_EXCHANGE_DIRECTION
 from EBRAINS_RichEndpoint.application_companion.common_enums import SteeringCommands, COMMANDS 
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
@@ -94,29 +93,28 @@ class InterscaleHubAdapter:
         """Initializes InterscaleHub Manager object"""
         # Case a: Nest to TVB inter-scale hub
         if self.__direction == DATA_EXCHANGE_DIRECTION.NEST_TO_TVB:
-            # create directories to store parameter.json file, 
-            # port information, and logs
-            SetupResultDirectories(self.__path)  # NOTE: will be changed
             self.__hub_name = "NEST_TO_TVB"
-            self.__hub = NestToTvbManager(
-                self.__parameters,
-                self.__configurations_manager,
-                self.__log_settings,
-                self.__direction,
-                sci_params_xml_path_filename=self.__sci_params_xml_path)
+    
+            # NOTE create directories to store parameter.json file, 
+            # port information, and logs
+            # TODO move this setup directories and cosim params initialization
+            # to for example Launcher
+            SetupResultDirectories(self.__path)  # NOTE: will be changed
 
         # Case b: TVB to NEST inter-scale hub
         elif self.__direction == DATA_EXCHANGE_DIRECTION.TVB_TO_NEST:
-            # let the NEST_TO_TVB inter-scale hub to set up the directories and
+            # NOTE let the NEST_TO_TVB inter-scale hub to set up the directories and
             # parameters
             time.sleep(1)
             self.__hub_name = "TVB_TO_NEST"
-            self.__hub = TvbToNestManager(
-                self.__parameters,
-                self.__configurations_manager,
-                self.__log_settings,
-                self.__direction,
-                sci_params_xml_path_filename=self.__sci_params_xml_path)
+        
+        # instantiate usecase specific manager (based on direction)
+        self.__hub = TvbNestManager(
+            self.__parameters,
+            self.__configurations_manager,
+            self.__log_settings,
+            self.__direction,
+            sci_params_xml_path_filename=self.__sci_params_xml_path)
 
         self.__logger.debug(f"initialized {self.__hub}")
 
@@ -138,11 +136,7 @@ class InterscaleHubAdapter:
     def execute_start_command(self, id_first_spike_detector):
         """executes START steering command"""
         self.__logger.debug("executing START command")
-        if self.__direction == DATA_EXCHANGE_DIRECTION.TVB_TO_NEST:
-            self.__hub.start(id_first_spike_detector[0])
-        else:
-            self.__hub.start()
-
+        self.__hub.start(id_first_spike_detector[0])
         self.__logger.debug("START command is executed")
 
     def execute_end_command(self):
