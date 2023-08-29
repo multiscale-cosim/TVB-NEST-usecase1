@@ -95,7 +95,7 @@ class NESTAdapter:
         '''
         helper function to prepare the port_names in the following format:
 
-        "endpoint_address":<port name>
+        <port name>
         '''
         for interscalehub in interscalehub_addresses:
             self.__logger.debug(f"running interscalehub: {interscalehub}")
@@ -105,7 +105,7 @@ class NESTAdapter:
                     DATA_EXCHANGE_DIRECTION.NEST_TO_TVB.name:
                 # get mpi port name
                 self.__interscalehub_nest_to_tvb_address =\
-                    "endpoint_address:"+interscalehub.get(
+                    interscalehub.get(
                         INTERSCALE_HUB.MPI_CONNECTION_INFO.name)
                 self.__logger.debug("Interscalehub_nest_to_tvb_address: "
                                     f"{self.__interscalehub_nest_to_tvb_address}")
@@ -116,7 +116,7 @@ class NESTAdapter:
                     DATA_EXCHANGE_DIRECTION.TVB_TO_NEST.name:
                 # get mpi port name
                 self.__interscalehub_tvb_to_nest_address =\
-                    "endpoint_address:"+interscalehub.get(
+                    interscalehub.get(
                         INTERSCALE_HUB.MPI_CONNECTION_INFO.name)
                 self.__logger.debug("Interscalehub_tvb_to_nest_address: "
                                     f"{self.__interscalehub_tvb_to_nest_address}")
@@ -238,13 +238,13 @@ class NESTAdapter:
         input_to_simulator = simulator.Create(model=self.__sci_params.input_to_simulator['model'],
                                               n=self.__sci_params.nb_neurons,
                                               params={'stimulus_source': 'mpi',
-                                                      'label': self.__interscalehub_tvb_to_nest_address})
+                                                      'mpi_address': self.__interscalehub_tvb_to_nest_address})
         # output_from_simulator = simulator.Create("spike_recorder",
         #                                          params={"record_to": "mpi",
         #                                                  'label': '/../transformation/spike_detector'})
         output_from_simulator = simulator.Create("spike_recorder",
                                                  params={"record_to": "mpi",
-                                                         'label': self.__interscalehub_nest_to_tvb_address})
+                                                         'mpi_address': self.__interscalehub_nest_to_tvb_address})
         
         # simulator.Connect(input_to_simulator, nodes_ex, {'rule': 'one_to_one'},
         #                   {"weight": 20.68015524367846, "delay": 0.1})
