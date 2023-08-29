@@ -26,11 +26,7 @@ class SetupResultDirectories:
     def __init__(self, path):
         parameter_default = {"co_simulation": False,
                              "path": "",
-<<<<<<< HEAD
                              "simulation_time": 30.0,
-=======
-                             "simulation_time": 3.0,
->>>>>>> upstream/main
                              "level_log": 1,
                              "resolution": 0.1,
                              "nb_neurons": [100]

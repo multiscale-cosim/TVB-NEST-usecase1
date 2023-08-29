@@ -25,17 +25,19 @@
                     <argv_02_value>{CO_SIM_EMPTY}</argv_02_value>
                     <argv_03_option>--nodes=</argv_03_option>
                     <argv_03_value>1</argv_03_value>
+                    <!-- NOTE at least 3 MPI processes/ranks are required
+                         1. receive the data
+                         2. transformation/ analysis
+                         3. sending the data
+                    -->
                     <argv_04_option>--ntasks=</argv_04_option>
-                    <argv_04_value>2</argv_04_value>
+                    <argv_04_value>3</argv_04_value>
                     <argv_05_option>--cpus-per-task</argv_05_option>
                     <argv_05_value>1</argv_05_value>
-                    <argv_06_option>--cpu-bind=</argv_06_option>
-                    <!-- <argv_06_value>none</argv_06_value> -->
-                    <argv_06_value>map_cpu:4,5</argv_06_value>
-                    <argv_07_option>--gres=</argv_07_option>
-                    <argv_07_value>gpus:0</argv_07_value>
-                    <argv_08_option>--nodelist=</argv_08_option>
-                    <argv_08_value>{CO_SIM_SLURM_NODE_000}</argv_08_value>
+                    <argv_06_option>--gres=</argv_06_option>
+                    <argv_06_value>gpus:0</argv_06_value>
+                    <argv_07_option>--nodelist=</argv_07_option>
+                    <argv_07_value>{CO_SIM_SLURM_NODE_000}</argv_07_value>
                 </launcher_arguments>
             </launcher>
             <performer>

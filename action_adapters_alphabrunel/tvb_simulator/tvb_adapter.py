@@ -28,12 +28,8 @@ from EBRAINS_RichEndpoint.application_companion.common_enums import INTEGRATED_I
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers.xml2class_parser import Xml2ClassParser
-<<<<<<< HEAD
 from EBRAINS_InterscaleHUB.common.interscalehub_enums import DATA_EXCHANGE_DIRECTION
-=======
-from EBRAINS_InterscaleHUB.Interscale_hub.interscalehub_enums import DATA_EXCHANGE_DIRECTION
 from EBRAINS_Launcher.common.utils.security_utils import check_integrity
->>>>>>> upstream/main
 
 import tvb.simulator.lab as lab
 import matplotlib.pyplot as plt
