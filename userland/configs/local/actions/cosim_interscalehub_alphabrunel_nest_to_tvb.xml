@@ -20,7 +20,7 @@
                 <launcher_command>{CO_SIM_LAUNCHER}</launcher_command>
                 <launcher_arguments>
                     <argv_1_option>-n</argv_1_option>
-                    <argv_1_value>2</argv_1_value>
+                    <argv_1_value>3</argv_1_value>
                 </launcher_arguments>
             </launcher>
             <performer>
