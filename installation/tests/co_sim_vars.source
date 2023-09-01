@@ -8,7 +8,7 @@ export CO_SIM_ROOT_PATH=`pwd`
 export CO_SIM_USE_CASE_ROOT_PATH=${CO_SIM_ROOT_PATH}/TVB-NEST-usecase1
 export CO_SIM_MODULES_ROOT_PATH=${CO_SIM_USE_CASE_ROOT_PATH}
 
-export CO_SIM_PYTHONPATH=${CO_SIM_USE_CASE_ROOT_PATH}:${CO_SIM_ROOT_PATH}/site-packages:${CO_SIM_ROOT_PATH}/nest/lib64/python3.9/site-packages
+export CO_SIM_PYTHONPATH=${CO_SIM_USE_CASE_ROOT_PATH}:${CO_SIM_ROOT_PATH}/site-packages:${CO_SIM_ROOT_PATH}/nest-installed/lib64/python3.9/site-packages
 export PYTHONPATH=${CO_SIM_PYTHONPATH}:$PYTHONPATH
 
-export PATH=${CO_SIM_ROOT_PATH}/nest/bin:$PATH
+export PATH=${CO_SIM_ROOT_PATH}/nest-installed/bin:$PATH
