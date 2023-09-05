@@ -65,7 +65,10 @@ echo "1" | sudo update-alternatives --config mpirun 1>/dev/null 2>&1 # --> choos
  
 #
 # STEP 3 - install python packages for the TVB-NEST use-case
-#
+
+# packages required to run App Server
+pip install --no-cache --target=${CO_SIM_SITE_PACKAGES} flask flask-cors gunicorn
+
 #
 # STEP 4 - TVB
 #
