@@ -66,16 +66,14 @@ echo "1" | sudo update-alternatives --config mpirun 1>/dev/null 2>&1 # --> choos
 #
 # STEP 3 - install python packages for the TVB-NEST use-case
 
-# packages required to run App Server
-pip install --no-cache --target=${CO_SIM_SITE_PACKAGES} flask flask-cors gunicorn
-
 #
 # STEP 4 - TVB
 #
 # NOTE: Specific versions are required for some packages
 pip install --no-cache --target=${CO_SIM_SITE_PACKAGES} \
         tvb-contrib==2.2 tvb-data==2.0 tvb-gdist==2.1 tvb-library==2.2 \
-        cython elephant mpi4py numpy==1.23 pyzmq requests testresources
+        cython elephant mpi4py numpy==1.23 pyzmq requests testresources \
+		flask flask-cors gunicorn
 
 # 
 # STEP 5 - cloning github repos
