@@ -93,9 +93,9 @@ cd /home/<user.name>/cosim/vagrant
 
 ## Step 2 VM Configuration and installation
 ### 2.1 Create setup and installation scripts
-Go to [installation/local](https://github.com/multiscale-cosim/TVB-NEST-usecase1/tree/hpc/installation/local) directory and follow the following steps:
+Go to [installation/local](https://github.com/multiscale-cosim/TVB-NEST-usecase1/tree/main/installation/local) directory and follow the following steps:
 
-  1. To setup and manage the VM, [Vagrantfile](https://github.com/multiscale-cosim/TVB-NEST-usecase1/tree/hpc/installation/local/vagrantfile.file).
+  1. To setup and manage the VM, [Vagrantfile](https://github.com/multiscale-cosim/TVB-NEST-usecase1/tree/main/installation/local/vagrantfile).
 <details>
   <summary>(<i>click to expand</i>) </summary>
   
