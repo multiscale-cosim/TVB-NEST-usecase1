@@ -221,8 +221,9 @@ class TVBMpiWrapper:
     
     def __run_tvb_simulation(self, data):
         """helper function to run TVB simulation with updated data"""
+        # increment counter in log to include the simulation run to send initial data
         self.__logger.info("TVB simulation counter: "
-                           f"{self.__simulation_run_counter}")
+                           f"{self.__simulation_run_counter+1}")  
         # start simulation until next synchronization time check
         for result in self.__simulator_tvb(simulation_length=self.__time_synch, cosim_updates=data):
             for i in range(self.__nb_monitor):
