@@ -221,7 +221,7 @@ class TVBMpiWrapper:
     
     def __run_tvb_simulation(self, data):
         """helper function to run TVB simulation with updated data"""
-        self.__logger.info("TVB start simulation counter: "
+        self.__logger.info("TVB simulation counter: "
                            f"{self.__simulation_run_counter}")
         # start simulation until next synchronization time check
         for result in self.__simulator_tvb(simulation_length=self.__time_synch, cosim_updates=data):
@@ -290,7 +290,7 @@ class TVBMpiWrapper:
         # prepare and send initialization data, required by protocol to signal
         # ready to receive
         self.__prepare_and_send_initialization_date()
-        self.__simulation_run_counter = 1  # NOTE initial simulaiton step is alreay done
+        self.__simulation_run_counter = 0
         # the main loop of the simulation and data exchange
         self.__logger.debug(f'global_minimum_step_size: {global_minimum_step_size}')
         while self.__simulation_run_counter * self.__time_synch < self.__simulation_length:
