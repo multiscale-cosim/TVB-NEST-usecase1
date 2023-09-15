@@ -290,7 +290,7 @@ class TVBMpiWrapper:
         # prepare and send initialization data, required by protocol to signal
         # ready to receive
         self.__prepare_and_send_initialization_date()
-        self.__simulation_run_counter = 0  # NOTE initial simulaiton step is alreay done ??
+        self.__simulation_run_counter = 1  # NOTE initial simulaiton step is alreay done
         # the main loop of the simulation and data exchange
         self.__logger.debug(f'global_minimum_step_size: {global_minimum_step_size}')
         while self.__simulation_run_counter * self.__time_synch < self.__simulation_length:
@@ -312,8 +312,8 @@ class TVBMpiWrapper:
 
         # finishes simulation and data exchange
         # now save the last part
-        self.__logger.info(" TVB finish")
+        self.__logger.info("TVB finish")
         # end communications and finalize MPI
         self.__finalize()
-        self.__logger.info(" TVB exit")
+        self.__logger.info("TVB exit")
         return self.__reshape_result()
