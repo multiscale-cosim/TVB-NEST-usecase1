@@ -39,13 +39,12 @@
             <performer>
                 <performer_binary>python3</performer_binary>
                 <performer_arguments>
-                    <argv_01_empty>{CO_SIM_EMPTY}</argv_01_empty>  <!-- change it with something for example CO_SIM_NONE -->
+                    <argv_01_empty>{CO_SIM_EMPTY}</argv_01_empty>
                 </performer_arguments>
             </performer>
             <routine>
                 <routine_code>{CO_SIM_ROUTINES_PATH}/nest_simulator/nest_adapter.py</routine_code>
                 <routine_arguments>
-                    <!-- TODO: change it with something for example CO_SIM_NONE -->
                     <argv_01_empty>{CO_SIM_EMPTY}</argv_01_empty>
                 </routine_arguments>
             </routine>

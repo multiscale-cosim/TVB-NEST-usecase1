@@ -19,6 +19,11 @@
             <launcher>
                 <launcher_command>{CO_SIM_LAUNCHER}</launcher_command>
                 <launcher_arguments>
+                    <!-- NOTE at least 3 MPI processes/ranks are required
+                        1. receive the data
+                        2. transformation/ analysis
+                        3. sending the data
+                    -->
                     <argv_1_option>-n</argv_1_option>
                     <argv_1_value>3</argv_1_value>
                 </launcher_arguments>
