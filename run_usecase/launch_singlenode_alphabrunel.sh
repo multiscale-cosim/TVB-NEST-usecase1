@@ -4,7 +4,7 @@ module --force purge
 
 module load Stages/2022 GCCcore/.11.2.0 GCC/11.2.0 ParaStationMPI/5.5.0-1 Python/3.9.6 mpi4py/3.1.3 CMake/3.21.1 ZeroMQ/4.3.4
 
-export CO_SIM_ROOT_PATH="/path/to/project/${LOGNAME}/multiscale-cosim"
+export CO_SIM_ROOT_PATH="$PROJECT_<project>/${LOGNAME}/multiscale-cosim"
 export CO_SIM_USE_CASE_ROOT_PATH="${CO_SIM_ROOT_PATH}/cosim-repos/TVB-NEST-usecase1"
 export CO_SIM_NEST=${CO_SIM_ROOT_PATH}/nest
 
